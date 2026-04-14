@@ -1,0 +1,16 @@
+{
+  "registryPath": "./chord.registry.json",
+  "runtime": {
+    "intervalMs": 250,
+    "maxCycles": null
+  },
+  "policy": {
+    "globalMaxLeased": 10,
+    "perEntityMaxLeased": 3,
+    "retry": {
+      "strategy": "exponential",
+      "baseDelayMs": 250,
+      "maxAttempts": 3
+    }
+  }
+}

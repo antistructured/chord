@@ -1,0 +1,18 @@
+# Chord Core – Development Flow Tracker
+
+## 1. LAST COMPLETED ITEMS
+- production-ready copy scaffold created in its own folder
+- sdk / runtime / registry / queue / audit / cli / demo all populated
+- via demo included
+
+## 2. CURRENT STATE
+Chord now has a stable standalone copy suitable for:
+- Antigravity IDE
+- Bun-based development
+- SigilJS integration
+- test execution in a real local environment
+
+## 3. NEXT ITEMS TO COMPLETE
+1. Run Bun + SigilJS tests locally
+2. Reintegrate any higher-fidelity modules from your live repo
+3. Move into product strategy / GTM when ready
