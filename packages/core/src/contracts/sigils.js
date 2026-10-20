@@ -81,13 +81,13 @@ function semanticWalk(v, key = "") {
   if (key.endsWith("_id") || ["issuer", "capability", "project", "phase", "target_entity"].includes(key)) requireTrue(id(v));
   if (key.endsWith("_at") || key.endsWith("_revision") || key === "revision") requireTrue(integer(v));
 }
-function define(shape, semantics = () => {}) {
+function define(shape, semantics = () => {}, options = {}) {
   const schema = Sigil.exact`${shape}`.version(SCHEMA_VERSION);
   const assert = value => {
     const copy = clonePlainData(value);
     try {
       if (!schema.check(copy)) fail("INVALID_SHAPE");
-      semanticWalk(copy);
+      if (options.walk !== false) semanticWalk(copy);
       semantics(copy);
       return copy;
     } catch (error) {
@@ -209,12 +209,13 @@ const ArtifactRecord = define('{ name: string, status: "declared" | "produced" |
 const DomainRecord = define('{ name: string, owner: string | null, delegates: string[], state: string, project: string, phase: string, state_history: { to: string, at: number }[] }', v => { requireTrue(id(v.name) && ids(v.delegates)); v.state_history.forEach(x => requireTrue(integer(x.at))); });
 // A validated snapshot is data, not authenticated authority.
 
+// walk disabled: created_at is an ISO string validated explicitly below; nested records are fully asserted.
 export const Snapshot = define(`{ snapshot_type: "chord.registry", snapshot_version: "0.3.0", ${version}, run: { run_id: string, ${version}, revision: number }, created_at: string, counts: { artifacts: number, domains: number, tasks: number, queued_tasks: number, journal_events: number }, registry: object }`, v => {
   requireTrue(Object.values(v.counts).every(integer) && Number.isFinite(Date.parse(v.created_at)));
   RegistryData.assert(v.registry);
   requireTrue(v.run.run_id === v.registry.run.run_id && v.run.revision === v.registry.run.revision);
   requireTrue(v.counts.artifacts === Object.keys(v.registry.artifacts).length && v.counts.domains === Object.keys(v.registry.domains).length && v.counts.tasks === Object.keys(v.registry.tasks).length && v.counts.queued_tasks === v.registry.task_queue.length && v.counts.journal_events === v.registry.event_journal.length);
-});
+}, { walk: false });
 export const assertTaskPacket = value => TaskPacket.assert(value);
 export const assertExecutionResult = value => ExecutionResult.assert(value);
 export function assertObject(value) {

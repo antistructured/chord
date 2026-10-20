@@ -76,6 +76,7 @@ async function runValidation() {
   console.log("--- 6. Failure + Retry Validation ---");
   const failSpec = chord.parseText(`
 @project FailProject
+@phase v0.1
 @do
 - failing task
 `).spec;

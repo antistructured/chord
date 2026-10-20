@@ -9,7 +9,7 @@
     "./platform": "./src/platform/index.js"
   },
   "scripts": {
-    "demo:via": "bun run src/demo/via-demo.js",
+    "demo:via": "bun run src/demo/callaback-demo.js",
     "chord:run": "bun run src/cli/run.js",
     "chord:replay": "bun run src/cli/replay.js",
     "chord:audit": "bun run src/cli/inspect-audit.js",
