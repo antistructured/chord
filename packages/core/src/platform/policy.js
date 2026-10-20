@@ -1,5 +1,8 @@
+import { RuntimePolicy, RuntimePolicyInput } from "../contracts/sigils.js";
+
 export function createRuntimePolicy(policy = {}) {
-  return {
+  policy = RuntimePolicyInput.assert(policy);
+  return RuntimePolicy.assert({
     globalMaxLeased: policy.globalMaxLeased ?? 10,
     perEntityMaxLeased: policy.perEntityMaxLeased ?? 3,
     retry: {
@@ -7,7 +10,7 @@ export function createRuntimePolicy(policy = {}) {
       baseDelayMs: policy.retry?.baseDelayMs ?? 250,
       maxAttempts: policy.retry?.maxAttempts ?? 3
     }
-  };
+  });
 }
 
 export function computeBackoffDelayMs(policy, attempt) {

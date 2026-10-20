@@ -5,13 +5,11 @@
     "": {
       "name": "@chord/core",
       "dependencies": {
-        "sigiljs": "^0.0.21",
+        "@weipertda/sigiljs": "0.18.0",
       },
     },
   },
   "packages": {
-    "classnames": ["classnames@2.5.1", "", {}, "sha512-saHYOzhIQs6wy2sVxTM6bUDsQO4F50V9RQ22qBpEdCW+I+/Wmke2HOl6lS6dTpdxVhb88/I6+Hs+438c3lfUow=="],
-
-    "sigiljs": ["sigiljs@0.0.21", "", { "dependencies": { "classnames": "^2.2.5" } }, "sha512-fBAgCx49DmnoYz7gIHKVQh+otWLMOGBTIbGL3M0VOLO8bYFJMliU6/ZQQt4IOkU0FW7Daby6DOS2JBXeh8CbjQ=="],
+    "@weipertda/sigiljs": ["@weipertda/sigiljs@0.18.0", "", { "bin": { "sigil": "src/playground.js" } }, "sha512-5m+SYlCrFmC9IJMPMINJbvB2KG38VMumBx02nyEceghcu476XIuUPHkCPUASmlBeHp3d2YapM9d2cRKt2p47sg=="],
   }
 }

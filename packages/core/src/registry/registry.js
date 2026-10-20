@@ -1,8 +1,11 @@
 import { stableId } from "../utils/id.js";
 import { deepClone } from "../utils/clone.js";
+import { assertExecutionResult, assertTaskPacket, assertSpec, SCHEMA_VERSION, contractError } from "../contracts/sigils.js";
+import { markQueueEntryStatus } from "../platform/task-queue.js";
 
 export function createRegistry() {
   return {
+    run: { run_id: stableId("run"), schema_version: SCHEMA_VERSION, revision: 0 },
     artifacts: {},
     domains: {},
     tasks: {},
@@ -15,6 +18,7 @@ export function createRegistry() {
 }
 
 export function registerSpec(registry, spec) {
+  spec = assertSpec(spec);
   registry.specs.push(spec);
 
   const specType = spec?.spec_type || detectSpecTypeFromSpec(spec);
@@ -71,6 +75,7 @@ export function transitionArtifact(record, next) {
 }
 
 export function registerTask(registry, packet) {
+  packet = assertTaskPacket(packet);
   registry.tasks[packet.task_id] = {
     ...deepClone(packet),
     status: "queued",
@@ -81,11 +86,12 @@ export function registerTask(registry, packet) {
 }
 
 export function registerExecutionResult(registry, result) {
-  assertExecutionResult(result);
-  registry.execution_results.push(deepClone(result));
+  result = assertExecutionResult(result);
   const task = registry.tasks[result.task_id];
+  if (!task) throw contractError("INVALID_RESULT");
+  registry.execution_results.push(deepClone(result));
   if (task) {
-    task.status = result.outcome === "succeeded" ? "completed" : "failed";
+    task.status = result.status;
     task.last_result = result;
   }
   // Sync queue status

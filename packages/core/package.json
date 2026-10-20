@@ -16,6 +16,6 @@
     "test": "bun test"
   },
   "dependencies": {
-    "sigiljs": "^0.0.21"
+    "@weipertda/sigiljs": "0.18.0"
   }
 }

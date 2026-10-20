@@ -9,90 +9,66 @@ import { createRuntimePolicy } from "../platform/policy.js";
 import { createDeterministicAuditReport, replayRegistryJournal } from "../platform/journal-audit.js";
 import { runRuntimeCycle } from "../platform/runtime-loop.js";
 import { appendRegistryEvent, listRegistryEvents } from "../platform/event-journal.js";
-import { assertTaskPacket, assertExecutionResult } from "../contracts/sigils.js";
+import { assertTaskPacket, assertSpec, RegistryData, SCHEMA_VERSION, CONTRACT_LIMITS, contractError } from "../contracts/sigils.js";
 
 export function createChord(options = {}) {
-  const registry = options.registry || createRegistry();
+  const registry = options.registry === undefined ? createRegistry() : RegistryData.assert(options.registry);
   registry.task_queue ||= createTaskQueue();
   let router = createAdapterRouter(options.adapterRouter || {});
   let policy = createRuntimePolicy(options.runtimePolicy || {});
 
   function parseText(text) {
-    const lines = text.split(/\r?\n/);
-    const spec = {};
+    if (typeof text !== "string" || new TextEncoder().encode(text).length > CONTRACT_LIMITS.bytes) throw contractError("LIMIT_EXCEEDED");
+    const arrayFields = new Set(["entity", "do", "dont", "verify", "stop", "files", "rules", "depends", "assign", "to", "handoff", "evidence", "assumptions", "blockers", "requested_action"]);
+    const scalarFields = new Set(["id", "project", "phase", "version", "goal", "intent", "role", "stance", "target_entity", "artifact", "from", "status"]);
+    const mapFields = new Set(["state", "authority"]);
+    const spec = { schema_version: SCHEMA_VERSION };
     let current = null;
-
-    for (const raw of lines) {
-      const line = raw.trimEnd();
-      if (!line.trim()) continue;
-      
-      if (line.trimStart().startsWith("@")) {
-        const content = line.trimStart().slice(1);
-        const [name, ...rest] = content.split(" ");
-        current = name;
-        if (rest.length) {
-          spec[current] = rest.join(" ").trim();
-        } else {
-          spec[current] = [];
+    // Accept actual newlines and the historical literal \n input notation.
+    for (const raw of text.split(/\r?\n|\\n/)) {
+      const line = raw.trim();
+      if (!line) continue;
+      if (line.startsWith("@")) {
+        const match = /^@([a-z_]+)(?: (.*))?$/.exec(line);
+        if (!match) throw contractError("INVALID_SHAPE");
+        current = match[1];
+        if ((!arrayFields.has(current) && !scalarFields.has(current) && !mapFields.has(current)) || Object.hasOwn(spec, current)) throw contractError("INVALID_SHAPE");
+        spec[current] = arrayFields.has(current) || mapFields.has(current) ? [] : "";
+        if (match[2]) {
+          if (Array.isArray(spec[current])) spec[current].push(match[2]);
+          else spec[current] = match[2];
         }
-        continue;
-      }
-
-      if (current) {
-        const trimmed = line.trim();
-        const isMapField = (current === "state" || current === "authority");
-        
-        if (trimmed.startsWith("- ")) {
-          if (!Array.isArray(spec[current])) spec[current] = [];
-          spec[current].push(trimmed.slice(2).trim());
-        } else if (isMapField && trimmed.includes(":")) {
-          if (!Array.isArray(spec[current])) spec[current] = [];
-          spec[current].push(trimmed);
-        } else {
-          if (Array.isArray(spec[current])) {
-            spec[current].push(trimmed);
-          } else {
-            spec[current] = (spec[current] + "\n" + trimmed).trim();
-          }
-        }
+      } else {
+        if (!current) throw contractError("INVALID_SHAPE");
+        const value = line.startsWith("- ") ? line.slice(2) : line;
+        if (Array.isArray(spec[current])) spec[current].push(value);
+        else spec[current] += (spec[current] ? "\n" : "") + value;
       }
     }
-
-    // TARGET 3: Parser Normalization
-    const result = {
-      project: ensureScalar(spec.project),
-      phase: ensureScalar(spec.phase),
-      version: ensureScalar(spec.version),
-      goal: ensureScalar(spec.goal),
-      intent: ensureScalar(spec.intent),
-      role: ensureScalar(spec.role),
-      stance: ensureScalar(spec.stance),
-      entity: ensureArray(spec.entity),
-      do: ensureArray(spec.do),
-      dont: ensureArray(spec.dont),
-      verify: ensureArray(spec.verify),
-      stop: ensureArray(spec.stop),
-      files: ensureArray(spec.files),
-      state: ensureMap(spec.state),
-      authority: ensureMap(spec.authority),
-      assign: ensureArray(spec.assign),
-      artifact: ensureScalar(spec.artifact),
-      from: ensureScalar(spec.from),
-      to: ensureArray(spec.to)
-    };
-
-    result.spec_type = detectSpecType(result);
-
-    return { spec: result };
+    for (const field of mapFields) if (spec[field]) {
+      const out = Object.create(null);
+      for (const item of spec[field]) {
+        const index = item.indexOf(":");
+        if (index <= 0) throw contractError("INVALID_SHAPE");
+        const key = item.slice(0, index).trim();
+        if (Object.hasOwn(out, key)) throw contractError("INVALID_SHAPE");
+        out[key] = item.slice(index + 1).trim();
+      }
+      spec[field] = out;
+    }
+    spec.spec_type = spec.artifact && spec.from ? "HandoffSpec" : (spec.authority || spec.assign || spec.entity) ? "CoordSpec" : "IntentSpec";
+    return { spec: assertSpec(spec) };
   }
 
   function register(spec) {
+    spec = assertSpec(spec);
     registerSpec(registry, spec);
     appendRegistryEvent(registry, "spec_registered", { spec_type: spec.spec_type, project: spec.project, phase: spec.phase });
     return { registry, spec };
   }
 
   function createTaskPackets(spec) {
+    spec = assertSpec(spec);
     if (spec.spec_type === "HandoffSpec") return createHandoffTaskPackets(spec);
     if (spec.spec_type === "IntentSpec") return [createIntentTaskPacket(spec)];
     return [];
@@ -100,7 +76,7 @@ export function createChord(options = {}) {
 
   function queueTaskPackets(packets, options = {}) {
     if (!Array.isArray(packets)) throw new TypeError("packets must be an array");
-    packets.forEach(assertTaskPacket);
+    packets = packets.map(assertTaskPacket);
     registerTaskPackets(registry, packets);
     packets.forEach(packet => {
       enqueueTask(registry, packet, {
@@ -142,37 +118,3 @@ export function createChord(options = {}) {
   };
 }
 
-function detectSpecType(spec) {
-  if (spec.artifact && spec.from) return "HandoffSpec";
-  if (Object.keys(spec.authority).length > 0 || spec.assign.length > 0 || spec.entity.length > 0) return "CoordSpec";
-  return "IntentSpec";
-}
-
-function ensureScalar(v) {
-  return typeof v === "string" ? v : "";
-}
-
-function ensureArray(v) {
-  if (Array.isArray(v)) return v.map(String).map(s => s.trim());
-  if (v == null || v === "") return [];
-  return [String(v).trim()];
-}
-
-function ensureMap(v) {
-  if (v && typeof v === "object" && !Array.isArray(v)) return v;
-  if (Array.isArray(v)) {
-    const out = {};
-    for (const item of v) {
-      if (typeof item === "string" && item.includes(":")) {
-        const index = item.indexOf(":");
-        const k = item.slice(0, index).trim();
-        const val = item.slice(index + 1).trim();
-        if (k) out[k] = val;
-      } else if (typeof item === "string" && item.trim()) {
-        throw new Error(`Malformed map entry: "${item}". Expected key:value`);
-      }
-    }
-    return out;
-  }
-  return {};
-}
