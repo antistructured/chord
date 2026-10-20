@@ -57,3 +57,54 @@ export function queueOptions(host, extra = {}) {
     ...extra
   };
 }
+
+/** Fresh-install host for adversarial tests: installs an empty authority
+ * snapshot and returns grant issuance plus pre-built queue options helpers.
+ * Distinct from `installHost` in that it exposes `issueGrantsFor` for
+ * selective batch denial and never mutates previously installed state.
+ */
+export function createAdaptiveAuthority(chord) {
+  const run_id = chord.registry.run.run_id;
+  const principal = { principal_id: "adv-principal", issuer: "adv-host", kind: "service", authenticated_at: 0, expires_at: Number.MAX_SAFE_INTEGER };
+  const actor = { actor_id: "adv-actor", principal_id: "adv-principal", kind: "agent", roles: ["admin"], capabilities: ["execute"], revoked_at: null };
+  chord.setAuthoritySnapshot({
+    schema_version: SCHEMA_VERSION,
+    run_id,
+    authority_revision: 0,
+    principals: [principal],
+    actors: [actor],
+    grants: [],
+    approvals: []
+  });
+  const issueGrantsFor = packets => packets.map(packet => ({
+    grant_id: `adv_grant_${packet.task_id}`,
+    principal_id: principal.principal_id,
+    actor_id: actor.actor_id,
+    capability: "execute",
+    effect: "allow",
+    scope: {
+      run_id,
+      project: packet.project,
+      phase: packet.phase,
+      task_id: packet.task_id,
+      target_entity: packet.target_entity,
+      resource: { kind: "task", id: packet.task_id }
+    },
+    issued_at: 0,
+    expires_at: Number.MAX_SAFE_INTEGER,
+    revoked_at: null,
+    requires_approval: false
+  }));
+  return {
+    principal_id: principal.principal_id,
+    actor_id: actor.actor_id,
+    capability: "execute",
+    issueGrantsFor,
+    queueOptions: {
+      principal_id: principal.principal_id,
+      actor_id: actor.actor_id,
+      capability: "execute",
+      issueGrants: issueGrantsFor
+    }
+  };
+}

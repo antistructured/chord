@@ -59,11 +59,22 @@ export function createHandoffTaskPackets(spec) {
 
 export async function executeTask(adapter, packet, context = {}) {
   assertAdapter(adapter);
-  packet = assertTaskPacket(packet);
+  // Validate, then deep-freeze the cloned packet the adapter receives
+  // (041-authority-design.md §5 step 3). Freezing limits accidental
+  // mutation; it is not a sandbox for malicious adapter code.
+  packet = deepFreeze(assertTaskPacket(packet));
   let raw;
   try { raw = await adapter.execute(packet, context); }
   catch { throw contractError("ADAPTER_ERROR"); }
   return assertExecutionResult(normalizeExecutionResult(packet, raw));
+}
+
+function deepFreeze(value) {
+  if (value && typeof value === "object" && !Object.isFrozen(value)) {
+    Object.freeze(value);
+    for (const key of Reflect.ownKeys(value)) deepFreeze(value[key]);
+  }
+  return value;
 }
 
 export function normalizeExecutionResult(packet, value) {
