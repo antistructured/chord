@@ -37,31 +37,41 @@ describe("Chord Core Hardening", () => {
     expect(() => chord.parseText(invalidText)).toThrow(/INVALID_SHAPE/);
   });
 
-  test("TARGET 2: Dead-Letter Consistency", async () => {
-    const chordFail = createChord({
+  test("TARGET 2: Dead-Letter Consistency (pre-dispatch exhaustion and fresh-admission replay)", async () => {
+    const chordDl = createChord({
       runtimePolicy: { retry: { strategy: "fixed", baseDelayMs: 0, maxAttempts: 1 } }
     });
-    const host = installHost(chordFail);
+    const host = installHost(chordDl);
 
-    chordFail.setAdapterRouter({ fallback: { execute: () => { throw new Error("fail"); } } });
+    // No adapter for the target entity: a pre-dispatch routing failure,
+    // retried under bounded policy until dead-letter. No lease, no
+    // attempt, no effect.
+    const { spec } = chordDl.parseText(`@project hardening\n@phase hardening\n@target_entity missing-adapter\n@do\n- unreachable task`);
+    chordDl.registerSpecAndQueue(spec, queueOptions(host));
 
-    const { spec } = chordFail.parseText(`@project hardening\n@phase hardening\n@do\n- fail task`);
-    chordFail.registerSpecAndQueue(spec, queueOptions(host));
+    await chordDl.runCycle();
 
-    await chordFail.runCycle();
-
-    const deadLetters = chordFail.queryDeadLetters();
+    const deadLetters = chordDl.queryDeadLetters();
     expect(deadLetters.length).toBe(1);
     expect(deadLetters[0].status).toBe("dead_letter");
 
-    // Check registry.tasks sync
+    // Check registry.tasks sync and attempt lifecycle.
     const taskId = deadLetters[0].task_id;
-    expect(chordFail.registry.tasks[taskId].status).toBe("dead_letter");
+    expect(chordDl.registry.tasks[taskId].status).toBe("dead_letter");
+    expect(chordDl.registry.pending_attempts[taskId]).toBeUndefined();
 
-    // Replay
-    chordFail.replayTask(taskId);
-    expect(chordFail.queryQueue({ status: "queued" }).length).toBe(1);
-    expect(chordFail.registry.tasks[taskId].status).toBe("queued");
+    // Replay goes through fresh admission and resets the reservation.
+    chordDl.replayTask(taskId);
+    expect(chordDl.queryQueue({ status: "queued" }).length).toBe(1);
+    expect(chordDl.registry.tasks[taskId].status).toBe("queued");
+
+    // Post-dispatch failures never dead-letter: they become uncertain.
+    chordDl.setAdapterRouter({ fallback: { execute: () => { throw new Error("fail"); } } });
+    const cycle = await chordDl.runCycle();
+    expect(cycle.ok).toBe(false);
+    expect(cycle.uncertain).toBe(true);
+    expect(chordDl.registry.tasks[taskId].status).toBe("uncertain");
+    expect(chordDl.queryDeadLetters().length).toBe(0);
   });
 
   test("TARGET 4: Contract Enforcement", () => {

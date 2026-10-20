@@ -24,7 +24,16 @@ export function serializeRegistry(registry) {
 
 export function importRegistry(snapshot) {
   const value = Snapshot.assert(snapshot);
-  // Restoring in-flight work safely requires pass 5 reconciliation, not reset.
-  if (value.registry.task_queue.some(x => x.status === "leased" || x.status === "running") || Object.values(value.registry.tasks).some(x => x.status === "leased" || x.status === "running")) throw contractError("INVALID_DATA");
-  return value.registry;
+  // Design §6: imported in-flight work is uncertain, never silently
+  // executable. Attempt state does not survive import; the host
+  // reconciles through explicit replay (fresh admission).
+  const registry = value.registry;
+  registry.active_attempts = {};
+  for (const task of Object.values(registry.tasks)) {
+    if (task.status === "leased" || task.status === "running") task.status = "uncertain";
+  }
+  for (const entry of registry.task_queue) {
+    if (entry.status === "leased" || entry.status === "running") entry.status = "uncertain";
+  }
+  return registry;
 }

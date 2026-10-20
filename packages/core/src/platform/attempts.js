@@ -31,6 +31,24 @@ export function invalidatePendingAttempt(registry, taskId) {
   return existing;
 }
 
+/** Move a prepared reservation to the active (mid-await) map at dispatch.
+ * The dispatch revision becomes the attempt's commit guard: a result may
+ * only commit while the run is still at that revision.
+ */
+export function activatePendingAttempt(registry, taskId, dispatchRevision) {
+  const attempt = registry.pending_attempts[taskId];
+  if (!attempt) return null;
+  delete registry.pending_attempts[taskId];
+  registry.active_attempts[taskId] = { attempt, dispatch_revision: dispatchRevision };
+  return attempt;
+}
+
+export function clearActiveAttempt(registry, taskId) {
+  const existing = registry.active_attempts[taskId] || null;
+  delete registry.active_attempts[taskId];
+  return existing;
+}
+
 export function assertTaskAuthorityBinding(binding) {
   return TaskAuthority.assert(binding);
 }

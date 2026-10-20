@@ -1,7 +1,9 @@
 import { stableId } from "../utils/id.js";
 import { deepClone } from "../utils/clone.js";
-import { assertExecutionResult, assertTaskPacket, assertSpec, TaskAuthority, SCHEMA_VERSION, contractError } from "../contracts/sigils.js";
+import { assertTaskPacket, assertSpec, TaskAuthority, Outcome, SCHEMA_VERSION, contractError } from "../contracts/sigils.js";
 import { markQueueEntryStatus } from "../platform/task-queue.js";
+import { assertArtifactTransition, assertDomainTransition, assertTaskTransition } from "../platform/transitions.js";
+import { invalidatePendingAttempt } from "../platform/attempts.js";
 
 export function createRegistry() {
   return {
@@ -15,7 +17,8 @@ export function createRegistry() {
     trigger_state: {},
     specs: [],
     authority: null,
-    pending_attempts: {}
+    pending_attempts: {},
+    active_attempts: {}
   };
 }
 
@@ -50,6 +53,10 @@ export function registerSpec(registry, spec) {
   }
 
   if (specType === "HandoffSpec" && spec.artifact) {
+    // Spec registration is descriptive only (design §4): it declares the
+    // artifact and its producers/consumers but never changes artifact
+    // status. Status moves only through a guarded, authorized committed
+    // result below.
     const artifact = registry.artifacts[spec.artifact] ||= {
       name: spec.artifact,
       status: "declared",
@@ -61,7 +68,6 @@ export function registerSpec(registry, spec) {
     };
     artifact.producers = Array.from(new Set([...(artifact.producers || []), spec.from].filter(Boolean)));
     artifact.consumers = Array.from(new Set([...(artifact.consumers || []), ...toArray(spec.to)]));
-    transitionArtifact(artifact, mapHandoffStatus(spec.status));
   }
 
   return registry;
@@ -69,6 +75,7 @@ export function registerSpec(registry, spec) {
 
 export function transitionArtifact(record, next) {
   if (record.status === next) return record;
+  assertArtifactTransition(record.status, next);
   const prev = record.status || null;
   record.status = next;
   record.history ||= [];
@@ -92,26 +99,55 @@ export function registerTask(registry, packet, binding) {
   return registry.tasks[packet.task_id];
 }
 
+/** Commit a correlated, authorized result (design §5 steps 4-5). Requires
+ * the task to be mid-attempt (`running`) with a matching active attempt;
+ * every referenced transition is validated before any mutation so a
+ * rejected result leaves the registry unchanged. A second result for a
+ * consumed attempt finds no active attempt and is rejected — it cannot
+ * append another record or repeat terminal transitions.
+ */
 export function registerExecutionResult(registry, result) {
-  result = assertExecutionResult(result);
+  result = Outcome.assert(result);
   const task = registry.tasks[result.task_id];
   if (!task) throw contractError("INVALID_RESULT");
-  registry.execution_results.push(deepClone(result));
-  if (task) {
-    task.status = result.status;
-    task.last_result = result;
-  }
-  // Sync queue status
-  markQueueEntryStatus(registry, result.task_id, task?.status || "completed");
+  const active = registry.active_attempts[result.task_id];
+  if (!active) throw contractError("INVALID_RESULT");
+  const attempt = active.attempt;
+  if (result.run_id !== registry.run.run_id ||
+    result.schema_version !== registry.run.schema_version ||
+    result.task_revision !== (task.task_revision ?? 0) ||
+    result.attempt_id !== attempt.attempt_id ||
+    result.queue_id !== attempt.queue_id) throw contractError("INVALID_RESULT");
 
+  // Validate every derived transition before mutating anything.
+  assertTaskTransition(task.status, result.status);
+  if (result.artifact && registry.artifacts[result.artifact]) {
+    assertArtifactTransition(registry.artifacts[result.artifact].status, result.outcome === "succeeded" ? "accepted" : "rejected");
+  }
+  if (result.domain && registry.domains[result.domain]) {
+    assertDomainTransition(registry.domains[result.domain].state, result.outcome === "succeeded" ? "complete" : "blocked");
+  }
+
+  // Mutations: single synchronous section, no awaits.
+  task.status = result.status;
+  task.last_result = deepClone(result);
+  registry.execution_results.push(deepClone(result));
+  markQueueEntryStatus(registry, result.task_id, result.status);
   if (result.artifact && registry.artifacts[result.artifact]) {
     transitionArtifact(registry.artifacts[result.artifact], result.outcome === "succeeded" ? "accepted" : "rejected");
   }
   if (result.domain && registry.domains[result.domain]) {
-    registry.domains[result.domain].state = result.outcome === "succeeded" ? "complete" : "blocked";
-    registry.domains[result.domain].state_history ||= [];
-    registry.domains[result.domain].state_history.push({ to: registry.domains[result.domain].state, at: Date.now() });
+    const domain = registry.domains[result.domain];
+    const next = result.outcome === "succeeded" ? "complete" : "blocked";
+    if (domain.state !== next) {
+      domain.state = next;
+      domain.state_history ||= [];
+      domain.state_history.push({ to: next, at: Date.now() });
+    }
   }
+  delete registry.active_attempts[result.task_id];
+  invalidatePendingAttempt(registry, result.task_id);
+  registry.run.revision += 1;
   return result;
 }
 
@@ -136,11 +172,4 @@ function normalizeCoordHandoffs(handoff) {
     }
   }
   return rows;
-}
-
-function mapHandoffStatus(status = "submitted") {
-  if (status === "accepted" || status === "complete") return "accepted";
-  if (status === "rejected") return "rejected";
-  if (status === "superseded") return "superseded";
-  return "produced";
 }

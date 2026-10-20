@@ -110,8 +110,8 @@ async function runValidation() {
   if (completed.length === 0) throw new Error("Task did not complete");
   console.log("✅ runCycle success ok\n");
 
-  // 6. FAILURE + RETRY VALIDATION
-  console.log("--- 6. Failure + Retry Validation ---");
+  // 6. POST-DISPATCH AMBIGUITY (design §5 step 6: uncertain, no blind retry)
+  console.log("--- 6. Post-Dispatch Ambiguity ---");
   const failSpec = chord.parseText(`
 @project FailProject
 @phase v0.1
@@ -119,7 +119,7 @@ async function runValidation() {
 - failing task
 `).spec;
   chord.registerSpecAndQueue(failSpec, hostOptions([]));
-  
+
   chord.setAdapterRouter({
     fallback: {
       execute: async (packet) => {
@@ -128,33 +128,49 @@ async function runValidation() {
     }
   });
 
-  // Cycle 1: Fail, retry_count -> 1
-  console.log("Running Cycle 1 (Failure)...");
-  await chord.runCycle();
-  
-  let tasks = chord.queryQueue();
-  console.log("Tasks after Cycle 1:", tasks.map(t => ({ id: t.task_id, status: t.status, retries: t.retry_count })));
+  const ambiguous = await chord.runCycle();
+  console.log("Ambiguous cycle:", { ok: ambiguous.ok, uncertain: ambiguous.uncertain, error: ambiguous.error });
+  if (ambiguous.ok !== false || ambiguous.uncertain !== true) {
+    throw new Error("Post-dispatch adapter failure must mark the attempt uncertain");
+  }
+  const uncertainTasks = chord.queryQueue({ status: "uncertain" });
+  console.log("Uncertain tasks:", uncertainTasks.length);
+  if (uncertainTasks.length === 0) throw new Error("Task should be uncertain for host reconciliation");
+  if (chord.queryDeadLetters().length !== 0) {
+    throw new Error("Post-dispatch failure must never dead-letter or blind-retry");
+  }
+  if (chord.registry.tasks[uncertainTasks[0].task_id].last_result !== undefined) {
+    throw new Error("Uncertain tasks must not record a result");
+  }
+  console.log("✅ Post-dispatch ambiguity -> uncertain ok\n");
 
-  // Wait for fixed delay
+  // 6b. PRE-DISPATCH DEAD-LETTER (bounded retry on routing failure)
+  console.log("--- 6b. Pre-Dispatch Dead Letter ---");
+  // Empty router: the target entity has no adapter at all.
+  chord.setAdapterRouter({});
+  const deadSpec = chord.parseText(`
+@project DeadProject
+@phase v0.1
+@target_entity missing-adapter
+@do
+- unreachable task
+`).spec;
+  chord.registerSpecAndQueue(deadSpec, hostOptions([]));
+
+  // Cycle 1: no adapter -> retry_count 1, requeued with backoff.
+  await chord.runCycle();
   await new Promise(r => setTimeout(r, 50));
-  
-  // Cycle 2: Fail, retry_count -> 2 -> dead_letter
-  console.log("Running Cycle 2 (Failure -> Dead Letter)...");
+  // Cycle 2: no adapter -> retry_count 2 -> dead_letter.
   await chord.runCycle();
 
-  tasks = chord.queryQueue();
-  console.log("Tasks after Cycle 2:", tasks.map(t => ({ id: t.task_id, status: t.status, retries: t.retry_count })));
-
-  // Note: listDeadLetterTasks checks registry.tasks, which might not be updated by scheduleTaskRetry yet
-  // Let's check the queue directly for now as verify-runtime confirms it transitioned to dead_letter
   const deadLetter = chord.queryQueue({ status: "dead_letter" });
   console.log("Dead letters (from queue):", deadLetter.length);
   if (deadLetter.length === 0) {
     throw new Error("Task should be in dead_letter queue");
   }
-  console.log("✅ Failure -> Dead Letter ok\n");
+  console.log("✅ Pre-dispatch exhaustion -> dead_letter ok\n");
 
-  // 7. REPLAY VALIDATION
+  // 7. REPLAY VALIDATION (fresh admission, not attempt reset)
   console.log("--- 7. Replay Validation ---");
   const taskId = deadLetter[0].task_id;
   chord.replayTask(taskId);
@@ -162,7 +178,27 @@ async function runValidation() {
   if (!reQueued.find(t => t.task_id === taskId)) {
     throw new Error("Task not re-queued for replay");
   }
-  console.log("✅ replayTask ok\n");
+  console.log("✅ replayTask (dead_letter -> queued) ok\n");
+
+  // 7b. UNCERTAIN RECONCILIATION
+  console.log("--- 7b. Uncertain Reconciliation ---");
+  chord.replayTask(uncertainTasks[0].task_id);
+  if (chord.registry.tasks[uncertainTasks[0].task_id].status !== "queued") {
+    throw new Error("Uncertain task should requeue through fresh admission");
+  }
+  chord.setAdapterRouter({
+    fallback: {
+      execute: async (packet) => ({
+        task_id: packet.task_id,
+        status: "completed",
+        outcome: "succeeded",
+        outputs: { reconciled: true }
+      })
+    }
+  });
+  const reconciled = await chord.runCycle();
+  if (reconciled.ok !== true) throw new Error("Reconciled task should complete");
+  console.log("✅ uncertain -> replay -> completed ok\n");
 
   // 8. AUDIT VALIDATION
   console.log("--- 8. Audit Validation ---");

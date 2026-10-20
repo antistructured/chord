@@ -3,14 +3,15 @@ import { queryArtifacts, queryDomains, listDeadLetterTasks } from "../registry/q
 import { serializeRegistry, exportRegistry } from "../registry/snapshot.js";
 import { createIntentTaskPacket, createHandoffTaskPackets } from "../execution/task-packets.js";
 import { registerTaskPackets } from "../execution/results.js";
-import { createTaskQueue, enqueueTask, replayDeadLetterTask, listQueuedTasks } from "../platform/task-queue.js";
+import { createTaskQueue, enqueueTask, listQueuedTasks } from "../platform/task-queue.js";
 import { createAdapterRouter } from "../platform/adapter-routing.js";
 import { createRuntimePolicy } from "../platform/policy.js";
 import { createDeterministicAuditReport, replayRegistryJournal } from "../platform/journal-audit.js";
 import { runRuntimeCycle } from "../platform/runtime-loop.js";
 import { appendRegistryEvent, listRegistryEvents } from "../platform/event-journal.js";
 import { evaluateAuthority, authorityError } from "../platform/authorization.js";
-import { prepareAttemptRecord, invalidatePendingAttempt } from "../platform/attempts.js";
+import { prepareAttemptRecord, invalidatePendingAttempt, clearActiveAttempt } from "../platform/attempts.js";
+import { transitionTaskStatus, canQueueTransition } from "../platform/transitions.js";
 import { deepClone } from "../utils/clone.js";
 import { assertTaskPacket, assertSpec, RegistryData, AuthoritySnapshot, TaskAuthority, Grant, SCHEMA_VERSION, CONTRACT_LIMITS, contractError } from "../contracts/sigils.js";
 
@@ -18,6 +19,7 @@ export function createChord(options = {}) {
   const registry = options.registry === undefined ? createRegistry() : RegistryData.assert(options.registry);
   registry.task_queue ||= createTaskQueue();
   registry.pending_attempts ||= {};
+  registry.active_attempts ||= {};
   let router = createAdapterRouter(options.adapterRouter || {});
   let policy = createRuntimePolicy(options.runtimePolicy || {});
 
@@ -193,6 +195,58 @@ export function createChord(options = {}) {
     return deepClone(prepareAttemptRecord(registry, task));
   }
 
+  /** Explicit host cancellation (design §4). Legal from any non-terminal
+   * state; terminal states and dead_letter (replay-only exit) reject.
+   * Bumps the run revision, so an in-flight attempt's commit guard goes
+   * stale: a late result is ignored, never committed over the cancel.
+   */
+  function cancelTask(taskId, cancelOptions = {}) {
+    const task = registry.tasks[taskId];
+    if (!task || typeof task.task_id !== "string") throw contractError("INVALID_DATA");
+    if (cancelOptions.expectedRevision !== undefined && cancelOptions.expectedRevision !== registry.run.revision) throw authorityError("STALE_REVISION");
+    transitionTaskStatus(registry, taskId, "cancelled");
+    const entry = registry.task_queue.find(x => x.task_id === taskId);
+    if (entry && canQueueTransition(entry.status, "cancelled")) entry.status = "cancelled";
+    invalidatePendingAttempt(registry, taskId);
+    clearActiveAttempt(registry, taskId);
+    registry.run.revision += 1;
+    appendRegistryEvent(registry, "task_cancelled", { task_id: taskId });
+    return deepClone(task);
+  }
+
+  /** Explicit host reconciliation / replay (design §5): legal only from
+   * `dead_letter`, `uncertain`, or `blocked`, and only through fresh
+   * admission — a revoked or denied grant leaves the task exactly where
+   * it was. A successful replay is a fresh queued attempt: retry counters
+   * reset, prior attempt reservations invalidated, and previously
+   * consumed approvals stay consumed (kernel-owned, never reset here).
+   */
+  function replayTask(taskId, replayOptions = {}) {
+    const task = registry.tasks[taskId];
+    if (!task || typeof task.task_id !== "string") throw contractError("INVALID_DATA");
+    if (replayOptions.expectedRevision !== undefined && replayOptions.expectedRevision !== registry.run.revision) throw authorityError("STALE_REVISION");
+    const previousStatus = task.status;
+    if (!["dead_letter", "uncertain", "blocked"].includes(previousStatus)) throw authorityError("INVALID_TRANSITION");
+    const now = hostNow();
+    const decision = evaluateAuthority({ stage: "admit", now, run: registry.run, task: { ...task, status: "queued" }, attempt: null, authority: registry.authority });
+    if (!decision.allowed) throw authorityError(decision.code);
+    transitionTaskStatus(registry, taskId, "queued");
+    task.retry_count = 0;
+    const entry = registry.task_queue.find(x => x.task_id === taskId);
+    if (entry) {
+      if (canQueueTransition(entry.status, "queued")) entry.status = "queued";
+      entry.retry_count = 0;
+      entry.available_at = now;
+      entry.lease_expires_at = null;
+      entry.last_error = null;
+    }
+    invalidatePendingAttempt(registry, taskId);
+    clearActiveAttempt(registry, taskId);
+    registry.run.revision += 1;
+    appendRegistryEvent(registry, "task_replayed", { task_id: taskId, from_status: previousStatus });
+    return deepClone(task);
+  }
+
   if (trustedHost && trustedHost.authoritySnapshot !== undefined && trustedHost.authoritySnapshot !== null) {
     setAuthoritySnapshot(trustedHost.authoritySnapshot);
   }
@@ -206,6 +260,7 @@ export function createChord(options = {}) {
     queueTaskPackets,
     setAuthoritySnapshot,
     prepareAttempt,
+    cancelTask,
     getAuthority: () => (registry.authority ? deepClone(registry.authority) : null),
     getRunRevision: () => registry.run.revision,
     runCycle: async () => runRuntimeCycle(registry, router, policy, { now: () => hostNow() }),
@@ -215,7 +270,7 @@ export function createChord(options = {}) {
     queryDomains: (criteria = {}) => queryDomains(registry, criteria),
     queryQueue: (criteria = {}) => listQueuedTasks(registry, criteria),
     queryDeadLetters: () => listDeadLetterTasks(registry),
-    replayTask: (taskId) => replayDeadLetterTask(registry, taskId),
+    replayTask,
     replayJournal: (replayOptions = {}) => replayRegistryJournal(registry, replayOptions),
     inspectAudit: (auditOptions = {}) => createDeterministicAuditReport(registry, auditOptions),
     inspectEvents: (filters = {}) => listRegistryEvents(registry, filters),

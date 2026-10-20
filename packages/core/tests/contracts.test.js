@@ -6,6 +6,7 @@ import { createRegistry, registerTask, registerExecutionResult } from "../src/re
 import { exportRegistry, importRegistry } from "../src/registry/snapshot.js";
 import { createIntentTaskPacket, createHandoffTaskPackets, normalizeExecutionResult, executeTask } from "../src/execution/task-packets.js";
 import { enqueueTask } from "../src/platform/task-queue.js";
+import { prepareAttemptRecord, activatePendingAttempt } from "../src/platform/attempts.js";
 import { installHost, queueOptions } from "./fixtures/host.js";
 
 const bindingFor = (registry, packet) => ({
@@ -150,18 +151,34 @@ describe("contract ingress and prerequisite result repairs", () => {
     expect(C.Outcome.check({ ...outcome, queue_id: undefined })).toBe(false);
     expect(C.Outcome.check({ ...outcome, status: "failed" })).toBe(false);
   });
-  test("valid result fixes both unbound ingestion functions and clones input", () => {
+  test("correlated result ingestion requires a running attempt and clones input", () => {
     const registry = createRegistry();
     registerTask(registry, packet, bindingFor(registry, packet)); enqueueTask(registry, packet);
-    const valid = { ...result, task_id: packet.task_id };
+    const task = registry.tasks[packet.task_id];
+    const attempt = prepareAttemptRecord(registry, task);
+    // Simulate the dispatch commit: task running, queue leased, reservation active.
+    task.status = "running";
+    registry.task_queue[0].status = "leased";
+    registry.run.revision += 1;
+    activatePendingAttempt(registry, packet.task_id, registry.run.revision);
+    const valid = {
+      ...result, task_id: packet.task_id,
+      run_id: registry.run.run_id, schema_version, task_revision: 0,
+      queue_id: registry.task_queue[0].queue_id, attempt_id: attempt.attempt_id
+    };
     registerExecutionResult(registry, valid);
     valid.outputs.done = false;
     expect(registry.execution_results[0].outputs.done).toBe(true);
     expect(registry.tasks[packet.task_id].status).toBe("completed");
     expect(registry.task_queue[0].status).toBe("completed");
+    expect(registry.active_attempts[packet.task_id]).toBeUndefined();
     const before = JSON.stringify(registry);
+    // Duplicate result: the active attempt is consumed; nothing may append.
+    expect(() => registerExecutionResult(registry, { ...valid, outputs: { done: true } })).toThrow(/INVALID_RESULT/);
+    // Foreign result: no such task.
+    expect(() => registerExecutionResult(registry, { ...valid, task_id: "foreign" })).toThrow(/INVALID_RESULT/);
+    // Inconsistent status/outcome pair never normalizes.
     expect(() => registerExecutionResult(registry, { ...valid, outcome: "failed" })).toThrow();
-    expect(() => registerExecutionResult(registry, { ...valid, task_id: "foreign" })).toThrow();
     expect(JSON.stringify(registry)).toBe(before);
   });
   test("runtime success, absent output noncompletion, provider error redaction", async () => {
@@ -182,14 +199,20 @@ describe("contract ingress and prerequisite result repairs", () => {
     chord.registerSpecAndQueue(intent, queueOptions(host)); await chord.runCycle();
     expect(JSON.stringify(chord.registry)).not.toContain("provider-secret");
   });
-  test("snapshot validates version, counts, nested records, clones and rejects in-flight import", () => {
+  test("snapshot validates version, counts, nested records, clones and reconciles in-flight import", () => {
     const registry = createRegistry(); registerTask(registry, packet, bindingFor(registry, packet)); enqueueTask(registry, packet);
     const snapshot = exportRegistry(registry);
     const copy = importRegistry(snapshot);
     expect(copy).toEqual(registry); expect(copy).not.toBe(snapshot.registry);
     for (const invalid of [{ registry }, { ...snapshot, schema_version: "future" }, { ...snapshot, counts: { ...snapshot.counts, tasks: 99 } }, { ...snapshot, registry: { ...registry, authority: authority } }, { ...snapshot, registry: { ...registry, tasks: { bad: {} } } }]) expect(() => importRegistry(invalid)).toThrow();
+    // Design §6: imported in-flight work becomes uncertain, never executable.
     snapshot.registry.task_queue[0].status = "leased";
-    expect(() => importRegistry(snapshot)).toThrow();
+    snapshot.registry.tasks[packet.task_id].status = "running";
+    const inFlight = importRegistry(snapshot);
+    expect(inFlight.tasks[packet.task_id].status).toBe("uncertain");
+    expect(inFlight.task_queue[0].status).toBe("uncertain");
+    expect(inFlight.active_attempts).toEqual({});
     expect(registry.task_queue[0].status).toBe("queued");
+    expect(registry.tasks[packet.task_id].status).toBe("queued");
   });
 });

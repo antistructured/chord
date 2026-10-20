@@ -167,7 +167,9 @@ const IntentInputs = define('{ spec: object, files: string[], verify: string[], 
 const HandoffInputs = define('{ artifact: string, evidence: string[], assumptions: string[], blockers: string[] }', v => requireTrue(id(v.artifact)));
 const IntentConstraints = define('{ dont: string[], rules: string[], depends: string[] }');
 const HandoffConstraints = define('{ authority: object }', v => specSemantics(v));
-// Transitional result contract until pass 4 supplies attempt correlation at dispatch.
+// Correlated result contract: the runtime stamps run/queue/attempt
+// correlation from kernel dispatch state (pass 5); adapters return only
+// AdapterResult fields and never author correlation identifiers.
 const resultFields = 'task_id: string, status: "completed" | "failed" | "blocked", outcome: "succeeded" | "failed" | "blocked", summary?: string, outputs?: object, artifact?: string, domain?: string';
 const resultSemantics = v => {
   requireTrue(({ completed: "succeeded", failed: "failed", blocked: "blocked" })[v.status] === v.outcome);
@@ -182,8 +184,9 @@ export const RuntimePolicy = define('{ globalMaxLeased: number, perEntityMaxLeas
   requireTrue(v.retry.baseDelayMs <= 86_400_000 && v.retry.maxAttempts >= 1 && v.retry.maxAttempts <= 32);
 });
 export const RuntimePolicyInput = define('{ globalMaxLeased?: number, perEntityMaxLeased?: number, retry?: { strategy?: "fixed" | "linear" | "exponential", baseDelayMs?: number, maxAttempts?: number } }');
-// Current registry shape; transition legality and atomic restore remain pass 5.
-export const RegistryData = define(`{ run: { run_id: string, ${version}, revision: number }, artifacts: object, domains: object, tasks: object, task_queue: object[], event_journal: object[], execution_results: object[], trigger_state: object, specs: object[], authority: object | null, pending_attempts: object }`, v => {
+// Current registry shape; transition legality validated by the guarded
+// transition module (pass 5), cross-record invariants enforced here.
+export const RegistryData = define(`{ run: { run_id: string, ${version}, revision: number }, artifacts: object, domains: object, tasks: object, task_queue: object[], event_journal: object[], execution_results: object[], trigger_state: object, specs: object[], authority: object | null, pending_attempts: object, active_attempts: object }`, v => {
   for (const [key, record] of Object.entries(v.tasks)) {
     requireTrue(id(key));
     const task = StoredTask.assert(record);
@@ -193,7 +196,7 @@ export const RegistryData = define(`{ run: { run_id: string, ${version}, revisio
   for (const [key, record] of Object.entries(v.domains)) { DomainRecord.assert(record); requireTrue(id(key) && key === record.name); }
   for (const [key, value] of Object.entries(v.trigger_state)) requireTrue(id(key) && typeof value === "boolean");
   v.specs.forEach(assertSpec);
-  v.execution_results.forEach(assertExecutionResult);
+  v.execution_results.forEach(x => Outcome.assert(x));
   v.task_queue.forEach(x => { QueueRecord.assert(x); requireTrue(Object.hasOwn(v.tasks, x.task_id)); });
   requireTrue(ids(v.task_queue.map(x => x.queue_id)));
   v.event_journal.forEach(x => JournalRecord.assert(x));
@@ -204,13 +207,22 @@ export const RegistryData = define(`{ run: { run_id: string, ${version}, revisio
     const attempt = Attempt.assert(record);
     requireTrue(key === attempt.task_id && Object.hasOwn(v.tasks, key) && v.tasks[key].status === "queued");
   }
+  // Active attempts exist only for mid-await dispatched tasks; the commit
+  // guard revision never exceeds the run revision it was captured from.
+  requireTrue(ids(Object.keys(v.active_attempts)));
+  for (const [key, record] of Object.entries(v.active_attempts)) {
+    requireTrue(id(key) && Object.hasOwn(v.tasks, key) && v.tasks[key].status === "running");
+    requireTrue(record !== null && typeof record === "object" && !Array.isArray(record));
+    const attempt = Attempt.assert(record.attempt);
+    requireTrue(key === attempt.task_id && integer(record.dispatch_revision) && record.dispatch_revision <= v.run.revision);
+  }
 });
 const StoredTask = define(`{ ${packetFields}, authority_binding: ${taskAuthorityShape}, status: "queued" | "leased" | "running" | "blocked" | "completed" | "failed" | "cancelled" | "uncertain" | "dead_letter", created_at: number, retry_count: number, last_result?: object }`, v => {
   const { status, created_at, retry_count, last_result, authority_binding, ...packet } = v;
   TaskPacket.assert(packet); requireTrue(integer(retry_count));
   TaskAuthority.assert(authority_binding);
   requireTrue(authority_binding.scope.task_id === v.task_id && authority_binding.scope.project === v.project && authority_binding.scope.phase === v.phase && authority_binding.scope.target_entity === v.target_entity);
-  if (last_result) { ExecutionResult.assert(last_result); requireTrue(last_result.task_id === v.task_id); }
+  if (last_result) { Outcome.assert(last_result); requireTrue(last_result.task_id === v.task_id); }
 });
 const QueueRecord = define('{ queue_id: string, task_id: string, target_entity: string, status: "queued" | "leased" | "running" | "blocked" | "completed" | "failed" | "cancelled" | "uncertain" | "dead_letter", priority: number, available_at: number, lease_expires_at: number | null, max_attempts: number, retry_count: number, last_error: string | null }', v => requireTrue(Number.isSafeInteger(v.priority) && integer(v.max_attempts) && v.max_attempts > 0 && integer(v.retry_count)));
 const JournalRecord = define('{ event_id: string, type: string, at: number, payload: object }', v => requireTrue(integer(v.at) && id(v.type)));

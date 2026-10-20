@@ -1,4 +1,5 @@
 import { stableId } from "../utils/id.js";
+import { transitionTaskStatus, transitionQueueEntryStatus } from "./transitions.js";
 
 export function createTaskQueue() {
   return [];
@@ -24,8 +25,8 @@ export function enqueueTask(registry, packet, options = {}) {
 export function selectReadyTask(registry, now = Date.now()) {
   const queued = registry.task_queue
     .filter(x => x.status === "queued" && x.available_at <= now)
-    .sort((a, b) => 
-      (b.priority - a.priority) || 
+    .sort((a, b) =>
+      (b.priority - a.priority) ||
       (a.available_at - b.available_at) ||
       (a.queue_id.localeCompare(b.queue_id))
     );
@@ -33,7 +34,7 @@ export function selectReadyTask(registry, now = Date.now()) {
 }
 
 export function leaseTaskEntry(entry, now = Date.now(), durationMs = 30_000) {
-  entry.status = "leased";
+  transitionQueueEntryStatus(entry, "leased");
   entry.lease_expires_at = now + durationMs;
   return entry;
 }
@@ -47,7 +48,7 @@ export function dequeueReadyTask(registry, now = Date.now()) {
 export function markQueueEntryStatus(registry, taskId, status, extra = {}) {
   const entry = registry.task_queue.find(x => x.task_id === taskId);
   if (!entry) return null;
-  entry.status = status;
+  transitionQueueEntryStatus(entry, status);
   Object.assign(entry, extra);
   return entry;
 }
@@ -60,39 +61,34 @@ export function listQueuedTasks(registry, filters = {}) {
   });
 }
 
+/** Bounded pre-dispatch retry (design §5: "Pre-dispatch transient routing
+ * failures may stay queued under bounded policy"). Only legal while the
+ * task has not been dispatched; post-dispatch ambiguity goes to uncertain
+ * through the runtime loop, never through this path. A dead-letter sink
+ * invalidates any attempt reservation.
+ */
 export function scheduleTaskRetry(registry, taskId, delayMs, error = null, options = {}) {
   const entry = registry.task_queue.find(x => x.task_id === taskId);
   if (!entry) return null;
   entry.retry_count += 1;
-  entry.status = entry.retry_count >= entry.max_attempts ? "dead_letter" : "queued";
+  const next = entry.retry_count >= entry.max_attempts ? "dead_letter" : "queued";
+  transitionQueueEntryStatus(entry, next);
   entry.available_at = (options.now ?? Date.now()) + delayMs;
   entry.lease_expires_at = null;
   entry.last_error = error ? String(error) : null;
 
-  // Sync registry.tasks
+  // Sync registry.tasks through the same guard.
   const task = registry.tasks[taskId];
   if (task) {
-    task.status = entry.status;
+    transitionTaskStatus(registry, taskId, next);
     task.retry_count = entry.retry_count;
   }
 
-  return entry;
-}
-
-export function replayDeadLetterTask(registry, taskId) {
-  const entry = registry.task_queue.find(x => x.task_id === taskId && x.status === "dead_letter");
-  if (!entry) return null;
-  entry.status = "queued";
-  entry.available_at = Date.now();
-  entry.retry_count = 0;
-  entry.last_error = null;
-
-  // Sync registry.tasks
-  const task = registry.tasks[taskId];
-  if (task) {
-    task.status = "queued";
-    task.retry_count = 0;
+  if (next === "dead_letter") {
+    delete registry.pending_attempts[taskId];
+    delete registry.active_attempts[taskId];
   }
+  registry.run.revision += 1;
 
   return entry;
 }
