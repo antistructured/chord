@@ -2,6 +2,7 @@ import { createChord } from "../src/sdk/chord.js";
 import { expect, test, describe } from "bun:test";
 import { dequeueReadyTask } from "../src/platform/task-queue.js";
 import { createIntentTaskPacket } from "../src/execution/task-packets.js";
+import { installHost, queueOptions } from "./fixtures/host.js";
 
 describe("Chord Core Hardening", () => {
   const chord = createChord();
@@ -40,11 +41,12 @@ describe("Chord Core Hardening", () => {
     const chordFail = createChord({
       runtimePolicy: { retry: { strategy: "fixed", baseDelayMs: 0, maxAttempts: 1 } }
     });
+    const host = installHost(chordFail);
 
     chordFail.setAdapterRouter({ fallback: { execute: () => { throw new Error("fail"); } } });
 
     const { spec } = chordFail.parseText(`@project hardening\n@phase hardening\n@do\n- fail task`);
-    chordFail.registerSpecAndQueue(spec);
+    chordFail.registerSpecAndQueue(spec, queueOptions(host));
 
     await chordFail.runCycle();
 
@@ -67,15 +69,21 @@ describe("Chord Core Hardening", () => {
     expect(() => chord.queueTaskPackets([{ task_id: "1" }])).toThrow(/INVALID_SHAPE/);
     expect(() => chord.queueTaskPackets([{ task_id: "1", requested_action: ["do"], target_entity: 123 }])).toThrow(/INVALID_SHAPE/);
     expect(chord.registry.tasks["1"]).toBeUndefined();
+
+    // Structurally valid packets without trusted-host authority arguments are denied.
+    const valid = createIntentTaskPacket({ schema_version: "chord.contracts.v1", spec_type: "IntentSpec", project: "p", phase: "q", do: ["a"], target_entity: "e" });
+    expect(() => chord.queueTaskPackets([valid])).toThrow(/INVALID_CONTEXT/);
+    expect(chord.registry.tasks[valid.task_id]).toBeUndefined();
   });
 
   test("TARGET 5: Deterministic Dequeue", () => {
     const chordDet = createChord();
+    const host = installHost(chordDet);
     const p1 = createIntentTaskPacket({ schema_version: "chord.contracts.v1", spec_type: "IntentSpec", project: "p", phase: "q", do: ["a"], target_entity: "e" });
     const p2 = createIntentTaskPacket({ schema_version: "chord.contracts.v1", spec_type: "IntentSpec", project: "p", phase: "q", do: ["a"], target_entity: "e" });
 
-    chordDet.queueTaskPackets([p1], { priority: 0 });
-    chordDet.queueTaskPackets([p2], { priority: 10 });
+    chordDet.queueTaskPackets([p1], queueOptions(host, { priority: 0 }));
+    chordDet.queueTaskPackets([p2], queueOptions(host, { priority: 10 }));
 
     // p2 has higher priority, should be first
     const entry = dequeueReadyTask(chordDet.registry);

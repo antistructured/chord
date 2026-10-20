@@ -107,7 +107,8 @@ export const Principal = define(principal, v => requireTrue(v.authenticated_at <
 export const Scope = define(scope, scopeCheck);
 export const Actor = define(actor, v => requireTrue(ids(v.roles) && ids(v.capabilities)));
 export const Grant = define(grant, v => { windowValid(v); scopeCheck(v.scope); });
-export const TaskAuthority = define(`{ principal_id: string, actor_id: string, capability: string, scope: ${scope}, approval_required: boolean }`, v => scopeCheck(v.scope));
+const taskAuthorityShape = '{ principal_id: string, actor_id: string, capability: string, scope: ' + scope + ', approval_required: boolean }';
+export const TaskAuthority = define(taskAuthorityShape, v => scopeCheck(v.scope));
 export const Approval = define(approval, v => {
   windowValid(v); scopeCheck(v.scope);
   requireTrue(v.run_id === v.scope.run_id && v.task_id === v.scope.task_id && v.approver_principal_id !== v.principal_id);
@@ -182,7 +183,7 @@ export const RuntimePolicy = define('{ globalMaxLeased: number, perEntityMaxLeas
 });
 export const RuntimePolicyInput = define('{ globalMaxLeased?: number, perEntityMaxLeased?: number, retry?: { strategy?: "fixed" | "linear" | "exponential", baseDelayMs?: number, maxAttempts?: number } }');
 // Current registry shape; transition legality and atomic restore remain pass 5.
-export const RegistryData = define(`{ run: { run_id: string, ${version}, revision: number }, artifacts: object, domains: object, tasks: object, task_queue: object[], event_journal: object[], execution_results: object[], trigger_state: object, specs: object[] }`, v => {
+export const RegistryData = define(`{ run: { run_id: string, ${version}, revision: number }, artifacts: object, domains: object, tasks: object, task_queue: object[], event_journal: object[], execution_results: object[], trigger_state: object, specs: object[], authority: object | null, pending_attempts: object }`, v => {
   for (const [key, record] of Object.entries(v.tasks)) {
     requireTrue(id(key));
     const task = StoredTask.assert(record);
@@ -197,10 +198,18 @@ export const RegistryData = define(`{ run: { run_id: string, ${version}, revisio
   requireTrue(ids(v.task_queue.map(x => x.queue_id)));
   v.event_journal.forEach(x => JournalRecord.assert(x));
   requireTrue(ids(v.event_journal.map(x => x.event_id)));
+  if (v.authority !== null) { AuthoritySnapshot.assert(v.authority); requireTrue(v.authority.run_id === v.run.run_id); }
+  requireTrue(ids(Object.keys(v.pending_attempts)));
+  for (const [key, record] of Object.entries(v.pending_attempts)) {
+    const attempt = Attempt.assert(record);
+    requireTrue(key === attempt.task_id && Object.hasOwn(v.tasks, key) && v.tasks[key].status === "queued");
+  }
 });
-const StoredTask = define(`{ ${packetFields}, status: "queued" | "leased" | "running" | "blocked" | "completed" | "failed" | "cancelled" | "uncertain" | "dead_letter", created_at: number, retry_count: number, last_result?: object }`, v => {
-  const { status, created_at, retry_count, last_result, ...packet } = v;
+const StoredTask = define(`{ ${packetFields}, authority_binding: ${taskAuthorityShape}, status: "queued" | "leased" | "running" | "blocked" | "completed" | "failed" | "cancelled" | "uncertain" | "dead_letter", created_at: number, retry_count: number, last_result?: object }`, v => {
+  const { status, created_at, retry_count, last_result, authority_binding, ...packet } = v;
   TaskPacket.assert(packet); requireTrue(integer(retry_count));
+  TaskAuthority.assert(authority_binding);
+  requireTrue(authority_binding.scope.task_id === v.task_id && authority_binding.scope.project === v.project && authority_binding.scope.phase === v.phase && authority_binding.scope.target_entity === v.target_entity);
   if (last_result) { ExecutionResult.assert(last_result); requireTrue(last_result.task_id === v.task_id); }
 });
 const QueueRecord = define('{ queue_id: string, task_id: string, target_entity: string, status: "queued" | "leased" | "running" | "blocked" | "completed" | "failed" | "cancelled" | "uncertain" | "dead_letter", priority: number, available_at: number, lease_expires_at: number | null, max_attempts: number, retry_count: number, last_error: string | null }', v => requireTrue(Number.isSafeInteger(v.priority) && integer(v.max_attempts) && v.max_attempts > 0 && integer(v.retry_count)));

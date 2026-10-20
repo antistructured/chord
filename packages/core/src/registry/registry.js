@@ -1,6 +1,6 @@
 import { stableId } from "../utils/id.js";
 import { deepClone } from "../utils/clone.js";
-import { assertExecutionResult, assertTaskPacket, assertSpec, SCHEMA_VERSION, contractError } from "../contracts/sigils.js";
+import { assertExecutionResult, assertTaskPacket, assertSpec, TaskAuthority, SCHEMA_VERSION, contractError } from "../contracts/sigils.js";
 import { markQueueEntryStatus } from "../platform/task-queue.js";
 
 export function createRegistry() {
@@ -13,7 +13,9 @@ export function createRegistry() {
     event_journal: [],
     execution_results: [],
     trigger_state: {},
-    specs: []
+    specs: [],
+    authority: null,
+    pending_attempts: {}
   };
 }
 
@@ -74,10 +76,15 @@ export function transitionArtifact(record, next) {
   return record;
 }
 
-export function registerTask(registry, packet) {
+export function registerTask(registry, packet, binding) {
   packet = assertTaskPacket(packet);
+  binding = TaskAuthority.assert(binding);
+  if (binding.scope.run_id !== registry.run.run_id || binding.scope.task_id !== packet.task_id ||
+    binding.scope.project !== packet.project || binding.scope.phase !== packet.phase ||
+    binding.scope.target_entity !== packet.target_entity) throw contractError("INVALID_SEMANTICS");
   registry.tasks[packet.task_id] = {
     ...deepClone(packet),
+    authority_binding: deepClone(binding),
     status: "queued",
     created_at: Date.now(),
     retry_count: 0

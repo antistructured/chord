@@ -6,6 +6,22 @@ import { createRegistry, registerTask, registerExecutionResult } from "../src/re
 import { exportRegistry, importRegistry } from "../src/registry/snapshot.js";
 import { createIntentTaskPacket, createHandoffTaskPackets, normalizeExecutionResult, executeTask } from "../src/execution/task-packets.js";
 import { enqueueTask } from "../src/platform/task-queue.js";
+import { installHost, queueOptions } from "./fixtures/host.js";
+
+const bindingFor = (registry, packet) => ({
+  principal_id: "host-principal",
+  actor_id: "worker-actor",
+  capability: "execute",
+  scope: {
+    run_id: registry.run.run_id,
+    project: packet.project,
+    phase: packet.phase,
+    task_id: packet.task_id,
+    target_entity: packet.target_entity,
+    resource: { kind: "task", id: packet.task_id }
+  },
+  approval_required: false
+});
 
 const schema_version = C.SCHEMA_VERSION;
 const run = { run_id: "run1", schema_version, revision: 0 };
@@ -136,7 +152,7 @@ describe("contract ingress and prerequisite result repairs", () => {
   });
   test("valid result fixes both unbound ingestion functions and clones input", () => {
     const registry = createRegistry();
-    registerTask(registry, packet); enqueueTask(registry, packet);
+    registerTask(registry, packet, bindingFor(registry, packet)); enqueueTask(registry, packet);
     const valid = { ...result, task_id: packet.task_id };
     registerExecutionResult(registry, valid);
     valid.outputs.done = false;
@@ -150,23 +166,24 @@ describe("contract ingress and prerequisite result repairs", () => {
   });
   test("runtime success, absent output noncompletion, provider error redaction", async () => {
     const chord = createChord({ runtimePolicy: { retry: { maxAttempts: 1 } } });
+    const host = installHost(chord);
     chord.setAdapterRouter({ fallback: { execute: () => ({ status: "completed", outcome: "succeeded" }) } });
-    chord.registerSpecAndQueue(intent);
+    chord.registerSpecAndQueue(intent, queueOptions(host));
     expect((await chord.runCycle()).ok).toBe(true);
     expect(chord.queryQueue({ status: "completed" }).length).toBe(1);
     chord.setAdapterRouter({ fallback: { execute: () => undefined } });
-    chord.registerSpecAndQueue(intent);
+    chord.registerSpecAndQueue(intent, queueOptions(host));
     const invalid = await chord.runCycle();
     expect(invalid.ok).toBe(false);
     expect(chord.registry.execution_results.length).toBe(1);
     expect(chord.queryQueue({ status: "completed" }).length).toBe(1);
     await expect(executeTask({ execute() { throw new Error("provider-secret"); } }, packet)).rejects.toThrow("ADAPTER_ERROR");
     chord.setAdapterRouter({ fallback: { execute() { throw new Error("provider-secret"); } } });
-    chord.registerSpecAndQueue(intent); await chord.runCycle();
+    chord.registerSpecAndQueue(intent, queueOptions(host)); await chord.runCycle();
     expect(JSON.stringify(chord.registry)).not.toContain("provider-secret");
   });
   test("snapshot validates version, counts, nested records, clones and rejects in-flight import", () => {
-    const registry = createRegistry(); registerTask(registry, packet); enqueueTask(registry, packet);
+    const registry = createRegistry(); registerTask(registry, packet, bindingFor(registry, packet)); enqueueTask(registry, packet);
     const snapshot = exportRegistry(registry);
     const copy = importRegistry(snapshot);
     expect(copy).toEqual(registry); expect(copy).not.toBe(snapshot.registry);

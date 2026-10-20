@@ -3,7 +3,9 @@ import { createChord } from "./sdk/chord.js";
 async function runValidation() {
   console.log("🚀 Starting Chord Core Runtime Validation (Revised)...\n");
 
+  // Trusted-host seam: the embedding host owns the clock and authority.
   const chord = createChord({
+    trustedHost: { now: () => Date.now() },
     runtimePolicy: {
       retry: { 
         strategy: "fixed",
@@ -11,6 +13,42 @@ async function runValidation() {
         maxAttempts: 2 
       }
     }
+  });
+
+  const principal = { principal_id: "host-principal", issuer: "verify-host", kind: "service", authenticated_at: 0, expires_at: Number.MAX_SAFE_INTEGER };
+  const actor = { actor_id: "worker-actor", principal_id: "host-principal", kind: "service", roles: [], capabilities: ["execute"], revoked_at: null };
+  chord.setAuthoritySnapshot({
+    schema_version: "chord.contracts.v1",
+    run_id: chord.registry.run.run_id,
+    authority_revision: 0,
+    principals: [principal],
+    actors: [actor],
+    grants: [],
+    approvals: []
+  });
+  const hostOptions = packets => ({
+    principal_id: principal.principal_id,
+    actor_id: actor.actor_id,
+    capability: "execute",
+    issueGrants: ps => ps.map(p => ({
+      grant_id: `grant_${p.task_id}`,
+      principal_id: principal.principal_id,
+      actor_id: actor.actor_id,
+      capability: "execute",
+      effect: "allow",
+      scope: {
+        run_id: chord.registry.run.run_id,
+        project: p.project,
+        phase: p.phase,
+        task_id: p.task_id,
+        target_entity: p.target_entity,
+        resource: { kind: "task", id: p.task_id }
+      },
+      issued_at: 0,
+      expires_at: Number.MAX_SAFE_INTEGER,
+      revoked_at: null,
+      requires_approval: false
+    }))
   });
 
   // 1. SDK: parseText (IntentSpec)
@@ -44,8 +82,8 @@ async function runValidation() {
   if (packets.length === 0) {
     throw new Error("No packets generated for IntentSpec");
   }
-  chord.queueTaskPackets(packets);
-  console.log("✅ createTaskPackets + queue ok\n");
+  chord.queueTaskPackets(packets, hostOptions(packets));
+  console.log("✅ createTaskPackets + admitted queue ok\n");
 
   // 4. QUEUE VALIDATION
   console.log("--- 4. Queue Validation ---");
@@ -80,7 +118,7 @@ async function runValidation() {
 @do
 - failing task
 `).spec;
-  chord.registerSpecAndQueue(failSpec);
+  chord.registerSpecAndQueue(failSpec, hostOptions([]));
   
   chord.setAdapterRouter({
     fallback: {
