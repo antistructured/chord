@@ -1,0 +1,19 @@
+{
+  "license_choice": {
+    "status": "answered",
+    "value": "Apache License 2.0",
+    "applied": false
+  },
+  "copyright_holders_and_redistribution_authority": {
+    "status": "unanswered",
+    "value": null
+  },
+  "npm_scope_and_package_identity_authorization": {
+    "status": "unanswered",
+    "value": null
+  },
+  "clarification_outcome": "timed_out",
+  "legal_gate": "BLOCKED",
+  "public_distribution_artifact_generated": false,
+  "publication_authorized": false
+}

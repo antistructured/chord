@@ -1,0 +1,92 @@
+bun test v1.3.14 (0d9b296a)
+
+tests/continuity.test.js:
+(pass) Block 3 continuity: concurrency and interruption > stale expectedRevision rejected on cancelRun [5.00ms]
+26 |     expect(() => chord.pauseForApproval()).toThrow(/INVALID_TRANSITION/);
+27 |     chord.resumeRun({ correlation_id: "c2", principal_id: host.human_id });
+28 |     expect(chord.getRunState()).toBe("active");
+29 |     chord.cancelRun({ reason: "test" });
+30 |     expect(chord.getRunState()).toBe("cancelled");
+31 |     expect(() => chord.resumeRun()).toThrow(/INVALID_TRANSITION/);
+                                         ^
+error: expect(received).toThrow(expected)
+
+Expected pattern: /INVALID_TRANSITION/
+Received message: "PRINCIPAL_INVALID"
+
+      at <anonymous> (/home/d/Workspace/other-projects/chord-v0.3.0/packages/core/tests/continuity.test.js:31:37)
+(fail) Block 3 continuity: concurrency and interruption > pause/resume/cancel flow with CAS [3.56ms]
+(pass) Block 3 continuity: concurrency and interruption > cancelRun cancels tasks and clears attempts [1.53ms]
+(pass) Block 3 continuity: concurrency and interruption > approval rejection fails run [2.20ms]
+(pass) Block 3 continuity: concurrency and interruption > context projection filters and has provenance [1.46ms]
+(pass) Block 3 continuity: concurrency and interruption > handoff proposal/accept with CAS and causation/correlation [2.42ms]
+(pass) Block 3 continuity: concurrency and interruption > handoff reject and wrong actor [2.21ms]
+
+tests/authorization.test.js:
+(pass) pure authorization evaluator > admit allows permission regardless of approval requirement [0.27ms]
+(pass) pure authorization evaluator > dispatch without approval requirement allows and selects grants [0.18ms]
+(pass) pure authorization evaluator > determinism: identical inputs give identical decisions [0.28ms]
+(pass) pure authorization evaluator > fixed failure order, first failure wins [0.57ms]
+(pass) pure authorization evaluator > principal, actor and capability gates [0.41ms]
+(pass) pure authorization evaluator > roles confer nothing; scope must equal stored task fields [0.22ms]
+(pass) pure authorization evaluator > deny beats allow; missing allow denies; expiry boundary equality [0.49ms]
+(pass) pure authorization evaluator > approval rules: required, rejected, exact attempt, consumed [0.98ms]
+(pass) pure authorization evaluator > commit requires unexpired lease, surviving selected grants and consumed approval [0.93ms]
+(pass) trusted-host seam and runtime gate > missing authority denies admission before any mutation [1.91ms]
+(pass) trusted-host seam and runtime gate > unauthorized dispatch invokes zero adapters and leaves the task queued [3.41ms]
+(pass) trusted-host seam and runtime gate > authorized dispatch executes and records lease, attempt and consumption-free allow [3.25ms]
+(pass) trusted-host seam and runtime gate > authority snapshot revisions are monotonic and clock rollback fails closed [1.69ms]
+(pass) trusted-host seam and runtime gate > approval-required task never reaches the adapter without a human approval [10.15ms]
+(pass) trusted-host seam and runtime gate > authorityError produces fixed sanitized codes [0.10ms]
+
+tests/lifecycle-integrity.test.js:
+(pass) LIFECYCLE: paused dispatches zero effects [1.68ms]
+(pass) LIFECYCLE: failed dispatches zero effects [1.33ms]
+(pass) LIFECYCLE: cancelled dispatches zero effects [1.51ms]
+(pass) LIFECYCLE: completed dispatches zero effects [2.40ms]
+(pass) LIFECYCLE: resume requires an active host-authenticated human [4.66ms]
+(pass) LIFECYCLE: cancellation wins against late adapter result [3.61ms]
+
+tests/adversarial.test.js:
+(pass) pass 6 — authority boundary and identity forgery > request-authored authority fields, roles, and decisions confer nothing [0.45ms]
+(pass) pass 6 — authority boundary and identity forgery > role strings never substitute for capabilities [0.68ms]
+(pass) pass 6 — authority boundary and identity forgery > capability alone without a grant is denied [0.07ms]
+(pass) pass 6 — authority boundary and identity forgery > missing host authority denies every stage [0.22ms]
+(pass) pass 6 — authority boundary and identity forgery > cross-principal actor binding is rejected [0.17ms]
+(pass) pass 6 — authority boundary and identity forgery > evaluator decisions are sanitized fixed data, never transferable tokens [0.28ms]
+(pass) pass 6 — scope, version, and run isolation > exact scope mismatch across every field is denied [0.48ms]
+(pass) pass 6 — scope, version, and run isolation > scope with a valid id but wrong run is denied as scope mismatch [0.09ms]
+(pass) pass 6 — scope, version, and run isolation > version mismatch and foreign run reject before any grant evaluation [0.25ms]
+(pass) pass 6 — temporal and revocation boundaries > grant expiry uses issued_at <= now < expires_at at exact boundaries [0.45ms]
+(pass) pass 6 — temporal and revocation boundaries > principal and actor revocation disable access immediately [0.29ms]
+(pass) pass 6 — temporal and revocation boundaries > contract window invariants reject nonpositive windows [0.09ms]
+(pass) pass 6 — deny/allow ordering permutations > an active matching deny beats every allow regardless of array order [0.28ms]
+(pass) pass 6 — deny/allow ordering permutations > a non-matching deny does not block a matching allow [0.10ms]
+(pass) pass 6 — deny/allow ordering permutations > grant_ids are sorted deterministically independent of array order [0.19ms]
+(pass) pass 6 — deny/allow ordering permutations > decisions are deterministic for identical input bytes and time [0.15ms]
+(pass) pass 6 — approval misuse permutations > approval_required dispatch needs an exact, unconsumed, matching approval [0.69ms]
+(pass) pass 6 — approval misuse permutations > explicit rejection wins over a present approval and blocks dispatch [0.13ms]
+(pass) pass 6 — approval misuse permutations > self-approval is structurally impossible [0.11ms]
+(pass) pass 6 — approval misuse permutations > admit grants permission without approval; dispatch gates on it [0.13ms]
+(pass) pass 6 — approval misuse permutations > commit requires the dispatch-selected approval consumed by this attempt [0.27ms]
+(pass) pass 6 — approval misuse permutations > a newly added grant cannot retroactively authorize an attempt [0.08ms]
+(pass) pass 6 — runtime boundary enforcement > admission denial writes nothing and dispatch denial never leases [2.23ms]
+(pass) pass 6 — runtime boundary enforcement > batch admission is atomic: one denial registers no member [0.60ms]
+(pass) pass 6 — runtime boundary enforcement > duplicate admission and re-registration of an existing id reject [0.90ms]
+(pass) pass 6 — runtime boundary enforcement > concurrent revision losers and stale expectedRevision are rejected [1.57ms]
+(pass) pass 6 — runtime boundary enforcement > an in-flight commit loses to a concurrent same-revision mutation [2.41ms]
+(pass) pass 6 — runtime boundary enforcement > no registry or authority write handle leaks to adapters [1.58ms]
+(pass) pass 6 — runtime boundary enforcement > safery: adapter cannot fabricate correlation or a passing result [1.77ms]
+(pass) pass 6 — runtime boundary enforcement > malformed adapter results never normalize to success or dead-letter [9.44ms]
+(pass) pass 6 — approval gate end to end > approval-required task is denied at dispatch with zero adapter calls until approved [4.49ms]
+(pass) pass 6 — approval gate end to end > explicit host rejection blocks dispatch permanently [2.48ms]
+(pass) pass 6 — approval gate end to end > an approval for a different attempt does not authorize dispatch [2.21ms]
+(pass) pass 6 — contract hardening regression > prototype, cycle, and accessor payloads are rejected without evaluation [0.21ms]
+
+1 tests failed:
+(fail) Block 3 continuity: concurrency and interruption > pause/resume/cancel flow with CAS [3.56ms]
+
+ 61 pass
+ 1 fail
+ 251 expect() calls
+Ran 62 tests across 4 files. [130.00ms]

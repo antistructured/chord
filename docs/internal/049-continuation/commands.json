@@ -1,0 +1,50 @@
+[
+  {
+    "name": "install-lock",
+    "command": "bun install --frozen-lockfile",
+    "cwd": "packages/core",
+    "exit_code": 0
+  },
+  {
+    "name": "core",
+    "command": "bun test",
+    "cwd": "packages/core",
+    "exit_code": 0
+  },
+  {
+    "name": "npm-test",
+    "command": "npm test",
+    "cwd": "packages/core",
+    "exit_code": 0
+  },
+  {
+    "name": "runtime",
+    "command": "bun run src/verify-runtime.js",
+    "cwd": "packages/core",
+    "exit_code": 0
+  },
+  {
+    "name": "quickstart-node",
+    "command": "node examples/quickstart.mjs",
+    "cwd": "packages/core",
+    "exit_code": 0
+  },
+  {
+    "name": "quickstart-bun",
+    "command": "bun examples/quickstart.mjs",
+    "cwd": "packages/core",
+    "exit_code": 0
+  },
+  {
+    "name": "workflow-node",
+    "command": "node examples/cross-actor-workflow.mjs",
+    "cwd": "packages/core",
+    "exit_code": 0
+  },
+  {
+    "name": "workflow-bun",
+    "command": "bun examples/cross-actor-workflow.mjs",
+    "cwd": "packages/core",
+    "exit_code": 0
+  }
+]

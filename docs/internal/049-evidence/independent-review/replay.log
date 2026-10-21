@@ -1,0 +1,21 @@
+bun test v1.3.14 (0d9b296a)
+
+tests/replay-integrity.test.js:
+(pass) REPLAY: committed admission/dispatch/result projection equals original with zero effects [48.42ms]
+(pass) REPLAY: uncertainty, reconciliation, handoff, pause and cancellation are recorded [38.81ms]
+(pass) REPLAY: changed content/order, missing middle/tail, duplicate/mixed-run/version records reject [5.88ms]
+(pass) REPLAY: dead-letter cancellation and imported running quarantine reconstruct [40.27ms]
+(pass) REPLAY: seeded operation sequences retain equivalence and stale-write rejection [570.06ms]
+(pass) REPLAY: unknown diagnostic type and incompatible version reject independently [1.52ms]
+
+tests/fault-injection.test.js:
+(pass) Block 4 fault injection > replay without genesis explicitly rejects insufficient history [0.13ms]
+(pass) Block 4 fault injection > duplicate event id rejected [0.65ms]
+(pass) Block 4 fault injection > backwards revision rejected [1.76ms]
+(pass) Block 4 fault injection > diff traces detects divergence [0.21ms]
+(pass) Block 4 fault injection > event journal includes extended fields [0.10ms]
+
+ 11 pass
+ 0 fail
+ 121 expect() calls
+Ran 11 tests across 2 files. [752.00ms]

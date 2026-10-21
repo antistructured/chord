@@ -1,0 +1,32 @@
+[
+  {
+    "name": "safety",
+    "command": "node --test docs/internal/046-state-probes.mjs",
+    "exit_code": 0
+  },
+  {
+    "name": "cli-run",
+    "command": "bun run chord:run",
+    "exit_code": 0
+  },
+  {
+    "name": "cli-audit",
+    "command": "bun run chord:audit",
+    "exit_code": 0
+  },
+  {
+    "name": "cli-replay",
+    "command": "bun run chord:replay --journal",
+    "exit_code": 0
+  },
+  {
+    "name": "demo",
+    "command": "bun run demo:via",
+    "exit_code": 0
+  },
+  {
+    "name": "diff-check",
+    "command": "git diff --check",
+    "exit_code": 0
+  }
+]

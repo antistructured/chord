@@ -1,0 +1,63 @@
+{
+  "missing_required_reports": [],
+  "changed_pre_existing_paths": [],
+  "sealed_source_drift": [],
+  "prior_artifact_hash_matches": true,
+  "new_candidate_tarball": null,
+  "license_applied": false,
+  "version_changed": false,
+  "independent_gate": "NO-GO",
+  "git": [
+    {
+      "command": [
+        "git",
+        "branch",
+        "--show-current"
+      ],
+      "exit": 0,
+      "stdout": "main\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit": 0,
+      "stdout": "ba3e37ea035a2862e06766ed7f90513babf945b0\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--stat"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "status",
+        "--short"
+      ],
+      "exit": 0,
+      "stdout": " M .gitignore\n D .history/README_20260321202149.md\n D .history/README_20260411020147.md\n M .vscode/settings.json\n M README.md\n M packages/core/dev_flow.md\n M packages/core/examples/basic-flow/README.md\n M packages/core/examples/failure-recovery/README.md\n M packages/core/examples/multi-entity-review/README.md\n M packages/core/src/contracts/sigils.js\n M packages/core/src/execution/task-packets.js\n M packages/core/src/index.js\n M packages/core/src/platform/event-journal.js\n M packages/core/src/platform/index.js\n M packages/core/src/platform/runtime-loop.js\n M packages/core/src/platform/task-queue.js\n M packages/core/src/platform/transitions.js\n M packages/core/src/registry/registry.js\n M packages/core/src/registry/snapshot.js\n M packages/core/src/sdk/chord.js\n M packages/core/src/verify-runtime.js\n M packages/core/tests/README.md\n M packages/core/tests/authorization.test.js\n M packages/core/tests/contracts.test.js\n M packages/core/tests/hardening.test.js\n M packages/core/tests/transitions.test.js\n?? docs/internal/041-block2-final-report.md\n?? docs/internal/042-approval-lifecycle.md\n?? docs/internal/042-context-handoff.md\n?? docs/internal/042-continuity-gap-audit.md\n?? docs/internal/042-continuity-tests.md\n?? docs/internal/042-coordination-guide.md\n?? docs/internal/042-final-report.md\n?? docs/internal/042-run-lifecycle.md\n?? docs/internal/042-state-implementation.md\n?? docs/internal/043-evidence-audit.md\n?? docs/internal/043-evidence-model.md\n?? docs/internal/043-fault-injection-tests.md\n?? docs/internal/043-final-report.md\n?? docs/internal/043-recovery-policy.md\n?? docs/internal/043-replay-diff.md\n?? docs/internal/043-trace-guarantees.md\n?? docs/internal/043-trace-reducer.md\n?? docs/internal/044-canonical-example-design.md\n?? docs/internal/044-cli-usage.md\n?? docs/internal/044-consumer-smoke.md\n?? docs/internal/044-developer-guide.md\n?? docs/internal/044-developer-surface-audit.md\n?? docs/internal/044-example-implementation.md\n?? docs/internal/044-example-tests.md\n?? docs/internal/044-final-report.md\n?? docs/internal/045-final-report.md\n?? docs/internal/045-go-no-go.md\n?? docs/internal/045-release-prerequisites.md\n?? docs/internal/046-evidence/\n?? docs/internal/046-final-report.md\n?? docs/internal/046-independent-stop-review.md\n?? docs/internal/046-mutation-inventory.md\n?? docs/internal/046-release-go-no-go.md\n?? docs/internal/046-repository-reality-audit.md\n?? docs/internal/046-standards-conformance-matrix.md\n?? docs/internal/046-state-atomicity-audit.md\n?? docs/internal/046-state-probes.mjs\n?? docs/internal/047-admission-and-projection.md\n?? docs/internal/047-canonical-state-commit.md\n?? docs/internal/047-contract-addendum.md\n?? docs/internal/047-evidence/\n?? docs/internal/047-final-report.md\n?? docs/internal/047-history-ownership-addendum.md\n?? docs/internal/047-independent-verification.md\n?? docs/internal/047-invariant-verification.md\n?? docs/internal/047-lifecycle-dispatch.md\n?? docs/internal/047-public-api-compatibility.md\n?? docs/internal/047-regression-results.md\n?? docs/internal/047-replay-and-evidence.md\n?? docs/internal/047-root-cause-matrix.md\n?? docs/internal/047-standards-conformance.md\n?? docs/internal/047-uncertain-reconciliation.md\n?? docs/internal/048-adversarial-verification.md\n?? docs/internal/048-architecture-compatibility.md\n?? docs/internal/048-consumer-package-verification.md\n?? docs/internal/048-evidence/\n?? docs/internal/048-final-report.md\n?? docs/internal/048-governed-workflow.md\n?? docs/internal/048-release-go-no-go.md\n?? docs/internal/048-release-review-prior.md\n?? docs/internal/048-replay-verification.md\n?? docs/internal/048-revalidation.md\n?? docs/internal/049-artifact-integrity.md\n?? docs/internal/049-consumer-verification.md\n?? docs/internal/049-evidence/\n?? docs/internal/049-final-report.md\n?? docs/internal/049-license-decision.md\n?? docs/internal/049-license-provenance.md\n?? docs/internal/049-package-curation.md\n?? docs/internal/049-package-manifest.md\n?? docs/internal/049-public-documentation-review.md\n?? docs/internal/049-release-baseline.md\n?? docs/internal/049-release-go-no-go.md\n?? docs/internal/049-release-notes-draft.md\n?? docs/internal/049-security-release-review.md\n?? docs/internal/049-version-and-source-candidate.md\n?? packages/core/INTEGRITY.md\n?? packages/core/README.md\n?? packages/core/examples/cross-actor-workflow.mjs\n?? packages/core/src/platform/approval-flow.js\n?? packages/core/src/platform/handoff.js\n?? packages/core/src/platform/history.js\n?? packages/core/src/platform/reconciliation.js\n?? packages/core/src/platform/recovery-policy.js\n?? packages/core/src/platform/state-invariants.js\n?? packages/core/src/platform/trace-reducer.js\n?? packages/core/src/registry/owner.js\n?? packages/core/tests/admission-integrity.test.js\n?? packages/core/tests/architecture-integrity.test.js\n?? packages/core/tests/canonical-example.test.js\n?? packages/core/tests/continuity.test.js\n?? packages/core/tests/fault-injection.test.js\n?? packages/core/tests/integrity.test.js\n?? packages/core/tests/lifecycle-integrity.test.js\n?? packages/core/tests/recovery-integrity.test.js\n?? packages/core/tests/replay-integrity.test.js\n",
+      "stderr": ""
+    }
+  ]
+}

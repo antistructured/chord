@@ -1,0 +1,13 @@
+bun test v1.3.14 (0d9b296a)
+
+gate.test.mjs:
+(pass) human exact-attempt approval; missing, service and wrong-attempt fail with zero effects [27.81ms]
+(pass) all common SDK read views detached; no-grant identity sees no tasks [5.78ms]
+(pass) same-revision CAS has one winner; rejected batch is byte-for-byte atomic [7.15ms]
+(pass) in-flight result loses to cancellation without changing terminal task or repeating effect [12.39ms]
+(pass) unknown effect quarantined across ID churn and restore; human evidence required before readmission [12.61ms]
+(pass) pure complete modern projection; malformed, missing-middle, tail and legacy reject; content diff detects edits [16.90ms]
+
+ 6 pass
+ 0 fail
+Ran 6 tests across 1 file. [123.00ms]

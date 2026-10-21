@@ -1,0 +1,21 @@
+bun test v1.3.14 (0d9b296a)
+
+tests/replay-integrity.test.js:
+(pass) REPLAY: committed admission/dispatch/result projection equals original with zero effects [24.69ms]
+(pass) REPLAY: uncertainty, reconciliation, handoff, pause and cancellation are recorded [22.32ms]
+(pass) REPLAY: changed content/order, missing middle/tail, duplicate/mixed-run/version records reject [4.21ms]
+(pass) REPLAY: dead-letter cancellation and imported running quarantine reconstruct [20.23ms]
+(pass) REPLAY: seeded operation sequences retain equivalence and stale-write rejection [392.52ms]
+(pass) REPLAY: unknown diagnostic type and incompatible version reject independently [0.85ms]
+
+tests/integrity.test.js:
+(pass) STATE-01/02: installed owner and revision-exclusive commits [4.59ms]
+(pass) STATE-03/05: rejected compound candidate changes no collection or event [3.45ms]
+(pass) STATE-04: reads and retained inputs cannot change canonical state [3.24ms]
+(pass) STATE-03: reservation and corresponding evidence share a revision [2.91ms]
+(pass) STATE: host commit cannot validate one operation while recording another [2.74ms]
+
+ 11 pass
+ 0 fail
+ 126 expect() calls
+Ran 11 tests across 2 files. [510.00ms]

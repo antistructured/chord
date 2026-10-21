@@ -1,0 +1,51 @@
+bun test v1.3.14 (0d9b296a)
+
+tests/admission-integrity.test.js:
+(pass) READ: grantless/expired/revoked/denied projections disclose no tasks or queue [48.59ms]
+(pass) READ: authorized projection detached including nested scope, bounded to permitted tasks [141.71ms]
+(pass) ADMIT: grant issuance cannot survive a later batch denial [2.32ms]
+(pass) ADMIT: invalid queue fields and reentrant callback cannot partially commit [4.60ms]
+(pass) READ: clock callback revocation precedes context snapshot [9.12ms]
+(pass) READ: explicit deny and exact expiry boundary suppress protected projections [18.90ms]
+
+tests/replay-integrity.test.js:
+(pass) REPLAY: committed admission/dispatch/result projection equals original with zero effects [20.16ms]
+(pass) REPLAY: uncertainty, reconciliation, handoff, pause and cancellation are recorded [23.68ms]
+(pass) REPLAY: changed content/order, missing middle/tail, duplicate/mixed-run/version records reject [3.95ms]
+(pass) REPLAY: dead-letter cancellation and imported running quarantine reconstruct [77.00ms]
+(pass) REPLAY: seeded operation sequences retain equivalence and stale-write rejection [787.55ms]
+(pass) REPLAY: unknown diagnostic type and incompatible version reject independently [0.77ms]
+
+tests/architecture-integrity.test.js:
+(pass) ARCH-18: first-party JS/ESM kernel has only SigilJS runtime dependency and no provider/framework imports [1.25ms]
+
+tests/lifecycle-integrity.test.js:
+(pass) LIFECYCLE: paused dispatches zero effects [3.45ms]
+(pass) LIFECYCLE: failed dispatches zero effects [3.44ms]
+(pass) LIFECYCLE: cancelled dispatches zero effects [2.05ms]
+(pass) LIFECYCLE: completed dispatches zero effects [3.03ms]
+(pass) LIFECYCLE: resume requires an active host-authenticated human [5.30ms]
+(pass) LIFECYCLE: cancellation wins against late adapter result [4.38ms]
+(pass) LIFECYCLE: executable accessor cannot cancel after claim then execute anyway [1.72ms]
+
+tests/recovery-integrity.test.js:
+(pass) RECOVERY: uncertainty cannot replay or evade quarantine with a new task ID [4.49ms]
+(pass) RECOVERY: missing authority/evidence rejected unchanged [3.32ms]
+(pass) RECOVERY: still unknown stays quarantined [5.21ms]
+(pass) RECOVERY: confirmed completion is never executed again [4.38ms]
+(pass) RECOVERY: no-effect evidence enables explicit fresh authorized attempt [8.33ms]
+(pass) RECOVERY: competing/duplicate reconciliation cannot both commit [4.64ms]
+(pass) RECOVERY: cancellation preserves unknown effect and supports explicit compensation receipt [4.86ms]
+
+tests/integrity.test.js:
+(pass) STATE-01/02: installed owner and revision-exclusive commits [5.20ms]
+(pass) STATE-03/05: rejected compound candidate changes no collection or event [3.19ms]
+(pass) STATE-04: reads and retained inputs cannot change canonical state [2.75ms]
+(pass) STATE-03: reservation and corresponding evidence share a revision [2.10ms]
+(pass) STATE: host commit cannot validate one operation while recording another [2.41ms]
+(pass) STATE: malformed handoff identity cannot enter persisted canonical metadata [1.32ms]
+
+ 33 pass
+ 0 fail
+ 337 expect() calls
+Ran 33 tests across 6 files. [1.92s]

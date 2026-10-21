@@ -1,0 +1,13 @@
+bun test v1.3.14 (0d9b296a)
+
+tests/fault-injection.test.js:
+(pass) Block 4 fault injection > replay with no events produces projected state [0.20ms]
+(pass) Block 4 fault injection > duplicate event id rejected [0.15ms]
+(pass) Block 4 fault injection > backwards revision rejected [0.04ms]
+(pass) Block 4 fault injection > diff traces detects divergence [0.10ms]
+(pass) Block 4 fault injection > event journal includes extended fields [0.19ms]
+
+ 5 pass
+ 0 fail
+ 11 expect() calls
+Ran 5 tests across 1 file. [24.00ms]

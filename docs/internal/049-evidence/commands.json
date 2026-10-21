@@ -1,0 +1,247 @@
+[
+  {
+    "name": "status",
+    "command": [
+      "git",
+      "status",
+      "--short",
+      "--untracked-files=all"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0",
+    "exit": 0
+  },
+  {
+    "name": "diff",
+    "command": [
+      "git",
+      "diff",
+      "--binary"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0",
+    "exit": 0
+  },
+  {
+    "name": "cached-diff",
+    "command": [
+      "git",
+      "diff",
+      "--cached",
+      "--binary"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0",
+    "exit": 0
+  },
+  {
+    "name": "core",
+    "command": [
+      "bun",
+      "test"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "exit": 0
+  },
+  {
+    "name": "safety",
+    "command": [
+      "node",
+      "--test",
+      "docs/internal/046-state-probes.mjs"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0",
+    "exit": 0
+  },
+  {
+    "name": "runtime",
+    "command": [
+      "bun",
+      "run",
+      "src/verify-runtime.js"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "exit": 0
+  },
+  {
+    "name": "canonical-node",
+    "command": [
+      "node",
+      "examples/cross-actor-workflow.mjs"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "exit": 0
+  },
+  {
+    "name": "canonical-bun",
+    "command": [
+      "bun",
+      "examples/cross-actor-workflow.mjs"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "exit": 0
+  },
+  {
+    "name": "node-sealed-consumer",
+    "command": [
+      "node",
+      "workflow.mjs"
+    ],
+    "cwd": "/home/d/.hermes/cache/scratch/chord048-5d81k9z3/sealed/consumer",
+    "exit": 0
+  },
+  {
+    "name": "bun-sealed-consumer",
+    "command": [
+      "bun",
+      "workflow.mjs"
+    ],
+    "cwd": "/home/d/.hermes/cache/scratch/chord048-5d81k9z3/sealed/consumer",
+    "exit": 0
+  },
+  {
+    "name": "contributors",
+    "command": [
+      "git",
+      "log",
+      "--all",
+      "--format=%aN <%aE> | %cN <%cE>"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0",
+    "exit": 0
+  },
+  {
+    "name": "remote-tags",
+    "command": [
+      "git",
+      "ls-remote",
+      "--tags",
+      "origin"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0",
+    "exit": 0
+  },
+  {
+    "name": "registry-package",
+    "command": [
+      "npm",
+      "view",
+      "@chord/core",
+      "name",
+      "versions",
+      "dist-tags",
+      "maintainers",
+      "repository",
+      "license",
+      "--json"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "exit": 1
+  },
+  {
+    "name": "dependency-provenance",
+    "command": [
+      "npm",
+      "view",
+      "@weipertda/sigiljs@0.18.0",
+      "name",
+      "version",
+      "license",
+      "repository",
+      "dist.integrity",
+      "--json"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "exit": 0
+  },
+  {
+    "name": "registry-exact-candidate",
+    "command": [
+      "npm",
+      "view",
+      "@chord/core@0.4.0-preview.1",
+      "version",
+      "--registry=https://registry.npmjs.org",
+      "--json"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "exit": 1
+  },
+  {
+    "name": "exports",
+    "command": [
+      "node",
+      "--input-type=module",
+      "-e",
+      "for (const p of ['@chord/core','@chord/core/sdk','@chord/core/platform']) { const m=await import(p); console.log(p, Object.keys(m).sort().join(',')); }"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "exit": 0
+  },
+  {
+    "name": "authority",
+    "command": [
+      "bun",
+      "test",
+      "tests/authorization.test.js",
+      "tests/adversarial.test.js"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "exit": 0
+  },
+  {
+    "name": "continuity",
+    "command": [
+      "bun",
+      "test",
+      "tests/continuity.test.js"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "exit": 0
+  },
+  {
+    "name": "replay",
+    "command": [
+      "bun",
+      "test",
+      "tests/fault-injection.test.js",
+      "tests/replay-integrity.test.js"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "exit": 0
+  },
+  {
+    "name": "block6b",
+    "command": [
+      "bun",
+      "test",
+      "tests/integrity.test.js",
+      "tests/lifecycle-integrity.test.js",
+      "tests/admission-integrity.test.js",
+      "tests/recovery-integrity.test.js",
+      "tests/replay-integrity.test.js",
+      "tests/architecture-integrity.test.js"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "exit": 0
+  },
+  {
+    "name": "node-existing-public-tests",
+    "command": [
+      "node",
+      "--test",
+      "gate.test.mjs",
+      "journal-rejection.test.mjs"
+    ],
+    "cwd": "/home/d/.hermes/cache/scratch/chord-sealed-independent-gemjso3w/consumer",
+    "exit": 0
+  },
+  {
+    "name": "bun-existing-public-tests",
+    "command": [
+      "bun",
+      "test",
+      "gate.test.mjs",
+      "journal-rejection.test.mjs"
+    ],
+    "cwd": "/home/d/.hermes/cache/scratch/chord-sealed-independent-gemjso3w/consumer",
+    "exit": 0
+  }
+]

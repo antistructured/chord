@@ -1,0 +1,70 @@
+bun test v1.3.14 (0d9b296a)
+
+tests/lifecycle-integrity.test.js:
+ 7 |   const f = fixture();
+ 8 |   if (state === 'paused') f.c.pauseForApproval();
+ 9 |   if (state === 'failed') { f.c.pauseForApproval(); f.c.rejectApproval(); }
+10 |   if (state === 'cancelled') f.c.cancelRun();
+11 |   if (state === 'completed') { const next = f.c.getRegistry(); next.run.state = state; next.run.revision++; f.c.commitRun({ expectedRevision: f.c.getRunRevision(), nextRegistry: next }); }
+12 |   await f.c.runCycle(); expect(f.calls()).toBe(0);
+                                               ^
+error: expect(received).toBe(expected)
+
+Expected: 0
+Received: 1
+
+      at <anonymous> (/home/d/Workspace/other-projects/chord-v0.3.0/packages/core/tests/lifecycle-integrity.test.js:12:43)
+(fail) LIFECYCLE: paused dispatches zero effects [13.00ms]
+ 7 |   const f = fixture();
+ 8 |   if (state === 'paused') f.c.pauseForApproval();
+ 9 |   if (state === 'failed') { f.c.pauseForApproval(); f.c.rejectApproval(); }
+10 |   if (state === 'cancelled') f.c.cancelRun();
+11 |   if (state === 'completed') { const next = f.c.getRegistry(); next.run.state = state; next.run.revision++; f.c.commitRun({ expectedRevision: f.c.getRunRevision(), nextRegistry: next }); }
+12 |   await f.c.runCycle(); expect(f.calls()).toBe(0);
+                                               ^
+error: expect(received).toBe(expected)
+
+Expected: 0
+Received: 1
+
+      at <anonymous> (/home/d/Workspace/other-projects/chord-v0.3.0/packages/core/tests/lifecycle-integrity.test.js:12:43)
+(fail) LIFECYCLE: failed dispatches zero effects [3.86ms]
+(pass) LIFECYCLE: cancelled dispatches zero effects [1.59ms]
+ 7 |   const f = fixture();
+ 8 |   if (state === 'paused') f.c.pauseForApproval();
+ 9 |   if (state === 'failed') { f.c.pauseForApproval(); f.c.rejectApproval(); }
+10 |   if (state === 'cancelled') f.c.cancelRun();
+11 |   if (state === 'completed') { const next = f.c.getRegistry(); next.run.state = state; next.run.revision++; f.c.commitRun({ expectedRevision: f.c.getRunRevision(), nextRegistry: next }); }
+12 |   await f.c.runCycle(); expect(f.calls()).toBe(0);
+                                               ^
+error: expect(received).toBe(expected)
+
+Expected: 0
+Received: 1
+
+      at <anonymous> (/home/d/Workspace/other-projects/chord-v0.3.0/packages/core/tests/lifecycle-integrity.test.js:12:43)
+(fail) LIFECYCLE: completed dispatches zero effects [3.25ms]
+11 |   if (state === 'completed') { const next = f.c.getRegistry(); next.run.state = state; next.run.revision++; f.c.commitRun({ expectedRevision: f.c.getRunRevision(), nextRegistry: next }); }
+12 |   await f.c.runCycle(); expect(f.calls()).toBe(0);
+13 | });
+14 | test('LIFECYCLE: resume requires an active host-authenticated human', async () => {
+15 |   const { c, h, calls } = fixture(); c.pauseForApproval();
+16 |   const before = c.getRegistry(); expect(() => c.resumeRun()).toThrow(); expect(c.getRegistry()).toEqual(before);
+                                                                   ^
+error: expect(received).toThrow()
+
+Received function did not throw
+Received value: {
+  ok: true,
+  run_state: "active",
+  previous: "paused",
+}
+
+      at <anonymous> (/home/d/Workspace/other-projects/chord-v0.3.0/packages/core/tests/lifecycle-integrity.test.js:16:63)
+(fail) LIFECYCLE: resume requires an active host-authenticated human [4.02ms]
+(pass) LIFECYCLE: cancellation wins against late adapter result [3.01ms]
+
+ 2 pass
+ 4 fail
+ 9 expect() calls
+Ran 6 tests across 1 file. [65.00ms]

@@ -1,0 +1,258 @@
+[
+  {
+    "path": "INTEGRITY.md",
+    "sha256": "bcb9e2f275cda53711aa2720a11594e4ebd9087a58412cb942faff27655ce2c7"
+  },
+  {
+    "path": "README.md",
+    "sha256": "dbc5fe6d6e2575281bf4a8e8e296493235387440fa721061f8e9f5a32078007f"
+  },
+  {
+    "path": "bun.lock",
+    "sha256": "8e8b23a8bc8d218d070ab47f737d3df4ce3e2727cfa17719837d8f9af55abd75"
+  },
+  {
+    "path": "dev_flow.md",
+    "sha256": "a1da168e84221c3d99a6c334ba831a2869740c9c480cff382249344dee3f0295"
+  },
+  {
+    "path": "examples/basic-flow/README.md",
+    "sha256": "c6d43733eda8def3db6620e567fa89ea773ad8583a4db6164a61d8f567ba0fdf"
+  },
+  {
+    "path": "examples/cross-actor-workflow.mjs",
+    "sha256": "b064b7ccd00959754287e21428381957f94e6b2791703c6083bc4c34f5b8e874"
+  },
+  {
+    "path": "examples/failure-recovery/README.md",
+    "sha256": "b663a5dd1fea9e3d1d030def12b53bfde7bd75774adf375f023de7f8a067acc1"
+  },
+  {
+    "path": "examples/multi-entity-review/README.md",
+    "sha256": "1b78ace8e2a7bf39815da49994940ce6971da8e9d36c00c80e7a7fbbbf70f3f8"
+  },
+  {
+    "path": "package.json",
+    "sha256": "ddd826a0ac18ce14ab10c699cc43c4724123dd1279a1f9bdcefe893052c1cbd1"
+  },
+  {
+    "path": "src/cli/_shared.js",
+    "sha256": "6735668c5bd8ce8e65722edc58ef8709889555f7c80a78a29c6a249f53d8c2c6"
+  },
+  {
+    "path": "src/cli/inspect-audit.js",
+    "sha256": "1069443082828336b34d9a2ec504998b428457d56a8b5867118f8467a31a1c0b"
+  },
+  {
+    "path": "src/cli/replay.js",
+    "sha256": "3a48c88c557a006ee0ee5a381f2406e4c37fa76d2510b8b81fc73a854f764aa9"
+  },
+  {
+    "path": "src/cli/run.js",
+    "sha256": "5f3cb4654e41ba44c9541ce2996e60e74aa3e3efbcf1df7260b91ca290508a04"
+  },
+  {
+    "path": "src/contracts/sigils.js",
+    "sha256": "43b5af096c9279b2eb3bba79ba482067d31b9119eead9c4bbb02835a610099e2"
+  },
+  {
+    "path": "src/demo/callaback-demo.js",
+    "sha256": "654f31ff35df0aceb4a736d16afe206775990d2626404b48686f700672058cf4"
+  },
+  {
+    "path": "src/demo/fake-sms-adapter.js",
+    "sha256": "7c1778f0a7e16f6230a138f7618709975628cec03b9f019c085fd43134e0d4b0"
+  },
+  {
+    "path": "src/demo/fake-user.js",
+    "sha256": "a9e2a07cd21e1373d27b32cf0bd7d5b02a88bc76ddd957d71cf894325f18dcc4"
+  },
+  {
+    "path": "src/execution/results.js",
+    "sha256": "be96f38973fa8560e6de84504587c1ba79adc79e03ff31471537de1485768956"
+  },
+  {
+    "path": "src/execution/task-packets.js",
+    "sha256": "f5e0ce19412e266d10d553685b8f3df3cd611638b7a978ae48235f2465f19594"
+  },
+  {
+    "path": "src/index.js",
+    "sha256": "fa41c033be3cea22c7e66b079a7adc99eee095ed4a79e63a2db65e8ea3e50284"
+  },
+  {
+    "path": "src/platform/adapter-routing.js",
+    "sha256": "4390ced5e563e3e4d38499b5eeb9ce8f8497c090f5a48bf9f4e6cd8596a47b72"
+  },
+  {
+    "path": "src/platform/approval-flow.js",
+    "sha256": "47dde9af514d81babb09edaafac956efcc85f3bb3c9df82e6384202b3fbb8624"
+  },
+  {
+    "path": "src/platform/attempts.js",
+    "sha256": "47431df92cf007aba99773444596729b5b341bdf8c8ab4ca8baa70f80ce0640b"
+  },
+  {
+    "path": "src/platform/authorization.js",
+    "sha256": "66c8edd5383344b35635f23b4bc7047bc55f74e4adbc5aed2c132883615ea880"
+  },
+  {
+    "path": "src/platform/event-journal.js",
+    "sha256": "d38bd521d5b0bad755a2b684e078b7805d4d2e80788a7260442a0d896fb31f64"
+  },
+  {
+    "path": "src/platform/handoff.js",
+    "sha256": "7255e3eaf9cd09286dd77447e9510e9aab2f2b167c6d81a877c356469c93e060"
+  },
+  {
+    "path": "src/platform/history.js",
+    "sha256": "7cae2c2b114e3cc80dc35a5757f162da0f2e68767ab3c42cd911bae0b8f90f5b"
+  },
+  {
+    "path": "src/platform/index.js",
+    "sha256": "733fa977b852aa8b42898d1648dea3253682170131c606475d8e18f63b9f463e"
+  },
+  {
+    "path": "src/platform/journal-audit.js",
+    "sha256": "9629c9ca4c586dfbc5ed3432fc0f43a80984c58584d3c80e91bc0d1e3d2db56f"
+  },
+  {
+    "path": "src/platform/policy.js",
+    "sha256": "77bcd446d85ad8c32fb6bbd3671ebad2e495f34e483de69fbec0bcf6c36b0e98"
+  },
+  {
+    "path": "src/platform/reconciliation.js",
+    "sha256": "1252650e822480be704721afba0f0652ef81be70d3c29eb759180dc085d93191"
+  },
+  {
+    "path": "src/platform/recovery-policy.js",
+    "sha256": "78f52d44e8a512978607ceeeb9bb6218c7ddc18a577cf8d93ede6eb548c2fb50"
+  },
+  {
+    "path": "src/platform/runtime-loop.js",
+    "sha256": "82237604150699c58323cbfac52ab1cc89dfbdd55ab781da45bed5d365df330b"
+  },
+  {
+    "path": "src/platform/state-invariants.js",
+    "sha256": "38cfad6a20fed28b00f45c448db2db42ce06ac9bb46326886ead15f2427cca65"
+  },
+  {
+    "path": "src/platform/task-queue.js",
+    "sha256": "ef6c4ef7f0ff91a71e0c46b3fa5439d148f01771ceae68e33396391f5b7b5cec"
+  },
+  {
+    "path": "src/platform/trace-reducer.js",
+    "sha256": "1539cea376a02014f583d6df913c4043bdc5a43f9941a5d112d0b8bbf483faec"
+  },
+  {
+    "path": "src/platform/transitions.js",
+    "sha256": "b8fe0507c086184aad43b55cebdde8bb0b56ec717966e2aec9158fc8ba1dfa11"
+  },
+  {
+    "path": "src/registry/owner.js",
+    "sha256": "614ad182d9905ce272148ea4dc2f8d7fd1bdc50e5dc5816db9c238dc1360549b"
+  },
+  {
+    "path": "src/registry/query.js",
+    "sha256": "aafd1de22534ef2cbbfee2095a2f731175563483ee4cda2b654b9cfa9f38cbbe"
+  },
+  {
+    "path": "src/registry/registry.js",
+    "sha256": "d19593446fa9a2cf449c4ebb513814bb6d2cc44ccc12affe66b8d169d0614f20"
+  },
+  {
+    "path": "src/registry/snapshot.js",
+    "sha256": "f55d7beec32dc7b34075b135895dee544fe024ad9ad07c0b9063710381daa80c"
+  },
+  {
+    "path": "src/runtime/adapter.js",
+    "sha256": "a1a89a112e9d80f96ea526d3a17f0de558c20db2ff18bd92672fda9a77e281dd"
+  },
+  {
+    "path": "src/sdk/chord.js",
+    "sha256": "1c3a22dac261f7d3850f45c8d2d98a7464d85a8af4eb062e9ec71f539681b997"
+  },
+  {
+    "path": "src/sdk/index.js",
+    "sha256": "7519ffb9268de97cb698a4bd4fc4ad41d0c603b6e54e58bef1128d3ce69cb1a7"
+  },
+  {
+    "path": "src/types/index.js",
+    "sha256": "c94b1e196b1691179af82befe97f3b9788d9763a4a1ad200ca501c562bfaa998"
+  },
+  {
+    "path": "src/utils/clone.js",
+    "sha256": "6c0715a8a9890575d1b7161781fcd8431330b186aea13b67bdab0c485a9c5ae0"
+  },
+  {
+    "path": "src/utils/id.js",
+    "sha256": "6879bb850f66317459a9d91724c297fb9e06ed1e6f130f3786a750c06674d9da"
+  },
+  {
+    "path": "src/verify-runtime.js",
+    "sha256": "8c13f754e792d58454b7cc0ddad0fc5ffeb5e1dbf55c0236b446c932777fb81c"
+  },
+  {
+    "path": "tests/README.md",
+    "sha256": "7c3b483fa3a650339bb770caf26003cd73e15dcadecf9bb5394dd7f029829ae7"
+  },
+  {
+    "path": "tests/admission-integrity.test.js",
+    "sha256": "902e683c051b063d8dabcf0b5057defebff460fcde18bb7905dfba3fbd59f4de"
+  },
+  {
+    "path": "tests/adversarial.test.js",
+    "sha256": "365db37c05b0c9744d12a81c8cc2dc4f972da06efa50114168cb50e5724e4185"
+  },
+  {
+    "path": "tests/architecture-integrity.test.js",
+    "sha256": "0afe56ae28aacc1b0160b191537c53f19b8a36df70fc014b37707abd1b70975c"
+  },
+  {
+    "path": "tests/authorization.test.js",
+    "sha256": "1fa051981b1bfc19bc0c2d70db5c7e322558d246fe9fa93241bd616c01ad29d5"
+  },
+  {
+    "path": "tests/canonical-example.test.js",
+    "sha256": "361ac9babed2ddb74432f31bb190b97f0e30ea4f272f9f8768e1f7d849d89276"
+  },
+  {
+    "path": "tests/continuity.test.js",
+    "sha256": "f2c0f1c3121f84f2c261a4f588ef3c82705d374cf15ccfcc0fc5616ab9c51666"
+  },
+  {
+    "path": "tests/contracts.test.js",
+    "sha256": "9cbd0c00d86973cbd905ee458e2c2f89442875d6b0b3604ceb48504f59ac1a36"
+  },
+  {
+    "path": "tests/fault-injection.test.js",
+    "sha256": "43088cfef13b36782716629e857d171396b4b9474f0cc140d5bd9ba03f4e1816"
+  },
+  {
+    "path": "tests/fixtures/host.js",
+    "sha256": "96ceead99aebea96981a3dcd497ecd980c60b91088cf7f7c3816fd8f2d9c34eb"
+  },
+  {
+    "path": "tests/hardening.test.js",
+    "sha256": "0bd74e9fa19119c17c48b6dac00c3154188eee74dcb75ef1c91ed123b17de1f2"
+  },
+  {
+    "path": "tests/integrity.test.js",
+    "sha256": "7f1a2b28e09ef4f8adc1e9367a265c75df57c4ce6ae342b5d7690172c3801f82"
+  },
+  {
+    "path": "tests/lifecycle-integrity.test.js",
+    "sha256": "2ba56c6906068dd4f10953a14b3d3da26485d8d66ff30f95bfdddeaa51b69d50"
+  },
+  {
+    "path": "tests/recovery-integrity.test.js",
+    "sha256": "0ea6b430d558d0dce3e50f84cfefbc7add0e9814a0f5fab70a72f3a16a9e1fc9"
+  },
+  {
+    "path": "tests/replay-integrity.test.js",
+    "sha256": "a9c0ce03c09022bdab4751aea30bc2cdcbd19db4a755ae6b7dd2dcbbe51d99b7"
+  },
+  {
+    "path": "tests/transitions.test.js",
+    "sha256": "05d348a1ee3735a54049c0ade3e64be30ad5a811d4ae33502290d51ab2159016"
+  }
+]

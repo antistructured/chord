@@ -1,8 +1,10 @@
 import { stableId } from "../utils/id.js";
-import { assertTaskPacket, assertExecutionResult, assertAdapter } from "../contracts/sigils.js";
+import { assertTaskPacket, assertExecutionResult, assertAdapter, assertSpec, AdapterResult, SCHEMA_VERSION, contractError } from "../contracts/sigils.js";
 
 export function createIntentTaskPacket(spec, options = {}) {
+  spec = assertSpec(spec);
   const packet = {
+    schema_version: SCHEMA_VERSION,
     task_id: stableId("task"),
     task_kind: "intent_execution",
     source_type: "IntentSpec",
@@ -29,8 +31,10 @@ export function createIntentTaskPacket(spec, options = {}) {
 }
 
 export function createHandoffTaskPackets(spec) {
+  spec = assertSpec(spec);
   const tos = Array.isArray(spec.to) ? spec.to : [spec.to].filter(Boolean);
   return tos.map(to => assertTaskPacket({
+    schema_version: SCHEMA_VERSION,
     task_id: stableId("task"),
     task_kind: "handoff_review",
     source_type: "HandoffSpec",
@@ -53,21 +57,36 @@ export function createHandoffTaskPackets(spec) {
   }));
 }
 
+// Resolve all host-executable properties and validate/freeze the packet before
+// a runtime claim is published. Invocation performs no later property lookup.
+export function prepareTaskExecution(adapter, packet, context = {}) {
+  const execute = adapter?.execute;
+  if (typeof execute !== "function") throw contractError("INVALID_SHAPE");
+  packet = deepFreeze(assertTaskPacket(packet));
+  const frozenContext = Object.freeze({ ...context });
+  return async () => {
+    let raw;
+    try { raw = await Reflect.apply(execute, adapter, [packet, frozenContext]); }
+    catch { throw contractError("ADAPTER_ERROR"); }
+    return assertExecutionResult(normalizeExecutionResult(packet, raw));
+  };
+}
 export async function executeTask(adapter, packet, context = {}) {
-  assertAdapter(adapter);
-  assertTaskPacket(packet);
-  const raw = await adapter.execute(packet, context);
-  return assertExecutionResult(normalizeExecutionResult(packet, raw));
+  return prepareTaskExecution(adapter, packet, context)();
+}
+
+function deepFreeze(value) {
+  if (value && typeof value === "object" && !Object.isFrozen(value)) {
+    Object.freeze(value);
+    for (const key of Reflect.ownKeys(value)) deepFreeze(value[key]);
+  }
+  return value;
 }
 
 export function normalizeExecutionResult(packet, value) {
-  return {
-    task_id: packet.task_id,
-    status: value?.status || "completed",
-    outcome: value?.outcome || "succeeded",
-    summary: value?.summary || `executed ${packet.task_id}`,
-    outputs: value?.outputs || {},
-    artifact: value?.artifact,
-    domain: value?.domain
-  };
+  let raw;
+  try { raw = AdapterResult.assert(value); }
+  catch { throw contractError("INVALID_RESULT"); }
+  if (raw.task_id !== undefined && raw.task_id !== packet.task_id) throw contractError("INVALID_RESULT");
+  return assertExecutionResult({ ...raw, task_id: packet.task_id });
 }

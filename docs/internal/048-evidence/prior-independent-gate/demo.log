@@ -1,0 +1,561 @@
+$ bun run src/demo/callaback-demo.js
+
+  === VIA DEMO (Chord-powered) ===
+
+task_packets: 1
+
+📤 SMS → User:
+Hey — sorry we missed your call. What happened?
+
+📥 User:
+I was in a car accident
+
+📤 SMS → User:
+Got it. When did it happen?
+
+📥 User:
+Yesterday
+
+📤 SMS → User:
+Were you injured?
+
+📥 User:
+Yes, my neck hurts
+
+🧠 Classification:
+{
+  "type": "personal_injury",
+  "urgency": "high",
+  "qualified": true
+}
+
+🚨 Notification to Firm:
+🔥 New potential case: Car accident, injury reported, happened yesterday. CALL NOW.
+
+📊 Audit:
+{
+  "audit_type": "chord.audit",
+  "audit_version": "0.3.0",
+  "created_at": "2026-10-21T05:17:04.076Z",
+  "counts": {
+    "artifacts": 0,
+    "domains": 0,
+    "tasks": 1,
+    "queued": 1,
+    "events": 7
+  },
+  "artifacts": [],
+  "domains": [],
+  "tasks": [
+    {
+      "schema_version": "chord.contracts.v1",
+      "task_id": "task_1792559824069_o7nyhddd",
+      "task_kind": "intent_execution",
+      "source_type": "IntentSpec",
+      "source_spec_id": null,
+      "project": "Via",
+      "phase": "demo-flow",
+      "target_entity": "default",
+      "role": "implementer",
+      "stance": "strict",
+      "requested_action": [
+        "send SMS within 5 seconds",
+        "ask what happened",
+        "ask when it happened",
+        "ask if the caller is injured"
+      ],
+      "inputs": {
+        "spec": {
+          "schema_version": "chord.contracts.v1",
+          "project": "Via",
+          "phase": "demo-flow",
+          "version": "spec:0.2.1",
+          "goal": "recover a missed call and qualify the lead",
+          "role": "implementer",
+          "stance": "strict",
+          "files": [
+            "lead/session.json"
+          ],
+          "do": [
+            "send SMS within 5 seconds",
+            "ask what happened",
+            "ask when it happened",
+            "ask if the caller is injured"
+          ],
+          "dont": [
+            "do not delay response"
+          ],
+          "verify": [
+            "at least 2 qualification signals captured"
+          ],
+          "stop": [
+            "one lead classified"
+          ],
+          "spec_type": "IntentSpec"
+        },
+        "files": [
+          "lead/session.json"
+        ],
+        "verify": [
+          "at least 2 qualification signals captured"
+        ],
+        "stop": [
+          "one lead classified"
+        ]
+      },
+      "constraints": {
+        "dont": [
+          "do not delay response"
+        ],
+        "rules": [],
+        "depends": []
+      },
+      "authority_binding": {
+        "principal_id": "host-principal",
+        "actor_id": "worker-actor",
+        "capability": "execute",
+        "scope": {
+          "run_id": "run_1792559824049_b3g1oq2p",
+          "project": "Via",
+          "phase": "demo-flow",
+          "task_id": "task_1792559824069_o7nyhddd",
+          "target_entity": "default",
+          "resource": {
+            "kind": "task",
+            "id": "task_1792559824069_o7nyhddd"
+          }
+        },
+        "approval_required": false
+      },
+      "status": "queued",
+      "created_at": 1792559824072,
+      "retry_count": 0,
+      "operation_id": "operation_1792559824072_s8nikf4p"
+    }
+  ],
+  "queue": [
+    {
+      "queue_id": "queue_1792559824072_abhg30mo",
+      "task_id": "task_1792559824069_o7nyhddd",
+      "target_entity": "default",
+      "status": "queued",
+      "priority": 0,
+      "available_at": 1792559824070,
+      "lease_expires_at": null,
+      "max_attempts": 3,
+      "retry_count": 0,
+      "last_error": null
+    }
+  ],
+  "replay": [
+    {
+      "sequence": 1,
+      "event_id": "evt_1792559824058_td376vdp",
+      "type": "state_initialized",
+      "at": 1792559824058,
+      "payload": {
+        "history_version": "chord.history.v1",
+        "sequence": 0,
+        "state": {
+          "run": {
+            "run_id": "run_1792559824049_b3g1oq2p",
+            "schema_version": "chord.contracts.v1",
+            "revision": 0,
+            "state": "created",
+            "causation_id": null,
+            "correlation_id": null
+          },
+          "artifacts": {},
+          "domains": {},
+          "tasks": {},
+          "task_queue": [],
+          "execution_results": [],
+          "trigger_state": {},
+          "specs": [],
+          "authority": null,
+          "pending_attempts": {},
+          "active_attempts": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "event_id": "evt_1792559824062_j8dx1kmt",
+      "type": "authority_snapshot_set",
+      "at": 1792559824062,
+      "payload": {
+        "authority_revision": 0
+      }
+    },
+    {
+      "sequence": 3,
+      "event_id": "evt_1792559824063_j426k7mn",
+      "type": "state_committed",
+      "at": 1792559824063,
+      "payload": {
+        "history_version": "chord.history.v1",
+        "operation": "authority_snapshot",
+        "sequence": 1,
+        "previous_commit_id": "evt_1792559824058_td376vdp",
+        "previous_revision": 0,
+        "changes": [
+          {
+            "path": [
+              "run",
+              "revision"
+            ],
+            "before": {
+              "exists": true,
+              "value": 0
+            },
+            "after": {
+              "exists": true,
+              "value": 1
+            }
+          },
+          {
+            "path": [
+              "authority"
+            ],
+            "before": {
+              "exists": true,
+              "value": null
+            },
+            "after": {
+              "exists": true,
+              "value": {
+                "schema_version": "chord.contracts.v1",
+                "run_id": "run_1792559824049_b3g1oq2p",
+                "authority_revision": 0,
+                "principals": [
+                  {
+                    "principal_id": "host-principal",
+                    "issuer": "demo-host",
+                    "kind": "service",
+                    "authenticated_at": 0,
+                    "expires_at": 9007199254740991
+                  }
+                ],
+                "actors": [
+                  {
+                    "actor_id": "worker-actor",
+                    "principal_id": "host-principal",
+                    "kind": "service",
+                    "roles": [],
+                    "capabilities": [
+                      "execute"
+                    ],
+                    "revoked_at": null
+                  }
+                ],
+                "grants": [],
+                "approvals": []
+              }
+            }
+          }
+        ],
+        "diagnostic_ids": [
+          "evt_1792559824062_j8dx1kmt"
+        ]
+      }
+    },
+    {
+      "sequence": 4,
+      "event_id": "evt_1792559824069_6giic1xw",
+      "type": "spec_registered",
+      "at": 1792559824069,
+      "payload": {
+        "spec_type": "IntentSpec",
+        "project": "Via",
+        "phase": "demo-flow"
+      }
+    },
+    {
+      "sequence": 5,
+      "event_id": "evt_1792559824070_owwq2lg3",
+      "type": "grants_installed",
+      "at": 1792559824070,
+      "payload": {
+        "count": 1
+      }
+    },
+    {
+      "sequence": 6,
+      "event_id": "evt_1792559824072_yrmcn7sy",
+      "type": "task_enqueued",
+      "at": 1792559824072,
+      "payload": {
+        "task_id": "task_1792559824069_o7nyhddd",
+        "target_entity": "default"
+      }
+    },
+    {
+      "sequence": 7,
+      "event_id": "evt_1792559824072_ae6hcjb0",
+      "type": "state_committed",
+      "at": 1792559824072,
+      "payload": {
+        "history_version": "chord.history.v1",
+        "operation": "admit_spec",
+        "sequence": 2,
+        "previous_commit_id": "evt_1792559824063_j426k7mn",
+        "previous_revision": 1,
+        "changes": [
+          {
+            "path": [
+              "run",
+              "revision"
+            ],
+            "before": {
+              "exists": true,
+              "value": 1
+            },
+            "after": {
+              "exists": true,
+              "value": 2
+            }
+          },
+          {
+            "path": [
+              "tasks",
+              "task_1792559824069_o7nyhddd"
+            ],
+            "before": {
+              "exists": false
+            },
+            "after": {
+              "exists": true,
+              "value": {
+                "schema_version": "chord.contracts.v1",
+                "task_id": "task_1792559824069_o7nyhddd",
+                "task_kind": "intent_execution",
+                "source_type": "IntentSpec",
+                "source_spec_id": null,
+                "project": "Via",
+                "phase": "demo-flow",
+                "target_entity": "default",
+                "role": "implementer",
+                "stance": "strict",
+                "requested_action": [
+                  "send SMS within 5 seconds",
+                  "ask what happened",
+                  "ask when it happened",
+                  "ask if the caller is injured"
+                ],
+                "inputs": {
+                  "spec": {
+                    "schema_version": "chord.contracts.v1",
+                    "project": "Via",
+                    "phase": "demo-flow",
+                    "version": "spec:0.2.1",
+                    "goal": "recover a missed call and qualify the lead",
+                    "role": "implementer",
+                    "stance": "strict",
+                    "files": [
+                      "lead/session.json"
+                    ],
+                    "do": [
+                      "send SMS within 5 seconds",
+                      "ask what happened",
+                      "ask when it happened",
+                      "ask if the caller is injured"
+                    ],
+                    "dont": [
+                      "do not delay response"
+                    ],
+                    "verify": [
+                      "at least 2 qualification signals captured"
+                    ],
+                    "stop": [
+                      "one lead classified"
+                    ],
+                    "spec_type": "IntentSpec"
+                  },
+                  "files": [
+                    "lead/session.json"
+                  ],
+                  "verify": [
+                    "at least 2 qualification signals captured"
+                  ],
+                  "stop": [
+                    "one lead classified"
+                  ]
+                },
+                "constraints": {
+                  "dont": [
+                    "do not delay response"
+                  ],
+                  "rules": [],
+                  "depends": []
+                },
+                "authority_binding": {
+                  "principal_id": "host-principal",
+                  "actor_id": "worker-actor",
+                  "capability": "execute",
+                  "scope": {
+                    "run_id": "run_1792559824049_b3g1oq2p",
+                    "project": "Via",
+                    "phase": "demo-flow",
+                    "task_id": "task_1792559824069_o7nyhddd",
+                    "target_entity": "default",
+                    "resource": {
+                      "kind": "task",
+                      "id": "task_1792559824069_o7nyhddd"
+                    }
+                  },
+                  "approval_required": false
+                },
+                "status": "queued",
+                "created_at": 1792559824072,
+                "retry_count": 0,
+                "operation_id": "operation_1792559824072_s8nikf4p"
+              }
+            }
+          },
+          {
+            "path": [
+              "task_queue",
+              "0"
+            ],
+            "before": {
+              "exists": false
+            },
+            "after": {
+              "exists": true,
+              "value": {
+                "queue_id": "queue_1792559824072_abhg30mo",
+                "task_id": "task_1792559824069_o7nyhddd",
+                "target_entity": "default",
+                "status": "queued",
+                "priority": 0,
+                "available_at": 1792559824070,
+                "lease_expires_at": null,
+                "max_attempts": 3,
+                "retry_count": 0,
+                "last_error": null
+              }
+            }
+          },
+          {
+            "path": [
+              "specs",
+              "0"
+            ],
+            "before": {
+              "exists": false
+            },
+            "after": {
+              "exists": true,
+              "value": {
+                "schema_version": "chord.contracts.v1",
+                "project": "Via",
+                "phase": "demo-flow",
+                "version": "spec:0.2.1",
+                "goal": "recover a missed call and qualify the lead",
+                "role": "implementer",
+                "stance": "strict",
+                "files": [
+                  "lead/session.json"
+                ],
+                "do": [
+                  "send SMS within 5 seconds",
+                  "ask what happened",
+                  "ask when it happened",
+                  "ask if the caller is injured"
+                ],
+                "dont": [
+                  "do not delay response"
+                ],
+                "verify": [
+                  "at least 2 qualification signals captured"
+                ],
+                "stop": [
+                  "one lead classified"
+                ],
+                "spec_type": "IntentSpec"
+              }
+            }
+          },
+          {
+            "path": [
+              "authority",
+              "authority_revision"
+            ],
+            "before": {
+              "exists": true,
+              "value": 0
+            },
+            "after": {
+              "exists": true,
+              "value": 1
+            }
+          },
+          {
+            "path": [
+              "authority",
+              "grants",
+              "0"
+            ],
+            "before": {
+              "exists": false
+            },
+            "after": {
+              "exists": true,
+              "value": {
+                "grant_id": "grant_task_1792559824069_o7nyhddd",
+                "principal_id": "host-principal",
+                "actor_id": "worker-actor",
+                "capability": "execute",
+                "effect": "allow",
+                "scope": {
+                  "run_id": "run_1792559824049_b3g1oq2p",
+                  "project": "Via",
+                  "phase": "demo-flow",
+                  "task_id": "task_1792559824069_o7nyhddd",
+                  "target_entity": "default",
+                  "resource": {
+                    "kind": "task",
+                    "id": "task_1792559824069_o7nyhddd"
+                  }
+                },
+                "issued_at": 0,
+                "expires_at": 9007199254740991,
+                "revoked_at": null,
+                "requires_approval": false
+              }
+            }
+          },
+          {
+            "path": [
+              "operations"
+            ],
+            "before": {
+              "exists": false
+            },
+            "after": {
+              "exists": true,
+              "value": {
+                "operation_1792559824072_s8nikf4p": {
+                  "operation_id": "operation_1792559824072_s8nikf4p",
+                  "signature": "{\"constraints\":{\"depends\":[],\"dont\":[\"do not delay response\"],\"rules\":[]},\"inputs\":{\"files\":[\"lead/session.json\"],\"spec\":{\"do\":[\"send SMS within 5 seconds\",\"ask what happened\",\"ask when it happened\",\"ask if the caller is injured\"],\"dont\":[\"do not delay response\"],\"files\":[\"lead/session.json\"],\"goal\":\"recover a missed call and qualify the lead\",\"phase\":\"demo-flow\",\"project\":\"Via\",\"role\":\"implementer\",\"schema_version\":\"chord.contracts.v1\",\"spec_type\":\"IntentSpec\",\"stance\":\"strict\",\"stop\":[\"one lead classified\"],\"verify\":[\"at least 2 qualification signals captured\"],\"version\":\"spec:0.2.1\"},\"stop\":[\"one lead classified\"],\"verify\":[\"at least 2 qualification signals captured\"]},\"phase\":\"demo-flow\",\"project\":\"Via\",\"requested_action\":[\"send SMS within 5 seconds\",\"ask what happened\",\"ask when it happened\",\"ask if the caller is injured\"],\"role\":\"implementer\",\"schema_version\":\"chord.contracts.v1\",\"source_type\":\"IntentSpec\",\"stance\":\"strict\",\"target_entity\":\"default\",\"task_kind\":\"intent_execution\"}",
+                  "task_id": "task_1792559824069_o7nyhddd",
+                  "state": "requested",
+                  "attempt_id": null,
+                  "reconciliation_id": null
+                }
+              }
+            }
+          }
+        ],
+        "diagnostic_ids": [
+          "evt_1792559824069_6giic1xw",
+          "evt_1792559824070_owwq2lg3",
+          "evt_1792559824072_yrmcn7sy"
+        ]
+      }
+    }
+  ]
+}
+
+=== DEMO COMPLETE ===
+

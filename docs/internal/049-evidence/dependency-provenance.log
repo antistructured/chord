@@ -1,0 +1,12 @@
+[
+  {
+    "name": "@weipertda/sigiljs",
+    "version": "0.18.0",
+    "license": "MIT",
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/antistructured/sigiljs.git"
+    },
+    "dist.integrity": "sha512-5m+SYlCrFmC9IJMPMINJbvB2KG38VMumBx02nyEceghcu476XIuUPHkCPUASmlBeHp3d2YapM9d2cRKt2p47sg=="
+  }
+]

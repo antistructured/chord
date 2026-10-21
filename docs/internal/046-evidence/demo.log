@@ -1,0 +1,193 @@
+
+  === VIA DEMO (Chord-powered) ===
+
+task_packets: 1
+
+📤 SMS → User:
+Hey — sorry we missed your call. What happened?
+
+📥 User:
+I was in a car accident
+
+📤 SMS → User:
+Got it. When did it happen?
+
+📥 User:
+Yesterday
+
+📤 SMS → User:
+Were you injured?
+
+📥 User:
+Yes, my neck hurts
+
+🧠 Classification:
+{
+  "type": "personal_injury",
+  "urgency": "high",
+  "qualified": true
+}
+
+🚨 Notification to Firm:
+🔥 New potential case: Car accident, injury reported, happened yesterday. CALL NOW.
+
+📊 Audit:
+{
+  "audit_type": "chord.audit",
+  "audit_version": "0.3.0",
+  "created_at": "2026-10-21T04:18:32.703Z",
+  "counts": {
+    "artifacts": 0,
+    "domains": 0,
+    "tasks": 1,
+    "queued": 1,
+    "events": 4
+  },
+  "artifacts": [],
+  "domains": [],
+  "tasks": [
+    {
+      "schema_version": "chord.contracts.v1",
+      "task_id": "task_1792556312700_elkb1pch",
+      "task_kind": "intent_execution",
+      "source_type": "IntentSpec",
+      "source_spec_id": null,
+      "project": "Via",
+      "phase": "demo-flow",
+      "target_entity": "default",
+      "role": "implementer",
+      "stance": "strict",
+      "requested_action": [
+        "send SMS within 5 seconds",
+        "ask what happened",
+        "ask when it happened",
+        "ask if the caller is injured"
+      ],
+      "inputs": {
+        "spec": {
+          "schema_version": "chord.contracts.v1",
+          "project": "Via",
+          "phase": "demo-flow",
+          "version": "spec:0.2.1",
+          "goal": "recover a missed call and qualify the lead",
+          "role": "implementer",
+          "stance": "strict",
+          "files": [
+            "lead/session.json"
+          ],
+          "do": [
+            "send SMS within 5 seconds",
+            "ask what happened",
+            "ask when it happened",
+            "ask if the caller is injured"
+          ],
+          "dont": [
+            "do not delay response"
+          ],
+          "verify": [
+            "at least 2 qualification signals captured"
+          ],
+          "stop": [
+            "one lead classified"
+          ],
+          "spec_type": "IntentSpec"
+        },
+        "files": [
+          "lead/session.json"
+        ],
+        "verify": [
+          "at least 2 qualification signals captured"
+        ],
+        "stop": [
+          "one lead classified"
+        ]
+      },
+      "constraints": {
+        "dont": [
+          "do not delay response"
+        ],
+        "rules": [],
+        "depends": []
+      },
+      "authority_binding": {
+        "principal_id": "host-principal",
+        "actor_id": "worker-actor",
+        "capability": "execute",
+        "scope": {
+          "run_id": "run_1792556312696_cvnhx2m8",
+          "project": "Via",
+          "phase": "demo-flow",
+          "task_id": "task_1792556312700_elkb1pch",
+          "target_entity": "default",
+          "resource": {
+            "kind": "task",
+            "id": "task_1792556312700_elkb1pch"
+          }
+        },
+        "approval_required": false
+      },
+      "status": "queued",
+      "created_at": 1792556312702,
+      "retry_count": 0
+    }
+  ],
+  "queue": [
+    {
+      "queue_id": "queue_1792556312703_yai45xy6",
+      "task_id": "task_1792556312700_elkb1pch",
+      "target_entity": "default",
+      "status": "queued",
+      "priority": 0,
+      "available_at": 1792556312701,
+      "lease_expires_at": null,
+      "max_attempts": 3,
+      "retry_count": 0,
+      "last_error": null
+    }
+  ],
+  "replay": [
+    {
+      "sequence": 1,
+      "event_id": "evt_1792556312698_vs3jbsmz",
+      "type": "authority_snapshot_set",
+      "at": 1792556312698,
+      "payload": {
+        "authority_revision": 0
+      }
+    },
+    {
+      "sequence": 2,
+      "event_id": "evt_1792556312700_p6nrlyn4",
+      "type": "spec_registered",
+      "at": 1792556312700,
+      "payload": {
+        "spec_type": "IntentSpec",
+        "project": "Via",
+        "phase": "demo-flow"
+      }
+    },
+    {
+      "sequence": 3,
+      "event_id": "evt_1792556312701_azm9frru",
+      "type": "grants_installed",
+      "at": 1792556312701,
+      "payload": {
+        "count": 1
+      }
+    },
+    {
+      "sequence": 4,
+      "event_id": "evt_1792556312703_eev56r5c",
+      "type": "task_enqueued",
+      "at": 1792556312703,
+      "payload": {
+        "task_id": "task_1792556312700_elkb1pch",
+        "target_entity": "default"
+      }
+    }
+  ]
+}
+
+=== DEMO COMPLETE ===
+
+$ bun run src/demo/callaback-demo.js

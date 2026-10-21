@@ -1,0 +1,27 @@
+bun test v1.3.14 (0d9b296a)
+
+tests/replay-integrity.test.js:
+(pass) REPLAY: committed admission/dispatch/result projection equals original with zero effects [16.82ms]
+(pass) REPLAY: uncertainty, reconciliation, handoff, pause and cancellation are recorded [21.55ms]
+18 |   c.reconcileTask({ task_id: packets[0].task_id, principal_id: h.human_id, decision: 'still_unknown', evidence: { kind: 'operator_review', reference: 'review-1' }, expectedRevision: c.getRunRevision() });
+19 |   c.pauseForApproval(); c.cancelRun(); expect(projection(reduceTrace(c.inspectEvents()))).toEqual(projection(c.getRegistry()));
+20 | });
+21 | test('REPLAY: changed content/order, missing middle/tail, duplicate/mixed-run/version records reject', () => {
+22 |   const c = createChord(); const h = installHost(c); c.registerSpecAndQueue(intent, queueOptions(h)); const events = c.inspectEvents();
+23 |   const changed = structuredClone(events); changed.at(-1).payload.changed = true; expect(diffTraces(events, changed).equal).toBe(false);
+                                                                                                                                 ^
+error: expect(received).toBe(expected)
+
+Expected: false
+Received: true
+
+      at <anonymous> (/home/d/.hermes/cache/scratch/chord047-mutants-54zwfjdl/diff-content-ignored/tests/replay-integrity.test.js:23:125)
+(fail) REPLAY: changed content/order, missing middle/tail, duplicate/mixed-run/version records reject [2.35ms]
+(pass) REPLAY: dead-letter cancellation and imported running quarantine reconstruct [18.13ms]
+(pass) REPLAY: seeded operation sequences retain equivalence and stale-write rejection [271.16ms]
+(pass) REPLAY: unknown diagnostic type and incompatible version reject independently [0.75ms]
+
+ 5 pass
+ 1 fail
+ 103 expect() calls
+Ran 6 tests across 1 file. [362.00ms]

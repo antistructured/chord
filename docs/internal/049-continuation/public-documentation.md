@@ -1,0 +1,11 @@
+# Pass 4 — Public documentation and README
+
+Status: source documentation/example checks PASS; exact artifact checks follow.
+
+Root and package README rebuilt with consistent hero, mission, capability limits, architecture, runnable governed draft example, canonical workflow, concepts, host responsibilities, non-guarantees, design principles, roadmap, development/contribution/license information. Root links use packages/core; package links are local. No registry availability or publication claim; quickstart installs named local tarball. Package name accepted by maintainer; npm authenticated control still unverified.
+
+Claim mapping: contracts -> src/contracts/sigils.js + contracts.test.js; authority -> platform/authorization.js + authorization.test.js; SDK data ownership/CAS -> sdk/chord.js, registry/owner.js + integrity/architecture-integrity tests; handoff/context -> platform/handoff.js + admission-integrity/continuity tests; lifecycle/reconciliation -> approval-flow.js/reconciliation.js + lifecycle/recovery-integrity tests; pure reconstruction -> trace-reducer.js/history.js + replay-integrity/fault-injection tests. Canonical two-actor/approval/restore/replay proof -> examples/cross-actor-workflow.mjs + canonical-example.test.js. The handoff interface is host administration, not independently authenticated actor RPC. Projections filter grants, not arbitrary secret content. No universal redaction claim.
+
+Source verified: bun install --frozen-lockfile exit 0/no changes; bun test and npm test each 160 pass/0 fail/1371 assertions; runtime verifier PASS; quickstart Node/Bun each adapterCalls 1; canonical workflow Node/Bun each protected effect 1, negative effects 0, approval consumed, snapshot restored, replay verified. Logs and exits in continuation/commands.json and matching .log files. Node v24.18.1, Bun 1.3.14, npm 12.0.2. No lint script available.
+
+Inspected: source SDK, policy evaluator, handoff, owner, reducer, root/platform barrels, canonical test, INTEGRITY and prior claims; complete test output executed. Changed: root README, package README, new examples/quickstart.mjs, CHANGELOG.md, this report and command evidence. Root/package prose matches apart from relative links. No kernel logic changed. Exact installed-consumer validation remains required. Next pass READY.

@@ -1,0 +1,19 @@
+bun test v1.3.14 (0d9b296a)
+
+journal.test.mjs:
+{"mode":"same-run-unsupported","rejection":"INVALID_HISTORY","unchanged":true,"replay_intact":true,"next_valid_commit":true}
+(pass) same-run-unsupported caller-appended journal rejects atomically and preserves complete replay [6.07ms]
+{"mode":"foreign-run","rejection":"INVALID_SEMANTICS","unchanged":true,"replay_intact":true,"next_valid_commit":true}
+(pass) foreign-run caller-appended journal rejects atomically and preserves complete replay [1.78ms]
+
+public.test.mjs:
+(pass) human exact-attempt approval; missing, service and wrong-attempt fail with zero effects [24.71ms]
+(pass) all common SDK read views detached; no-grant identity sees no tasks [5.34ms]
+(pass) same-revision CAS has one winner; rejected batch is byte-for-byte atomic [6.58ms]
+(pass) in-flight result loses to cancellation without changing terminal task or repeating effect [11.41ms]
+(pass) unknown effect quarantined across ID churn and restore; human evidence required before readmission [12.82ms]
+(pass) pure complete modern projection; malformed, missing-middle, tail and legacy reject; content diff detects edits [13.50ms]
+
+ 8 pass
+ 0 fail
+Ran 8 tests across 2 files. [128.00ms]

@@ -1,0 +1,40 @@
+bun test v1.3.14 (0d9b296a)
+
+tests/admission-integrity.test.js:
+2 | import { createChord } from '../src/index.js';
+3 | import { installHost, queueOptions } from './fixtures/host.js';
+4 | const intent = { schema_version: 'chord.contracts.v1', spec_type: 'IntentSpec', project: 'admission', phase: 'verify', do: ['mock'] };
+5 | test('READ: grantless/expired/revoked/denied projections disclose no tasks or queue', () => {
+6 |   const c = createChord(); const h = installHost(c); c.registerSpecAndQueue(intent, queueOptions(h));
+7 |   const none = c.projectContext({ actor_id: 'absent', principal_id: 'absent' }); expect(none.tasks).toEqual([]); expect(none.queue_summary).toEqual([]);
+                                                                                                        ^
+error: expect(received).toEqual(expected)
+
+- []
++ [
++   {
++     "created_at": 1792557869364,
++     "phase": "verify",
++     "project": "admission",
++     "queue_id": "queue_1792557869364_6y7uq0h6",
++     "retry_count": 0,
++     "status": "queued",
++     "target_entity": "default",
++     "task_id": "task_1792557869363_88v9b112",
++     "task_revision": 0,
++   },
++ ]
+
+- Expected  - 1
++ Received  + 13
+
+      at <anonymous> (/home/d/Workspace/other-projects/chord-v0.3.0/packages/core/tests/admission-integrity.test.js:7:101)
+(fail) READ: grantless/expired/revoked/denied projections disclose no tasks or queue [6.79ms]
+(pass) READ: authorized projection detached including nested scope, bounded to permitted tasks [2.48ms]
+(pass) ADMIT: grant issuance cannot survive a later batch denial [0.90ms]
+(pass) ADMIT: invalid queue fields and reentrant callback cannot partially commit [1.04ms]
+
+ 3 pass
+ 1 fail
+ 9 expect() calls
+Ran 4 tests across 1 file. [46.00ms]

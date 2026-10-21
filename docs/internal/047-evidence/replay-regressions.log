@@ -1,0 +1,377 @@
+bun test v1.3.14 (0d9b296a)
+
+tests/canonical-example.test.js:
+21 |     a.task_id === b.task_id && a.target_entity === b.target_entity &&
+22 |     a.resource.kind === b.resource.kind && a.resource.id === b.resource.id;
+23 | }
+24 | 
+25 | export function authorityError(code) {
+26 |   const error = new TypeError(String(code));
+                         ^
+TypeError: PRINCIPAL_INVALID
+ path: "$",
+ code: "PRINCIPAL_INVALID"
+
+      at authorityError (/home/d/Workspace/other-projects/chord-v0.3.0/packages/core/src/platform/authorization.js:26:21)
+      at <anonymous> (/home/d/Workspace/other-projects/chord-v0.3.0/packages/core/src/sdk/chord.js:297:25)
+      at <anonymous> (/home/d/Workspace/other-projects/chord-v0.3.0/packages/core/src/sdk/chord.js:29:20)
+      at transact (/home/d/Workspace/other-projects/chord-v0.3.0/packages/core/src/registry/owner.js:29:22)
+      at mutate (/home/d/Workspace/other-projects/chord-v0.3.0/packages/core/src/sdk/chord.js:26:26)
+      at <anonymous> (/home/d/Workspace/other-projects/chord-v0.3.0/packages/core/tests/canonical-example.test.js:66:8)
+(fail) Block 5 canonical workflow > cross-session workflow with approval and replay [21.80ms]
+
+tests/admission-integrity.test.js:
+(pass) READ: grantless/expired/revoked/denied projections disclose no tasks or queue [2.93ms]
+(pass) READ: authorized projection detached including nested scope, bounded to permitted tasks [2.00ms]
+(pass) ADMIT: grant issuance cannot survive a later batch denial [0.87ms]
+(pass) ADMIT: invalid queue fields and reentrant callback cannot partially commit [1.16ms]
+
+tests/replay-integrity.test.js:
+(pass) REPLAY: committed admission/dispatch/result projection equals original with zero effects [14.12ms]
+(pass) REPLAY: uncertainty, reconciliation, handoff, pause and cancellation are recorded [26.59ms]
+(pass) REPLAY: changed content/order, missing middle/tail, duplicate/mixed-run/version records reject [4.15ms]
+
+tests/hardening.test.js:
+(pass) Chord Core Hardening > TARGET 1 & 3: CoordSpec Parsing & Normalization [0.78ms]
+(pass) Chord Core Hardening > TARGET 2: Dead-Letter Consistency (pre-dispatch exhaustion and fresh-admission replay) [7.08ms]
+(pass) Chord Core Hardening > TARGET 4: Contract Enforcement [0.38ms]
+(pass) Chord Core Hardening > TARGET 5: Deterministic Dequeue [2.64ms]
+
+tests/continuity.test.js:
+(pass) Block 3 continuity: concurrency and interruption > stale expectedRevision rejected on cancelRun [1.59ms]
+(pass) Block 3 continuity: concurrency and interruption > pause/resume/cancel flow with CAS [4.44ms]
+(pass) Block 3 continuity: concurrency and interruption > cancelRun cancels tasks and clears attempts [2.34ms]
+(pass) Block 3 continuity: concurrency and interruption > approval rejection fails run [3.23ms]
+(pass) Block 3 continuity: concurrency and interruption > context projection filters and has provenance [1.73ms]
+(pass) Block 3 continuity: concurrency and interruption > handoff proposal/accept with CAS and causation/correlation [2.41ms]
+(pass) Block 3 continuity: concurrency and interruption > handoff reject and wrong actor [3.52ms]
+
+tests/contracts.test.js:
+(pass) real Sigil contracts > Run: valid clone and closed invalid shape [0.11ms]
+(pass) real Sigil contracts > Principal: valid clone and closed invalid shape [0.03ms]
+(pass) real Sigil contracts > Scope: valid clone and closed invalid shape [0.06ms]
+(pass) real Sigil contracts > Actor: valid clone and closed invalid shape [0.05ms]
+(pass) real Sigil contracts > Grant: valid clone and closed invalid shape [0.07ms]
+(pass) real Sigil contracts > Approval: valid clone and closed invalid shape [0.12ms]
+(pass) real Sigil contracts > AuthoritySnapshot: valid clone and closed invalid shape [0.21ms]
+(pass) real Sigil contracts > Attempt: valid clone and closed invalid shape [0.05ms]
+(pass) real Sigil contracts > TaskAuthority: valid clone and closed invalid shape [0.02ms]
+(pass) real Sigil contracts > Decision: valid clone and closed invalid shape [0.05ms]
+(pass) real Sigil contracts > ErrorContract: valid clone and closed invalid shape [0.03ms]
+(pass) real Sigil contracts > Intent: valid clone and closed invalid shape [0.03ms]
+(pass) real Sigil contracts > Coord: valid clone and closed invalid shape [0.04ms]
+(pass) real Sigil contracts > Handoff: valid clone and closed invalid shape [0.05ms]
+(pass) real Sigil contracts > TaskPacket: valid clone and closed invalid shape [0.09ms]
+(pass) real Sigil contracts > ExecutionResult: valid clone and closed invalid shape [0.03ms]
+(pass) real Sigil contracts > AdapterResult: valid clone and closed invalid shape [0.02ms]
+(pass) real Sigil contracts > Outcome: valid clone and closed invalid shape [0.03ms]
+(pass) real Sigil contracts > RuntimePolicy: valid clone and closed invalid shape [0.02ms]
+(pass) real Sigil contracts > RuntimePolicyInput: valid clone and closed invalid shape [0.02ms]
+(pass) real Sigil contracts > RegistryData: valid clone and closed invalid shape [0.05ms]
+(pass) real Sigil contracts > Snapshot: valid clone and closed invalid shape [0.09ms]
+(pass) real Sigil contracts > Sigil inherited-field caveat is blocked before checking [0.13ms]
+(pass) real Sigil contracts > plain own-data rejects accessors without evaluating them [0.12ms]
+(pass) real Sigil contracts > dangerous values and keys are rejected recursively [0.18ms]
+(pass) real Sigil contracts > depth, array, string, byte and node limits [7.93ms]
+(pass) real Sigil contracts > identifier, enum, numeric, duplicate and nested exactness semantics [0.45ms]
+(pass) real Sigil contracts > authority records and references do not manufacture valid approval [0.55ms]
+(pass) real Sigil contracts > decisions and errors are fixed, consistent, sanitized data [0.14ms]
+(pass) contract ingress and prerequisite result repairs > strict specs, real/literal newline parsing and no discarded unknown fields [0.58ms]
+(pass) contract ingress and prerequisite result repairs > policy validates before defaults and bounds after defaults [0.13ms]
+(pass) contract ingress and prerequisite result repairs > malformed raw outputs never normalize to success [0.15ms]
+(pass) contract ingress and prerequisite result repairs > correlated result ingestion requires a running attempt and clones input [0.30ms]
+(pass) contract ingress and prerequisite result repairs > runtime success, absent output noncompletion, provider error redaction [17.83ms]
+201 |   });
+202 |   test("snapshot validates version, counts, nested records, clones and reconciles in-flight import", () => {
+203 |     const registry = createRegistry(); registerTask(registry, packet, bindingFor(registry, packet)); enqueueTask(registry, packet);
+204 |     const snapshot = exportRegistry(registry);
+205 |     const copy = importRegistry(snapshot);
+206 |     expect(copy).toEqual(registry); expect(copy).not.toBe(snapshot.registry);
+                       ^
+error: expect(received).toEqual(expected)
+
+@@ -1,11 +1,119 @@
+  {
+    "active_attempts": {},
+    "artifacts": {},
+    "authority": null,
+    "domains": {},
+-   "event_journal": [],
++   "event_journal": [
++     {
++       "actor_id": null,
++       "at": 1792558155767,
++       "authority_revision": null,
++       "causation_id": null,
++       "correlation_id": null,
++       "event_id": "evt_1792558155767_22e7edgh",
++       "payload": {
++         "history_version": "chord.history.v1",
++         "sequence": 0,
++         "state": {
++           "active_attempts": {},
++           "artifacts": {},
++           "authority": null,
++           "domains": {},
++           "execution_results": [],
++           "pending_attempts": {},
++           "run": {
++             "causation_id": null,
++             "correlation_id": null,
++             "revision": 0,
++             "run_id": "run_1792558155767_3asx47vz",
++             "schema_version": "chord.contracts.v1",
++             "state": "created",
++           },
++           "specs": [],
++           "task_queue": [
++             {
++               "available_at": 1792558155767,
++               "last_error": null,
++               "lease_expires_at": null,
++               "max_attempts": 3,
++               "priority": 0,
++               "queue_id": "queue_1792558155767_fpw3egsx",
++               "retry_count": 0,
++               "status": "queued",
++               "target_entity": "agent1",
++               "task_id": "task_1792558155736_8xqk0v3a",
++             },
++           ],
++           "tasks": {
++             "task_1792558155736_8xqk0v3a": {
++               "authority_binding": {
++                 "actor_id": "worker-actor",
++                 "approval_required": false,
++                 "capability": "execute",
++                 "principal_id": "host-principal",
++                 "scope": {
++                   "phase": "phase",
++                   "project": "proj",
++                   "resource": {
++                     "id": "task_1792558155736_8xqk0v3a",
++                     "kind": "task",
++                   },
++                   "run_id": "run_1792558155767_3asx47vz",
++                   "target_entity": "agent1",
++                   "task_id": "task_1792558155736_8xqk0v3a",
++                 },
++               },
++               "constraints": {
++                 "depends": [],
++                 "dont": [],
++                 "rules": [],
++               },
++               "created_at": 1792558155767,
++               "inputs": {
++                 "files": [],
++                 "spec": {
++                   "do": [
++                     "build",
++                   ],
++                   "phase": "phase",
++                   "project": "proj",
++                   "schema_version": "chord.contracts.v1",
++                   "spec_type": "IntentSpec",
++                   "target_entity": "agent1",
++                 },
++                 "stop": [],
++                 "verify": [],
++               },
++               "phase": "phase",
++               "project": "proj",
++               "requested_action": [
++                 "build",
++               ],
++               "retry_count": 0,
++               "role": "implementer",
++               "schema_version": "chord.contracts.v1",
++               "source_spec_id": null,
++               "source_type": "IntentSpec",
++               "stance": "strict",
++               "status": "queued",
++               "target_entity": "agent1",
++               "task_id": "task_1792558155736_8xqk0v3a",
++               "task_kind": "intent_execution",
++             },
++           },
++           "trigger_state": {},
++         },
++       },
++       "policy_decision": null,
++       "principal_id": null,
++       "run_id": "run_1792558155767_3asx47vz",
++       "run_revision": 0,
++       "schema_version": "chord.contracts.v1",
++       "type": "state_initialized",
++     },
++   ],
+    "execution_results": [],
+    "pending_attempts": {},
+    "run": {
+      "causation_id": null,
+      "correlation_id": null,
+
+- Expected  - 1
++ Received  + 109
+
+      at <anonymous> (/home/d/Workspace/other-projects/chord-v0.3.0/packages/core/tests/contracts.test.js:206:18)
+(fail) contract ingress and prerequisite result repairs > snapshot validates version, counts, nested records, clones and reconciles in-flight import [0.75ms]
+
+tests/fault-injection.test.js:
+4 | import { applyChanges, sameData } from "./history.js";
+5 | import { canTaskTransition, canQueueTransition } from "./transitions.js";
+6 | 
+7 | // Reducer consumes committed facts only; no clocks, adapters or executables.
+8 | export function reduceTrace(events = [], initialState = null) {
+9 |   if (!Array.isArray(events) || !events.length || initialState !== null) throw authorityError("UNSUPPORTED_HISTORY");
+                                                                                                                       ^
+TypeError: UNSUPPORTED_HISTORY
+      at reduceTrace (/home/d/Workspace/other-projects/chord-v0.3.0/packages/core/src/platform/trace-reducer.js:9:116)
+      at replayNoSideEffects (/home/d/Workspace/other-projects/chord-v0.3.0/packages/core/src/platform/trace-reducer.js:57:33)
+      at <anonymous> (/home/d/Workspace/other-projects/chord-v0.3.0/packages/core/tests/fault-injection.test.js:8:17)
+(fail) Block 4 fault injection > replay with no events produces projected state [0.09ms]
+10 |     expect(res.effects_invoked).toBe(0);
+11 |   });
+12 | 
+13 |   test("duplicate event id rejected", () => {
+14 |     const ev = { event_id: "evt-1", type: "test", run_revision: 0 };
+15 |     expect(() => reduceTrace([ev, { ...ev }])).toThrow(/INVALID_SEMANTICS/);
+                                                    ^
+error: expect(received).toThrow(expected)
+
+Expected pattern: /INVALID_SEMANTICS/
+Received message: "INVALID_SHAPE"
+
+      at <anonymous> (/home/d/Workspace/other-projects/chord-v0.3.0/packages/core/tests/fault-injection.test.js:15:48)
+(fail) Block 4 fault injection > duplicate event id rejected [0.18ms]
+15 |     expect(() => reduceTrace([ev, { ...ev }])).toThrow(/INVALID_SEMANTICS/);
+16 |   });
+17 | 
+18 |   test("backwards revision rejected", () => {
+19 |     const events = [{ event_id: "e1", type: "t", run_revision: 2 }, { event_id: "e2", type: "t", run_revision: 1 }];
+20 |     expect(() => reduceTrace(events)).toThrow(/STALE_REVISION/);
+                                           ^
+error: expect(received).toThrow(expected)
+
+Expected pattern: /STALE_REVISION/
+Received message: "INVALID_SHAPE"
+
+      at <anonymous> (/home/d/Workspace/other-projects/chord-v0.3.0/packages/core/tests/fault-injection.test.js:20:39)
+(fail) Block 4 fault injection > backwards revision rejected [0.05ms]
+(pass) Block 4 fault injection > diff traces detects divergence [0.05ms]
+(pass) Block 4 fault injection > event journal includes extended fields [0.05ms]
+
+tests/authorization.test.js:
+(pass) pure authorization evaluator > admit allows permission regardless of approval requirement [0.25ms]
+(pass) pure authorization evaluator > dispatch without approval requirement allows and selects grants [0.12ms]
+(pass) pure authorization evaluator > determinism: identical inputs give identical decisions [0.22ms]
+(pass) pure authorization evaluator > fixed failure order, first failure wins [0.46ms]
+(pass) pure authorization evaluator > principal, actor and capability gates [0.26ms]
+(pass) pure authorization evaluator > roles confer nothing; scope must equal stored task fields [0.19ms]
+(pass) pure authorization evaluator > deny beats allow; missing allow denies; expiry boundary equality [0.29ms]
+(pass) pure authorization evaluator > approval rules: required, rejected, exact attempt, consumed [0.66ms]
+(pass) pure authorization evaluator > commit requires unexpired lease, surviving selected grants and consumed approval [0.70ms]
+(pass) trusted-host seam and runtime gate > missing authority denies admission before any mutation [1.09ms]
+(pass) trusted-host seam and runtime gate > unauthorized dispatch invokes zero adapters and leaves the task queued [3.09ms]
+(pass) trusted-host seam and runtime gate > authorized dispatch executes and records lease, attempt and consumption-free allow [3.66ms]
+(pass) trusted-host seam and runtime gate > authority snapshot revisions are monotonic and clock rollback fails closed [2.38ms]
+(pass) trusted-host seam and runtime gate > approval-required task never reaches the adapter without a human approval [11.82ms]
+(pass) trusted-host seam and runtime gate > authorityError produces fixed sanitized codes [0.08ms]
+
+tests/lifecycle-integrity.test.js:
+(pass) LIFECYCLE: paused dispatches zero effects [2.20ms]
+(pass) LIFECYCLE: failed dispatches zero effects [2.51ms]
+(pass) LIFECYCLE: cancelled dispatches zero effects [1.89ms]
+(pass) LIFECYCLE: completed dispatches zero effects [2.63ms]
+(pass) LIFECYCLE: resume requires an active host-authenticated human [4.93ms]
+(pass) LIFECYCLE: cancellation wins against late adapter result [4.15ms]
+
+tests/recovery-integrity.test.js:
+(pass) RECOVERY: uncertainty cannot replay or evade quarantine with a new task ID [3.96ms]
+(pass) RECOVERY: missing authority/evidence rejected unchanged [3.38ms]
+(pass) RECOVERY: still unknown stays quarantined [3.95ms]
+(pass) RECOVERY: confirmed completion is never executed again [3.82ms]
+(pass) RECOVERY: no-effect evidence enables explicit fresh authorized attempt [7.85ms]
+(pass) RECOVERY: competing/duplicate reconciliation cannot both commit [5.22ms]
+
+tests/transitions.test.js:
+(pass) transition graphs > task graph: every allowed edge commits, every forbidden edge rejects [0.25ms]
+(pass) transition graphs > task graph: terminal states and reconciliation-only exits [0.06ms]
+(pass) transition graphs > queue graph: every allowed edge commits, every forbidden edge rejects [0.17ms]
+(pass) transition graphs > artifact graph: prefix edges to terminal states only [0.19ms]
+(pass) transition graphs > domain guard: result-derived transitions only, complete terminal [0.10ms]
+(pass) transition graphs > markTaskUncertain clears attempts, bumps revision, skips terminal states [0.32ms]
+(pass) guarded runtime: ambiguity and commit guards > adapter throw after dispatch marks uncertain, never retries or dead-letters [3.66ms]
+(pass) guarded runtime: ambiguity and commit guards > invalid adapter result marks uncertain without committing anything [2.94ms]
+(pass) guarded runtime: ambiguity and commit guards > intervening revision bump during await makes the commit stale [4.93ms]
+(pass) guarded runtime: ambiguity and commit guards > authority replacement during await invalidates the in-flight attempt [4.89ms]
+(pass) guarded runtime: ambiguity and commit guards > expired lease at commit marks uncertain [3.20ms]
+(pass) guarded runtime: ambiguity and commit guards > successful run commits a correlated outcome and keeps export valid [4.35ms]
+(pass) guarded runtime: ambiguity and commit guards > blocked adapter result transitions to blocked and is not dead-lettered [3.30ms]
+(pass) guarded runtime: ambiguity and commit guards > direct ingestion on a non-running task is rejected [0.29ms]
+(pass) host reconciliation: cancel, replay, re-evaluation > cancelTask wins over an in-flight success and drops the late result [5.04ms]
+(pass) host reconciliation: cancel, replay, re-evaluation > cancelTask rejects terminal states, dead letters, and stale revisions [6.15ms]
+(pass) host reconciliation: cancel, replay, re-evaluation > uncertain task reconciles only through fresh-admission replay [12.37ms]
+(pass) host reconciliation: cancel, replay, re-evaluation > replay denial after revocation leaves the task untouched [4.23ms]
+(pass) host reconciliation: cancel, replay, re-evaluation > replayTask requires a replayable state [3.59ms]
+(pass) host reconciliation: cancel, replay, re-evaluation > blocked task exits only through explicit re-evaluation [8.02ms]
+(pass) artifact and domain derivation > spec registration declares artifacts but never changes their status [0.88ms]
+(pass) artifact and domain derivation > committed result derives artifact acceptance; terminal edge rejects [5.46ms]
+(pass) artifact and domain derivation > committed result derives domain completion; complete is terminal [5.42ms]
+(pass) artifact and domain derivation > rejected outcome rejects a declared artifact through the commit path [4.05ms]
+(pass) lease caps > per-entity and global lease caps defer dispatch before any effect [8.65ms]
+
+tests/integrity.test.js:
+(pass) STATE-01/02: installed owner and revision-exclusive commits [5.21ms]
+(pass) STATE-03/05: rejected compound candidate changes no collection or event [3.66ms]
+(pass) STATE-04: reads and retained inputs cannot change canonical state [2.44ms]
+(pass) STATE-03: reservation and corresponding evidence share a revision [2.06ms]
+
+tests/adversarial.test.js:
+(pass) pass 6 — authority boundary and identity forgery > request-authored authority fields, roles, and decisions confer nothing [0.49ms]
+(pass) pass 6 — authority boundary and identity forgery > role strings never substitute for capabilities [0.61ms]
+(pass) pass 6 — authority boundary and identity forgery > capability alone without a grant is denied [0.07ms]
+(pass) pass 6 — authority boundary and identity forgery > missing host authority denies every stage [0.21ms]
+(pass) pass 6 — authority boundary and identity forgery > cross-principal actor binding is rejected [0.17ms]
+(pass) pass 6 — authority boundary and identity forgery > evaluator decisions are sanitized fixed data, never transferable tokens [0.20ms]
+(pass) pass 6 — scope, version, and run isolation > exact scope mismatch across every field is denied [0.39ms]
+(pass) pass 6 — scope, version, and run isolation > scope with a valid id but wrong run is denied as scope mismatch [0.08ms]
+(pass) pass 6 — scope, version, and run isolation > version mismatch and foreign run reject before any grant evaluation [0.16ms]
+(pass) pass 6 — temporal and revocation boundaries > grant expiry uses issued_at <= now < expires_at at exact boundaries [0.34ms]
+(pass) pass 6 — temporal and revocation boundaries > principal and actor revocation disable access immediately [0.23ms]
+(pass) pass 6 — temporal and revocation boundaries > contract window invariants reject nonpositive windows [0.08ms]
+(pass) pass 6 — deny/allow ordering permutations > an active matching deny beats every allow regardless of array order [0.30ms]
+(pass) pass 6 — deny/allow ordering permutations > a non-matching deny does not block a matching allow [0.09ms]
+(pass) pass 6 — deny/allow ordering permutations > grant_ids are sorted deterministically independent of array order [0.16ms]
+(pass) pass 6 — deny/allow ordering permutations > decisions are deterministic for identical input bytes and time [0.15ms]
+(pass) pass 6 — approval misuse permutations > approval_required dispatch needs an exact, unconsumed, matching approval [0.59ms]
+(pass) pass 6 — approval misuse permutations > explicit rejection wins over a present approval and blocks dispatch [0.14ms]
+(pass) pass 6 — approval misuse permutations > self-approval is structurally impossible [0.11ms]
+(pass) pass 6 — approval misuse permutations > admit grants permission without approval; dispatch gates on it [0.12ms]
+(pass) pass 6 — approval misuse permutations > commit requires the dispatch-selected approval consumed by this attempt [0.30ms]
+(pass) pass 6 — approval misuse permutations > a newly added grant cannot retroactively authorize an attempt [0.09ms]
+(pass) pass 6 — runtime boundary enforcement > admission denial writes nothing and dispatch denial never leases [2.78ms]
+(pass) pass 6 — runtime boundary enforcement > batch admission is atomic: one denial registers no member [0.71ms]
+(pass) pass 6 — runtime boundary enforcement > duplicate admission and re-registration of an existing id reject [1.42ms]
+(pass) pass 6 — runtime boundary enforcement > concurrent revision losers and stale expectedRevision are rejected [2.82ms]
+(pass) pass 6 — runtime boundary enforcement > an in-flight commit loses to a concurrent same-revision mutation [4.63ms]
+(pass) pass 6 — runtime boundary enforcement > no registry or authority write handle leaks to adapters [2.87ms]
+(pass) pass 6 — runtime boundary enforcement > safery: adapter cannot fabricate correlation or a passing result [2.95ms]
+(pass) pass 6 — runtime boundary enforcement > malformed adapter results never normalize to success or dead-letter [15.33ms]
+(pass) pass 6 — approval gate end to end > approval-required task is denied at dispatch with zero adapter calls until approved [7.91ms]
+(pass) pass 6 — approval gate end to end > explicit host rejection blocks dispatch permanently [3.66ms]
+(pass) pass 6 — approval gate end to end > an approval for a different attempt does not authorize dispatch [3.33ms]
+(pass) pass 6 — contract hardening regression > prototype, cycle, and accessor payloads are rejected without evaluation [0.20ms]
+
+5 tests failed:
+(fail) Block 5 canonical workflow > cross-session workflow with approval and replay [21.80ms]
+(fail) contract ingress and prerequisite result repairs > snapshot validates version, counts, nested records, clones and reconciles in-flight import [0.75ms]
+(fail) Block 4 fault injection > replay with no events produces projected state [0.09ms]
+(fail) Block 4 fault injection > duplicate event id rejected [0.18ms]
+(fail) Block 4 fault injection > backwards revision rejected [0.05ms]
+
+ 144 pass
+ 5 fail
+ 1079 expect() calls
+Ran 149 tests across 13 files. [413.00ms]

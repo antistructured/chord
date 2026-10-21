@@ -1,0 +1,18 @@
+{
+  "version": "1.0.0",
+  "name": "independent-security-consumer",
+  "dependencies": {
+    "@weipertda/chord": {
+      "version": "0.4.0-preview.1",
+      "resolved": "file:/home/d/.hermes/cache/scratch/chord049-independent-security-1nvszb3z/weipertda-chord-0.4.0-preview.1.tgz",
+      "overridden": false,
+      "dependencies": {
+        "@weipertda/sigiljs": {
+          "version": "0.18.0",
+          "resolved": "https://registry.npmjs.org/@weipertda/sigiljs/-/sigiljs-0.18.0.tgz",
+          "overridden": false
+        }
+      }
+    }
+  }
+}

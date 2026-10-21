@@ -1,0 +1,25 @@
+bun test v1.3.14 (0d9b296a)
+
+tests/integrity.test.js:
+ 9 | }
+10 | test('STATE-01/02: installed owner and revision-exclusive commits', () => {
+11 |   const { c } = setup(); const revision = c.getRunRevision();
+12 |   const next = c.exportRegistry().registry; next.run.state = 'active'; next.run.revision++;
+13 |   expect(c.commitRun({ expectedRevision: revision, nextRegistry: next }).ok).toBe(true);
+14 |   expect(c.getRunState()).toBe('active'); expect(c.getRunRevision()).toBe(revision + 1);
+                               ^
+error: expect(received).toBe(expected)
+
+Expected: "active"
+Received: "created"
+
+      at <anonymous> (/home/d/.hermes/cache/scratch/chord047-mutants-54zwfjdl/owner-no-install/tests/integrity.test.js:14:27)
+(fail) STATE-01/02: installed owner and revision-exclusive commits [11.14ms]
+(pass) STATE-03/05: rejected compound candidate changes no collection or event [4.53ms]
+(pass) STATE-04: reads and retained inputs cannot change canonical state [4.10ms]
+(pass) STATE-03: reservation and corresponding evidence share a revision [2.87ms]
+
+ 3 pass
+ 1 fail
+ 10 expect() calls
+Ran 4 tests across 1 file. [53.00ms]

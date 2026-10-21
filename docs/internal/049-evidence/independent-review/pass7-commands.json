@@ -1,0 +1,100 @@
+[
+  {
+    "name": "core",
+    "command": [
+      "bun",
+      "test"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "exit": 0
+  },
+  {
+    "name": "probes",
+    "command": [
+      "node",
+      "--test",
+      "docs/internal/046-state-probes.mjs"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0",
+    "exit": 0
+  },
+  {
+    "name": "security",
+    "command": [
+      "bun",
+      "test",
+      "tests/authorization.test.js",
+      "tests/adversarial.test.js"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "exit": 0
+  },
+  {
+    "name": "continuity",
+    "command": [
+      "bun",
+      "test",
+      "tests/continuity.test.js"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "exit": 0
+  },
+  {
+    "name": "replay",
+    "command": [
+      "bun",
+      "test",
+      "tests/fault-injection.test.js",
+      "tests/replay-integrity.test.js"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "exit": 0
+  },
+  {
+    "name": "block6b",
+    "command": [
+      "bun",
+      "test",
+      "tests/integrity.test.js",
+      "tests/lifecycle-integrity.test.js",
+      "tests/admission-integrity.test.js",
+      "tests/recovery-integrity.test.js",
+      "tests/replay-integrity.test.js",
+      "tests/architecture-integrity.test.js"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "exit": 0
+  },
+  {
+    "name": "runtime",
+    "command": [
+      "bun",
+      "run",
+      "src/verify-runtime.js"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "exit": 0
+  },
+  {
+    "name": "old-consumer-node",
+    "command": [
+      "node",
+      "--test",
+      "gate.test.mjs",
+      "journal-rejection.test.mjs"
+    ],
+    "cwd": "/home/d/.hermes/cache/scratch/chord-sealed-independent-gemjso3w/consumer",
+    "exit": 0
+  },
+  {
+    "name": "old-consumer-bun",
+    "command": [
+      "bun",
+      "test",
+      "gate.test.mjs",
+      "journal-rejection.test.mjs"
+    ],
+    "cwd": "/home/d/.hermes/cache/scratch/chord-sealed-independent-gemjso3w/consumer",
+    "exit": 0
+  }
+]

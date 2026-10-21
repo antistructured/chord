@@ -1,0 +1,4 @@
+{
+  "missing": [],
+  "limit": "static relative imports only; actual exported imports checked separately"
+}

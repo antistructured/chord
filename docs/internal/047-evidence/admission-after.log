@@ -1,0 +1,80 @@
+bun test v1.3.14 (0d9b296a)
+
+tests/admission-integrity.test.js:
+(pass) READ: grantless/expired/revoked/denied projections disclose no tasks or queue [19.19ms]
+(pass) READ: authorized projection detached including nested scope, bounded to permitted tasks [6.08ms]
+(pass) ADMIT: grant issuance cannot survive a later batch denial [2.11ms]
+(pass) ADMIT: invalid queue fields and reentrant callback cannot partially commit [2.97ms]
+
+tests/continuity.test.js:
+(pass) Block 3 continuity: concurrency and interruption > stale expectedRevision rejected on cancelRun [2.45ms]
+(pass) Block 3 continuity: concurrency and interruption > pause/resume/cancel flow with CAS [4.65ms]
+(pass) Block 3 continuity: concurrency and interruption > cancelRun cancels tasks and clears attempts [1.78ms]
+(pass) Block 3 continuity: concurrency and interruption > approval rejection fails run [1.86ms]
+(pass) Block 3 continuity: concurrency and interruption > context projection filters and has provenance [1.16ms]
+(pass) Block 3 continuity: concurrency and interruption > handoff proposal/accept with CAS and causation/correlation [2.63ms]
+(pass) Block 3 continuity: concurrency and interruption > handoff reject and wrong actor [3.45ms]
+
+tests/authorization.test.js:
+(pass) pure authorization evaluator > admit allows permission regardless of approval requirement [0.42ms]
+(pass) pure authorization evaluator > dispatch without approval requirement allows and selects grants [0.40ms]
+(pass) pure authorization evaluator > determinism: identical inputs give identical decisions [0.56ms]
+(pass) pure authorization evaluator > fixed failure order, first failure wins [0.97ms]
+(pass) pure authorization evaluator > principal, actor and capability gates [0.75ms]
+(pass) pure authorization evaluator > roles confer nothing; scope must equal stored task fields [0.43ms]
+(pass) pure authorization evaluator > deny beats allow; missing allow denies; expiry boundary equality [0.63ms]
+(pass) pure authorization evaluator > approval rules: required, rejected, exact attempt, consumed [1.30ms]
+(pass) pure authorization evaluator > commit requires unexpired lease, surviving selected grants and consumed approval [1.19ms]
+(pass) trusted-host seam and runtime gate > missing authority denies admission before any mutation [1.31ms]
+(pass) trusted-host seam and runtime gate > unauthorized dispatch invokes zero adapters and leaves the task queued [3.62ms]
+(pass) trusted-host seam and runtime gate > authorized dispatch executes and records lease, attempt and consumption-free allow [3.14ms]
+(pass) trusted-host seam and runtime gate > authority snapshot revisions are monotonic and clock rollback fails closed [0.93ms]
+(pass) trusted-host seam and runtime gate > approval-required task never reaches the adapter without a human approval [6.18ms]
+(pass) trusted-host seam and runtime gate > authorityError produces fixed sanitized codes [0.09ms]
+
+tests/integrity.test.js:
+(pass) STATE-01/02: installed owner and revision-exclusive commits [1.67ms]
+(pass) STATE-03/05: rejected compound candidate changes no collection or event [1.43ms]
+(pass) STATE-04: reads and retained inputs cannot change canonical state [1.37ms]
+(pass) STATE-03: reservation and corresponding evidence share a revision [0.96ms]
+
+tests/adversarial.test.js:
+(pass) pass 6 — authority boundary and identity forgery > request-authored authority fields, roles, and decisions confer nothing [0.51ms]
+(pass) pass 6 — authority boundary and identity forgery > role strings never substitute for capabilities [0.56ms]
+(pass) pass 6 — authority boundary and identity forgery > capability alone without a grant is denied [0.07ms]
+(pass) pass 6 — authority boundary and identity forgery > missing host authority denies every stage [0.19ms]
+(pass) pass 6 — authority boundary and identity forgery > cross-principal actor binding is rejected [0.14ms]
+(pass) pass 6 — authority boundary and identity forgery > evaluator decisions are sanitized fixed data, never transferable tokens [0.26ms]
+(pass) pass 6 — scope, version, and run isolation > exact scope mismatch across every field is denied [0.43ms]
+(pass) pass 6 — scope, version, and run isolation > scope with a valid id but wrong run is denied as scope mismatch [0.08ms]
+(pass) pass 6 — scope, version, and run isolation > version mismatch and foreign run reject before any grant evaluation [0.15ms]
+(pass) pass 6 — temporal and revocation boundaries > grant expiry uses issued_at <= now < expires_at at exact boundaries [0.33ms]
+(pass) pass 6 — temporal and revocation boundaries > principal and actor revocation disable access immediately [0.21ms]
+(pass) pass 6 — temporal and revocation boundaries > contract window invariants reject nonpositive windows [0.09ms]
+(pass) pass 6 — deny/allow ordering permutations > an active matching deny beats every allow regardless of array order [0.26ms]
+(pass) pass 6 — deny/allow ordering permutations > a non-matching deny does not block a matching allow [0.09ms]
+(pass) pass 6 — deny/allow ordering permutations > grant_ids are sorted deterministically independent of array order [0.17ms]
+(pass) pass 6 — deny/allow ordering permutations > decisions are deterministic for identical input bytes and time [0.13ms]
+(pass) pass 6 — approval misuse permutations > approval_required dispatch needs an exact, unconsumed, matching approval [0.54ms]
+(pass) pass 6 — approval misuse permutations > explicit rejection wins over a present approval and blocks dispatch [0.12ms]
+(pass) pass 6 — approval misuse permutations > self-approval is structurally impossible [0.10ms]
+(pass) pass 6 — approval misuse permutations > admit grants permission without approval; dispatch gates on it [0.12ms]
+(pass) pass 6 — approval misuse permutations > commit requires the dispatch-selected approval consumed by this attempt [0.30ms]
+(pass) pass 6 — approval misuse permutations > a newly added grant cannot retroactively authorize an attempt [0.09ms]
+(pass) pass 6 — runtime boundary enforcement > admission denial writes nothing and dispatch denial never leases [1.91ms]
+(pass) pass 6 — runtime boundary enforcement > batch admission is atomic: one denial registers no member [0.52ms]
+(pass) pass 6 — runtime boundary enforcement > duplicate admission and re-registration of an existing id reject [0.83ms]
+(pass) pass 6 — runtime boundary enforcement > concurrent revision losers and stale expectedRevision are rejected [1.42ms]
+(pass) pass 6 — runtime boundary enforcement > an in-flight commit loses to a concurrent same-revision mutation [3.10ms]
+(pass) pass 6 — runtime boundary enforcement > no registry or authority write handle leaks to adapters [2.08ms]
+(pass) pass 6 — runtime boundary enforcement > safery: adapter cannot fabricate correlation or a passing result [1.81ms]
+(pass) pass 6 — runtime boundary enforcement > malformed adapter results never normalize to success or dead-letter [8.02ms]
+(pass) pass 6 — approval gate end to end > approval-required task is denied at dispatch with zero adapter calls until approved [4.45ms]
+(pass) pass 6 — approval gate end to end > explicit host rejection blocks dispatch permanently [2.07ms]
+(pass) pass 6 — approval gate end to end > an approval for a different attempt does not authorize dispatch [2.17ms]
+(pass) pass 6 — contract hardening regression > prototype, cycle, and accessor payloads are rejected without evaluation [0.22ms]
+
+ 64 pass
+ 0 fail
+ 263 expect() calls
+Ran 64 tests across 5 files. [150.00ms]

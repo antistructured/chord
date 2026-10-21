@@ -1,0 +1,47 @@
+🚀 Starting Chord Core Runtime Validation (Revised)...
+
+--- 1. SDK: parseText ---
+Parsed Spec Type: IntentSpec
+✅ parseText ok
+
+--- 2. Registry: registerSpec ---
+✅ registerSpec ok
+
+--- 3. Execution: createTaskPackets ---
+Packets generated: 1
+✅ createTaskPackets + admitted queue ok
+
+--- 4. Queue Validation ---
+Queued tasks: 1
+✅ Queue entries found
+
+--- 5. Runtime Loop (Success Case) ---
+Completed tasks: 1
+✅ runCycle success ok
+
+--- 6. Post-Dispatch Ambiguity ---
+Ambiguous cycle: {
+  ok: false,
+  uncertain: true,
+  error: "ADAPTER_ERROR",
+}
+Uncertain tasks: 1
+✅ Post-dispatch ambiguity -> uncertain ok
+
+--- 6b. Pre-Dispatch Dead Letter ---
+Dead letters (from queue): 1
+✅ Pre-dispatch exhaustion -> dead_letter ok
+
+--- 7. Replay Validation ---
+✅ replayTask (dead_letter -> queued) ok
+
+--- 7b. Uncertain Reconciliation ---
+✅ uncertain -> replay -> completed ok
+
+--- 8. Audit Validation ---
+✅ Audit report structured ok
+
+--- 9. SigilJS Integration (Negative Test) ---
+✅ SigilJS caught invalid packet: INVALID_SHAPE
+
+🎉 ALL RUNTIME VALIDATIONS PASSED!

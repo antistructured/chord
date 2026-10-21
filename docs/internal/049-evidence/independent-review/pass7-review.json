@@ -1,0 +1,6 @@
+{
+  "verdict": "PASS \u2014 bounded current-source/security baseline; no new defect demonstrated",
+  "tests": "core160/0; probes21/0; security49/0; continuity7/0; replay11/0; Block6B34/0; runtime exit0; old-consumer Node8/0 and Bun8/0. All command exits0. Categories overlap.",
+  "review": "Reviewed detached aliases/constructor and return data, whole-run clone/swap CAS and installed+1/history restrictions, lifecycle claim/late-result guards, atomic batch admission, import/effect quarantine and reconciliation, exact single-use approval checks, pure complete modern replay, dependency pin/license/provenance and existing-artifact limited-pattern scan evidence.",
+  "limits": "Trusted-host administrative API, no hostile same-process JS sandbox, distributed durability or external exactly-once claim. Existing scan63files/no known-pattern findings is historical old0.3.0 evidence only; no new-candidate security or legal clearance. Same-model independent review, not certification."
+}

@@ -1,0 +1,7 @@
+SESSION1_CONTEXT_TASKS: 1
+SESSION1_TASK_STATUS: uncertain
+SESSION1_PAUSED: paused
+SESSION1_EXPORTED_REV: 8
+SESSION2_INITIAL_STATE: paused
+SESSION2_RESUMED
+{"ok":true,"task_status":"completed","run_state":"active","trace_events":13,"replay_ok":true,"effects_invoked":0}

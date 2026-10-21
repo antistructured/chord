@@ -1,0 +1,12 @@
+bun test v1.3.14 (0d9b296a)
+
+tests/replay-integrity.test.js:
+(pass) REPLAY: committed admission/dispatch/result projection equals original with zero effects [26.09ms]
+(pass) REPLAY: uncertainty, reconciliation, handoff, pause and cancellation are recorded [34.27ms]
+(pass) REPLAY: changed content/order, missing middle/tail, duplicate/mixed-run/version records reject [4.41ms]
+(pass) REPLAY: dead-letter cancellation and imported running quarantine reconstruct [19.16ms]
+
+ 4 pass
+ 0 fail
+ 17 expect() calls
+Ran 4 tests across 1 file. [114.00ms]

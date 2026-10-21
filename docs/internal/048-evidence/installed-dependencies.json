@@ -1,0 +1,17 @@
+{
+  "name": "chord-integrity-consumer",
+  "dependencies": {
+    "@chord/core": {
+      "version": "0.3.0",
+      "resolved": "file:/home/d/.hermes/cache/scratch/chord048-5d81k9z3/chord-core-0.3.0.tgz",
+      "overridden": false,
+      "dependencies": {
+        "@weipertda/sigiljs": {
+          "version": "0.18.0",
+          "resolved": "https://registry.npmjs.org/@weipertda/sigiljs/-/sigiljs-0.18.0.tgz",
+          "overridden": false
+        }
+      }
+    }
+  }
+}

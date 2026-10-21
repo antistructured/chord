@@ -1,0 +1,2 @@
+Diagnostic reproduction of UNSAFE behavior, not a passing invariant.
+{"calls":2,"statusBefore":"uncertain","firstUncertain":true,"secondUncertain":true}

@@ -1,0 +1,251 @@
+{
+  "@weipertda/chord": {
+    "id": "@weipertda/chord@0.4.0-preview.1",
+    "name": "@weipertda/chord",
+    "version": "0.4.0-preview.1",
+    "size": 49050,
+    "unpackedSize": 177046,
+    "shasum": "ef495f82abd9ef9472ca6e3e0398f1b04a136301",
+    "integrity": "sha512-uChofNDVIvyg8epPRUcdCpLVtvYClz4qR8wCnWvkgbqGfolUoElKNFYu3iBQEDK4f/w4Dtkn8ZKKxOgJYVvBlQ==",
+    "filename": "weipertda-chord-0.4.0-preview.1.tgz",
+    "files": [
+      {
+        "path": "CHANGELOG.md",
+        "size": 2437,
+        "mode": 420
+      },
+      {
+        "path": "INTEGRITY.md",
+        "size": 8960,
+        "mode": 420
+      },
+      {
+        "path": "LICENSE",
+        "size": 11358,
+        "mode": 420
+      },
+      {
+        "path": "NOTICE",
+        "size": 259,
+        "mode": 420
+      },
+      {
+        "path": "README.md",
+        "size": 13855,
+        "mode": 420
+      },
+      {
+        "path": "THIRD_PARTY_NOTICES.md",
+        "size": 1425,
+        "mode": 420
+      },
+      {
+        "path": "examples/cross-actor-workflow.mjs",
+        "size": 6034,
+        "mode": 420
+      },
+      {
+        "path": "examples/quickstart.mjs",
+        "size": 1852,
+        "mode": 420
+      },
+      {
+        "path": "package.json",
+        "size": 1422,
+        "mode": 420
+      },
+      {
+        "path": "src/cli/_shared.js",
+        "size": 357,
+        "mode": 420
+      },
+      {
+        "path": "src/cli/inspect-audit.js",
+        "size": 170,
+        "mode": 420
+      },
+      {
+        "path": "src/cli/replay.js",
+        "size": 465,
+        "mode": 420
+      },
+      {
+        "path": "src/cli/run.js",
+        "size": 572,
+        "mode": 420
+      },
+      {
+        "path": "src/contracts/sigils.js",
+        "size": 25674,
+        "mode": 420
+      },
+      {
+        "path": "src/demo/callaback-demo.js",
+        "size": 3110,
+        "mode": 420
+      },
+      {
+        "path": "src/demo/fake-sms-adapter.js",
+        "size": 648,
+        "mode": 420
+      },
+      {
+        "path": "src/demo/fake-user.js",
+        "size": 102,
+        "mode": 420
+      },
+      {
+        "path": "src/execution/results.js",
+        "size": 471,
+        "mode": 420
+      },
+      {
+        "path": "src/execution/task-packets.js",
+        "size": 3345,
+        "mode": 420
+      },
+      {
+        "path": "src/index.js",
+        "size": 236,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/adapter-routing.js",
+        "size": 454,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/approval-flow.js",
+        "size": 4596,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/attempts.js",
+        "size": 2048,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/authorization.js",
+        "size": 8830,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/event-journal.js",
+        "size": 1297,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/handoff.js",
+        "size": 6152,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/history.js",
+        "size": 2706,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/index.js",
+        "size": 342,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/journal-audit.js",
+        "size": 1083,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/policy.js",
+        "size": 769,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/reconciliation.js",
+        "size": 4056,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/recovery-policy.js",
+        "size": 959,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/runtime-loop.js",
+        "size": 7431,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/state-invariants.js",
+        "size": 2800,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/task-queue.js",
+        "size": 4919,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/trace-reducer.js",
+        "size": 3739,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/transitions.js",
+        "size": 6164,
+        "mode": 420
+      },
+      {
+        "path": "src/registry/owner.js",
+        "size": 3516,
+        "mode": 420
+      },
+      {
+        "path": "src/registry/query.js",
+        "size": 799,
+        "mode": 420
+      },
+      {
+        "path": "src/registry/registry.js",
+        "size": 8397,
+        "mode": 420
+      },
+      {
+        "path": "src/registry/snapshot.js",
+        "size": 1765,
+        "mode": 420
+      },
+      {
+        "path": "src/runtime/adapter.js",
+        "size": 514,
+        "mode": 420
+      },
+      {
+        "path": "src/sdk/chord.js",
+        "size": 19621,
+        "mode": 420
+      },
+      {
+        "path": "src/sdk/index.js",
+        "size": 28,
+        "mode": 420
+      },
+      {
+        "path": "src/types/index.js",
+        "size": 1084,
+        "mode": 420
+      },
+      {
+        "path": "src/utils/clone.js",
+        "size": 81,
+        "mode": 420
+      },
+      {
+        "path": "src/utils/id.js",
+        "size": 144,
+        "mode": 420
+      }
+    ],
+    "entryCount": 47,
+    "bundled": []
+  }
+}

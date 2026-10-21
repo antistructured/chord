@@ -1,0 +1,14 @@
+bun test v1.3.14 (0d9b296a)
+
+tests/recovery-integrity.test.js:
+(pass) RECOVERY: uncertainty cannot replay or evade quarantine with a new task ID [10.45ms]
+(pass) RECOVERY: missing authority/evidence rejected unchanged [3.37ms]
+(pass) RECOVERY: still unknown stays quarantined [3.00ms]
+(pass) RECOVERY: confirmed completion is never executed again [2.90ms]
+(pass) RECOVERY: no-effect evidence enables explicit fresh authorized attempt [5.49ms]
+(pass) RECOVERY: competing/duplicate reconciliation cannot both commit [3.09ms]
+
+ 6 pass
+ 0 fail
+ 16 expect() calls
+Ran 6 tests across 1 file. [68.00ms]

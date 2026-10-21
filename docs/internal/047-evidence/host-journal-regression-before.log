@@ -1,0 +1,33 @@
+bun test v1.3.14 (0d9b296a)
+
+tests/integrity.test.js:
+(pass) STATE-01/02: installed owner and revision-exclusive commits [41.62ms]
+(pass) STATE-03/05: rejected compound candidate changes no collection or event [9.50ms]
+(pass) STATE-04: reads and retained inputs cannot change canonical state [6.17ms]
+(pass) STATE-03: reservation and corresponding evidence share a revision [6.91ms]
+(pass) STATE: host commit cannot validate one operation while recording another [7.00ms]
+(pass) STATE: malformed handoff identity cannot enter persisted canonical metadata [2.78ms]
+52 |   expect(c.getRegistry()).toEqual(before);
+53 | });
+54 | test('STATE: host candidates cannot append fabricated kernel history', () => {
+55 |   const { c } = setup(); const before = c.getRegistry(); const next = c.getRegistry(); next.run.revision++;
+56 |   next.event_journal.push({ event_id: 'caller-event', type: 'unsupported_type', at: 0, payload: {}, schema_version: 'chord.contracts.v1', run_id: next.run.run_id, run_revision: next.run.revision });
+57 |   expect(() => c.commitRun({ expectedRevision: c.getRunRevision(), nextRegistry: next })).toThrow(/INVALID_HISTORY/);
+                                                                                               ^
+error: expect(received).toThrow(expected)
+
+Expected pattern: /INVALID_HISTORY/
+
+Received function did not throw
+Received value: {
+  ok: true,
+  revision: 3,
+}
+
+      at <anonymous> (/home/d/Workspace/other-projects/chord-v0.3.0/packages/core/tests/integrity.test.js:57:91)
+(fail) STATE: host candidates cannot append fabricated kernel history [44.63ms]
+
+ 6 pass
+ 1 fail
+ 18 expect() calls
+Ran 7 tests across 1 file. [462.00ms]

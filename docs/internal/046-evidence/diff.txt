@@ -1,0 +1,427 @@
+diff --git a/.gitignore b/.gitignore
+index 4ef572c..aeaf5a9 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -23,8 +23,8 @@ yarn-error.log*
+ pnpm-debug.log*
+ 
+ # IDE/Editor configurations
+-./history/*
+-./.agent/*
++.history/*
++.agent/*
+ .vscode/*
+ !.vscode/settings.json
+ !.vscode/tasks.json
+diff --git a/.vscode/settings.json b/.vscode/settings.json
+index 6676209..ab071b0 100644
+--- a/.vscode/settings.json
++++ b/.vscode/settings.json
+@@ -1,15 +1,15 @@
+ {
+-  "workbench.colorCustomizations": {
+-    "activityBar.background": "#A02C18",
+-    "titleBar.activeBackground": "#DE3F24",
+-    "titleBar.activeForeground": "#FEF9F9",
+-    "titleBar.inactiveBackground": "#A02C18",
+-    "titleBar.inactiveForeground": "#FEF9F9",
+-    "statusBar.background": "#A02C18",
+-    "statusBar.foreground": "#FEF9F9",
+-    "statusBar.debuggingBackground": "#A02C18",
+-    "statusBar.debuggingForeground": "#FEF9F9",
+-    "statusBar.noFolderBackground": "#A02C18",
+-    "statusBar.noFolderForeground": "#FEF9F9"
+-  }
++    "workbench.colorCustomizations": {
++        "activityBar.background": "#A02C18",
++        "titleBar.activeBackground": "#DE3F24",
++        "titleBar.activeForeground": "#FEF9F9",
++        "titleBar.inactiveBackground": "#A02C18",
++        "titleBar.inactiveForeground": "#FEF9F9",
++        "statusBar.background": "#A02C18",
++        "statusBar.foreground": "#FEF9F9",
++        "statusBar.debuggingBackground": "#A02C18",
++        "statusBar.debuggingForeground": "#FEF9F9",
++        "statusBar.noFolderBackground": "#A02C18",
++        "statusBar.noFolderForeground": "#FEF9F9"
++    }
+ }
+\ No newline at end of file
+diff --git a/README.md b/README.md
+index ba0c87b..e7dfa45 100644
+--- a/README.md
++++ b/README.md
+@@ -2,31 +2,40 @@
+ 
+ **Chord** is a **Mixed-Entity Coordination Kernel**.
+ 
+-This package is a JS-first, Bun-oriented production scaffold for:
++This package is a JS-first, Bun-oriented **preview scaffold** for:
+ - coordination specs
+ - execution bridge task packets
+ - registry/state tracking
+-- runtime loop + queue
++- runtime loop + queue with guarded state transitions
+ - adapter routing
++- host-authenticated authority (grants + approvals)
+ - audit + replay
+ - CLI + demo flow
+ 
+-Guiding principle:
+-
+-> it only helps if
+-
+ ## Package
+-- `@chord/core`
++- `@chord/core` (`0.3.0`)
++
++## Status (preview)
++This is a **preview**, not a production release. The governed runtime path enforces host-authenticated authority, exact-scope grants, approvals, and guarded task/queue/artifact/domain transitions. It is **not** a sandbox: in-process adapters, the `./platform` low-level exports, and direct registry access are trusted-host APIs, and a host that passes untrusted input straight through as its trusted configuration defeats the boundary. See `docs/internal/041-authority-design.md` for the model and its explicit limits.
+ 
+ ## Quick start
+ 
+ ```bash
+ cd packages/core
+ bun install
+-bun run demo:via
++bun test          # 113 tests
++bun run demo:via  # end-to-end demo (installs host authority)
+ ```
+ 
++## Embedding (host responsibilities)
++
++Authorization is a host responsibility. Before queueing work the embedding host must:
++
++1. authenticate principals with its own mechanism;
++2. pass `options.trustedHost.now` (its clock) and install an `AuthoritySnapshot` via `setAuthoritySnapshot`;
++3. supply `principal_id`, `actor_id`, `capability`, and grant issuance to `queueTaskPackets`/`registerSpecAndQueue`.
++
++Without host authority, every admission and dispatch is denied. The host resolves principal/actor from its authenticated session and must never forward client-supplied identifiers as trusted configuration.
++
+ ## Notes
+-This is a full production-ready **copy/scaffold** of Chord's architecture in its own folder.
+-It is intended to be a stable working base inside Antigravity for further hardening,
+-tests, and feature completion.
++This is a working base for further hardening and feature completion. The npm version (`0.3.0`) is independent of the contract schema version (`chord.contracts.v1`), which is frozen per run.
+diff --git a/packages/core/dev_flow.md b/packages/core/dev_flow.md
+index 714f6ec..6b131a1 100644
+--- a/packages/core/dev_flow.md
++++ b/packages/core/dev_flow.md
+@@ -1,18 +1,23 @@
+ # Chord Core – Development Flow Tracker
+ 
+ ## 1. LAST COMPLETED ITEMS
+-- production-ready copy scaffold created in its own folder
+-- sdk / runtime / registry / queue / audit / cli / demo all populated
+-- via demo included
++- Block 2 (authority hardening) passes 3–6 complete: real SigilJS contracts,
++  pure authorization evaluator + trusted-host seam, guarded transitions with
++  ambiguity handling, and an adversarial test matrix.
++- 113 tests passing; `verify-runtime.js` and `demo:via` green.
+ 
+ ## 2. CURRENT STATE
+-Chord now has a stable standalone copy suitable for:
+-- Antigravity IDE
+-- Bun-based development
+-- SigilJS integration
+-- test execution in a real local environment
++Chord is a JS/Bun preview kernel with a governed runtime path:
++- host-authenticated identity, exact-scope grants, human approvals
++- guarded task/queue/artifact/domain transitions
++- pre-dispatch bounded retry (dead_letter) vs post-dispatch ambiguity (uncertain)
++- explicit host exits: `cancelTask`, `replayTask` (fresh admission)
+ 
+-## 3. NEXT ITEMS TO COMPLETE
+-1. Run Bun + SigilJS tests locally
+-2. Reintegrate any higher-fidelity modules from your live repo
+-3. Move into product strategy / GTM when ready
++Not production-ready: in-process adapters, `./platform` exports, and direct
++registry access remain trusted-host APIs (no sandbox).
++
++## 3. NEXT ITEMS (Block 3)
++1. Whole-run `commitRun` clone-swap CAS and per-operation `expectedRevision`
++   enforcement (deferred from Block 2 per `040-preview-scope-lock.md`).
++2. Fill in runnable example scripts behind the prose in `examples/`.
++3. Product strategy / GTM when the kernel stabilizes.
+diff --git a/packages/core/examples/basic-flow/README.md b/packages/core/examples/basic-flow/README.md
+index a0b0999..e3609ea 100644
+--- a/packages/core/examples/basic-flow/README.md
++++ b/packages/core/examples/basic-flow/README.md
+@@ -1,2 +1,7 @@
+ # Basic Flow
+-Parse an IntentSpec, register it, queue task packets, run a cycle, inspect audit.
++
++Parse an IntentSpec, register it, queue task packets (requires host authority),
++run one governed runtime cycle, then inspect the audit report.
++
++Post-dispatch success commits a correlated outcome; the task and queue entry end
++`completed`. See `src/verify-runtime.js` §1–5 for a runnable equivalent.
+diff --git a/packages/core/examples/failure-recovery/README.md b/packages/core/examples/failure-recovery/README.md
+index 3e85806..7505c40 100644
+--- a/packages/core/examples/failure-recovery/README.md
++++ b/packages/core/examples/failure-recovery/README.md
+@@ -1,2 +1,14 @@
+ # Failure + Recovery
+-Exercise retries, dead-letter, and replay helpers.
++
++Two distinct failure modes, by design (041-authority-design.md §5):
++
++- **Pre-dispatch routing failure** (no adapter for the target entity): bounded
++  retry under policy; exhausted attempts land in `dead_letter`.
++- **Post-dispatch ambiguity** (adapter throws, invalid/uncorrelated result,
++  expired lease, or a lost commit race): the attempt is marked `uncertain` for
++  explicit host reconciliation — never blind-retried or dead-lettered.
++
++Recovery goes through fresh admission: `replayTask(taskId)` re-queues a
++`dead_letter`, `uncertain`, or `blocked` task only if authority still permits;
++`cancelTask(taskId)` is the explicit terminal exit. Both reset attempt
++reservations. See `src/verify-runtime.js` §6–7b for a runnable equivalent.
+diff --git a/packages/core/examples/multi-entity-review/README.md b/packages/core/examples/multi-entity-review/README.md
+index 461284d..ba7f647 100644
+--- a/packages/core/examples/multi-entity-review/README.md
++++ b/packages/core/examples/multi-entity-review/README.md
+@@ -1,2 +1,10 @@
+ # Multi-Entity Review
+-CoordSpec + HandoffSpec with multiple recipients and audit trail.
++
++A CoordSpec declares domains (open string states); a HandoffSpec declares an
++artifact, its producer, and its consumers and generates one `handoff_review`
++task packet per recipient.
++
++Spec text is descriptive only: registering a spec never changes artifact or
++domain status. Artifact status (`declared -> produced/accepted/rejected/
++superseded`) and domain completion derive exclusively from an authorized,
++correlated, committed adapter result. All derived transitions are guarded.
+diff --git a/packages/core/src/contracts/sigils.js b/packages/core/src/contracts/sigils.js
+index eae44a6..93553e2 100644
+--- a/packages/core/src/contracts/sigils.js
++++ b/packages/core/src/contracts/sigils.js
+@@ -186,7 +186,7 @@ export const RuntimePolicy = define('{ globalMaxLeased: number, perEntityMaxLeas
+ export const RuntimePolicyInput = define('{ globalMaxLeased?: number, perEntityMaxLeased?: number, retry?: { strategy?: "fixed" | "linear" | "exponential", baseDelayMs?: number, maxAttempts?: number } }');
+ // Current registry shape; transition legality validated by the guarded
+ // transition module (pass 5), cross-record invariants enforced here.
+-export const RegistryData = define(`{ run: { run_id: string, ${version}, revision: number }, artifacts: object, domains: object, tasks: object, task_queue: object[], event_journal: object[], execution_results: object[], trigger_state: object, specs: object[], authority: object | null, pending_attempts: object, active_attempts: object }`, v => {
++export const RegistryData = define(`{ run: { run_id: string, ${version}, revision: number, state?: string, causation_id?: string | null, correlation_id?: string | null }, artifacts: object, domains: object, tasks: object, task_queue: object[], event_journal: object[], execution_results: object[], trigger_state: object, specs: object[], authority: object | null, pending_attempts: object, active_attempts: object, handoffs?: object, approval_pause?: object | null }`, v => {
+   for (const [key, record] of Object.entries(v.tasks)) {
+     requireTrue(id(key));
+     const task = StoredTask.assert(record);
+@@ -225,13 +225,13 @@ const StoredTask = define(`{ ${packetFields}, authority_binding: ${taskAuthority
+   if (last_result) { Outcome.assert(last_result); requireTrue(last_result.task_id === v.task_id); }
+ });
+ const QueueRecord = define('{ queue_id: string, task_id: string, target_entity: string, status: "queued" | "leased" | "running" | "blocked" | "completed" | "failed" | "cancelled" | "uncertain" | "dead_letter", priority: number, available_at: number, lease_expires_at: number | null, max_attempts: number, retry_count: number, last_error: string | null }', v => requireTrue(Number.isSafeInteger(v.priority) && integer(v.max_attempts) && v.max_attempts > 0 && integer(v.retry_count)));
+-const JournalRecord = define('{ event_id: string, type: string, at: number, payload: object }', v => requireTrue(integer(v.at) && id(v.type)));
++const JournalRecord = define('{ event_id: string, type: string, at: number, payload: object, schema_version?: string | null, run_id?: string | null, run_revision?: number | null, actor_id?: string | null, principal_id?: string | null, correlation_id?: string | null, causation_id?: string | null, authority_revision?: number | null, policy_decision?: object | null }', v => requireTrue(integer(v.at) && id(v.type)));
+ const ArtifactRecord = define('{ name: string, status: "declared" | "produced" | "accepted" | "rejected" | "superseded", producers: string[], consumers: string[], project: string, phase: string, history: { from: string | null, to: string, at: number }[] }', v => { requireTrue(id(v.name) && ids(v.producers) && ids(v.consumers)); v.history.forEach(x => requireTrue(integer(x.at))); });
+ const DomainRecord = define('{ name: string, owner: string | null, delegates: string[], state: string, project: string, phase: string, state_history: { to: string, at: number }[] }', v => { requireTrue(id(v.name) && ids(v.delegates)); v.state_history.forEach(x => requireTrue(integer(x.at))); });
+ // A validated snapshot is data, not authenticated authority.
+ 
+ // walk disabled: created_at is an ISO string validated explicitly below; nested records are fully asserted.
+-export const Snapshot = define(`{ snapshot_type: "chord.registry", snapshot_version: "0.3.0", ${version}, run: { run_id: string, ${version}, revision: number }, created_at: string, counts: { artifacts: number, domains: number, tasks: number, queued_tasks: number, journal_events: number }, registry: object }`, v => {
++export const Snapshot = define(`{ snapshot_type: "chord.registry", snapshot_version: "0.3.0", ${version}, run: { run_id: string, ${version}, revision: number, state?: string, causation_id?: string | null, correlation_id?: string | null }, created_at: string, counts: { artifacts: number, domains: number, tasks: number, queued_tasks: number, journal_events: number }, registry: object }`, v => {
+   requireTrue(Object.values(v.counts).every(integer) && Number.isFinite(Date.parse(v.created_at)));
+   RegistryData.assert(v.registry);
+   requireTrue(v.run.run_id === v.registry.run.run_id && v.run.revision === v.registry.run.revision);
+diff --git a/packages/core/src/platform/event-journal.js b/packages/core/src/platform/event-journal.js
+index 4dceb08..56508e3 100644
+--- a/packages/core/src/platform/event-journal.js
++++ b/packages/core/src/platform/event-journal.js
+@@ -1,10 +1,19 @@
+ import { stableId } from "../utils/id.js";
+ 
+-export function appendRegistryEvent(registry, type, payload = {}) {
++export function appendRegistryEvent(registry, type, payload = {}, meta = {}) {
+   const event = {
+     event_id: stableId("evt"),
+     type,
+     at: Date.now(),
++    schema_version: registry.run?.schema_version || null,
++    run_id: registry.run?.run_id || null,
++    run_revision: registry.run?.revision ?? null,
++    actor_id: meta.actor_id || null,
++    principal_id: meta.principal_id || null,
++    correlation_id: meta.correlation_id || null,
++    causation_id: meta.causation_id || null,
++    authority_revision: registry.authority?.authority_revision ?? null,
++    policy_decision: meta.policy_decision || null,
+     payload
+   };
+   registry.event_journal.push(event);
+@@ -12,8 +21,12 @@ export function appendRegistryEvent(registry, type, payload = {}) {
+ }
+ 
+ export function listRegistryEvents(registry, filters = {}) {
+-  return registry.event_journal.filter(e => {
+-    if (filters.type && e.type !== filters.type) return false;
+-    return true;
+-  });
++  let out = registry.event_journal || [];
++  if (filters.type) out = out.filter(e => e.type === filters.type);
++  if (filters.run_id) out = out.filter(e => e.run_id === filters.run_id);
++  if (filters.correlation_id) out = out.filter(e => e.correlation_id === filters.correlation_id);
++  if (filters.causation_id) out = out.filter(e => e.causation_id === filters.causation_id);
++  if (filters.since) out = out.filter(e => e.at >= filters.since);
++  if (filters.limit) out = out.slice(-filters.limit);
++  return out;
+ }
+diff --git a/packages/core/src/platform/task-queue.js b/packages/core/src/platform/task-queue.js
+index ba36d00..4ae3463 100644
+--- a/packages/core/src/platform/task-queue.js
++++ b/packages/core/src/platform/task-queue.js
+@@ -1,5 +1,7 @@
+ import { stableId } from "../utils/id.js";
+-import { transitionTaskStatus, transitionQueueEntryStatus } from "./transitions.js";
++import { transitionTaskStatus, transitionQueueEntryStatus, canQueueTransition } from "./transitions.js";
++import { evaluateAuthority, authorityError } from "./authorization.js";
++import { invalidatePendingAttempt, clearActiveAttempt } from "./attempts.js";
+ 
+ export function createTaskQueue() {
+   return [];
+@@ -92,3 +94,40 @@ export function scheduleTaskRetry(registry, taskId, delayMs, error = null, optio
+ 
+   return entry;
+ }
++
++/** Fresh-admission dead-letter replay (design §5: "Dead-letter replay must
++ *  go through fresh admission and attempt allocation, not reset a prior
++ *  attempt/approval"). Retained on the historical `@chord/core/platform`
++ *  export surface, but its semantics are corrected: replay is a *new*
++ *  queued attempt, not an in-place status reset. Authority is re-evaluated
++ *  at admission; a revoked or denied grant leaves the task untouched.
++ *  Previously consumed approvals stay consumed (kernel-owned) — only the
++ *  attempt reservations and retry counters are reset.
++ */
++export function replayDeadLetterTask(registry, taskId, options = {}) {
++  const task = registry.tasks[taskId];
++  if (!task || typeof task.task_id !== "string") return null;
++  const entry = registry.task_queue.find(x => x.task_id === taskId);
++  if (!entry || entry.status !== "dead_letter" || task.status !== "dead_letter") return null;
++  const now = options.now ?? Date.now();
++  const decision = evaluateAuthority({
++    stage: "admit",
++    now,
++    run: registry.run,
++    task: { ...task, status: "queued" },
++    attempt: null,
++    authority: registry.authority ?? null
++  });
++  if (!decision.allowed) throw authorityError(decision.code);
++  transitionTaskStatus(registry, taskId, "queued");
++  task.retry_count = 0;
++  if (canQueueTransition(entry.status, "queued")) entry.status = "queued";
++  entry.retry_count = 0;
++  entry.available_at = now;
++  entry.lease_expires_at = null;
++  entry.last_error = null;
++  invalidatePendingAttempt(registry, taskId);
++  clearActiveAttempt(registry, taskId);
++  registry.run.revision += 1;
++  return entry;
++}
+diff --git a/packages/core/src/registry/registry.js b/packages/core/src/registry/registry.js
+index 7dab990..e13d2ae 100644
+--- a/packages/core/src/registry/registry.js
++++ b/packages/core/src/registry/registry.js
+@@ -1,13 +1,14 @@
+ import { stableId } from "../utils/id.js";
+ import { deepClone } from "../utils/clone.js";
+-import { assertTaskPacket, assertSpec, TaskAuthority, Outcome, SCHEMA_VERSION, contractError } from "../contracts/sigils.js";
++import { assertTaskPacket, assertSpec, TaskAuthority, Outcome, SCHEMA_VERSION, contractError, RegistryData } from "../contracts/sigils.js";
+ import { markQueueEntryStatus } from "../platform/task-queue.js";
+ import { assertArtifactTransition, assertDomainTransition, assertTaskTransition } from "../platform/transitions.js";
+ import { invalidatePendingAttempt } from "../platform/attempts.js";
++import { authorityError } from "../platform/authorization.js";
+ 
+ export function createRegistry() {
+   return {
+-    run: { run_id: stableId("run"), schema_version: SCHEMA_VERSION, revision: 0 },
++    run: { run_id: stableId("run"), schema_version: SCHEMA_VERSION, revision: 0, state: "created", causation_id: null, correlation_id: null },
+     artifacts: {},
+     domains: {},
+     tasks: {},
+@@ -22,6 +23,31 @@ export function createRegistry() {
+   };
+ }
+ 
++/** Whole-run clone-swap CAS (Block 3). Validates nextRegistry, compares
++ * expectedRevision against current registry.run.revision, swaps the
++ * owner-held reference in one synchronous section with no awaits.
++ * Returns { ok: true, revision } or { ok: false, code: "STALE_REVISION" }.
++ */
++export function commitRun(owner, { expectedRevision, nextRegistry } = {}) {
++  if (!owner || typeof owner !== "object") throw authorityError("INVALID_CONTEXT");
++  const current = owner.registry || owner.current || owner.state;
++  if (!current) throw authorityError("INVALID_CONTEXT");
++  if (expectedRevision !== undefined && expectedRevision !== current.run.revision) {
++    return { ok: false, code: "STALE_REVISION" };
++  }
++  RegistryData.assert(nextRegistry);
++  if (nextRegistry.run.run_id !== current.run.run_id) throw authorityError("RUN_MISMATCH");
++  if (nextRegistry.run.schema_version !== current.run.schema_version) throw authorityError("SCHEMA_MISMATCH");
++  if (nextRegistry.run.revision <= current.run.revision) {
++    nextRegistry.run.revision = current.run.revision + 1;
++  }
++  if (owner.registry !== undefined) owner.registry = nextRegistry;
++  else if (owner.current !== undefined) owner.current = nextRegistry;
++  else if (owner.state !== undefined) owner.state = nextRegistry;
++  else throw authorityError("INVALID_CONTEXT");
++  return { ok: true, revision: nextRegistry.run.revision };
++}
++
+ export function registerSpec(registry, spec) {
+   spec = assertSpec(spec);
+   registry.specs.push(spec);
+diff --git a/packages/core/src/sdk/chord.js b/packages/core/src/sdk/chord.js
+index 14bcab7..617ccda 100644
+--- a/packages/core/src/sdk/chord.js
++++ b/packages/core/src/sdk/chord.js
+@@ -1,4 +1,6 @@
+-import { createRegistry, registerSpec, transitionArtifact } from "../registry/registry.js";
++import { createRegistry, registerSpec, transitionArtifact, commitRun } from "../registry/registry.js";
++import { projectContext, proposeHandoff, respondToHandoff } from "../platform/handoff.js";
++import { pauseForApproval, resumeRun, rejectApproval, cancelRun } from "../platform/approval-flow.js";
+ import { queryArtifacts, queryDomains, listDeadLetterTasks } from "../registry/query.js";
+ import { serializeRegistry, exportRegistry } from "../registry/snapshot.js";
+ import { createIntentTaskPacket, createHandoffTaskPackets } from "../execution/task-packets.js";
+@@ -262,7 +264,17 @@ export function createChord(options = {}) {
+     prepareAttempt,
+     cancelTask,
+     getAuthority: () => (registry.authority ? deepClone(registry.authority) : null),
++    getRegistry: () => registry,
++    getRunState: () => registry.run?.state || "unknown",
+     getRunRevision: () => registry.run.revision,
++    commitRun: (args = {}) => commitRun({ registry }, args),
++    projectContext: (opts = {}) => projectContext(registry, opts),
++    proposeHandoff: (opts = {}) => proposeHandoff(registry, opts),
++    respondToHandoff: (opts = {}) => respondToHandoff(registry, opts),
++    pauseForApproval: (opts = {}) => pauseForApproval(registry, opts),
++    resumeRun: (opts = {}) => resumeRun(registry, opts),
++    rejectApproval: (opts = {}) => rejectApproval(registry, opts),
++    cancelRun: (opts = {}) => cancelRun(registry, opts),
+     runCycle: async () => runRuntimeCycle(registry, router, policy, { now: () => hostNow() }),
+     setAdapterRouter(value) { router = createAdapterRouter(value); return router; },
+     setRuntimePolicy(value) { policy = createRuntimePolicy(value); return policy; },
+diff --git a/packages/core/tests/README.md b/packages/core/tests/README.md
+index 1778d4e..aa5d50a 100644
+--- a/packages/core/tests/README.md
++++ b/packages/core/tests/README.md
+@@ -1 +1,19 @@
+-Run tests in Antigravity/Bun after installing SigilJS and wiring your preferred test runner.
++# Tests
++
++Run with [Bun](https://bun.sh) from `packages/core`:
++
++```bash
++bun test
++```
++
++Files:
++- `transitions.test.js` — guarded task/queue/artifact/domain state machines,
++  ambiguity → `uncertain`, commit-revision guards.
++- `adversarial.test.js` — authority boundary: identity/authority forgery, roles
++  vs capabilities, scope/version/run isolation, expiry/revocation boundaries,
++  deny/allow ordering, approval misuse, runtime boundaries, approval gate.
++- `contracts.test.js` — SigilJS closed contracts, ingress, snapshot import.
++- `hardening.test.js` — parsing, dead-letter, contract enforcement, dequeue.
++
++`fixtures/host.js` provides trusted-host stand-ins (`installHost`,
++`createAdaptiveAuthority`) used by the suites.

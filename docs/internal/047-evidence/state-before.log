@@ -1,0 +1,167 @@
+bun test v1.3.14 (0d9b296a)
+
+tests/integrity.test.js:
+ 9 | }
+10 | test('STATE-01/02: installed owner and revision-exclusive commits', () => {
+11 |   const { c } = setup(); const revision = c.getRunRevision();
+12 |   const next = c.exportRegistry().registry; next.run.state = 'active'; next.run.revision++;
+13 |   expect(c.commitRun({ expectedRevision: revision, nextRegistry: next }).ok).toBe(true);
+14 |   expect(c.getRunState()).toBe('active'); expect(c.getRunRevision()).toBe(revision + 1);
+                               ^
+error: expect(received).toBe(expected)
+
+Expected: "active"
+Received: "created"
+
+      at <anonymous> (/home/d/Workspace/other-projects/chord-v0.3.0/packages/core/tests/integrity.test.js:14:27)
+(fail) STATE-01/02: installed owner and revision-exclusive commits [7.23ms]
+20 |   const { c } = setup(); const before = c.exportRegistry().registry;
+21 |   const next = c.exportRegistry().registry; next.tasks = {}; next.run.state = 'failed'; next.event_journal = [];
+22 |   expect(() => c.commitRun({ expectedRevision: before.run.revision, nextRegistry: next })).toThrow();
+23 |   expect(c.getRegistry()).toEqual(before);
+24 |   expect(() => c.registerSpecAndQueue(intent, { actor_id: 'absent', principal_id: 'absent', capability: 'execute' })).toThrow();
+25 |   expect(c.getRegistry()).toEqual(before);
+                               ^
+error: expect(received).toEqual(expected)
+
+@@ -132,11 +132,29 @@
+        "run_id": "run_1792557624622_31paaujh",
+        "run_revision": 2,
+        "schema_version": "chord.contracts.v1",
+        "type": "task_enqueued",
+      },
++     {
++       "actor_id": null,
++       "at": 1792557624624,
++       "authority_revision": 1,
++       "causation_id": null,
++       "correlation_id": null,
++       "event_id": "evt_1792557624624_4yfiyel0",
++       "payload": {
++         "phase": "verify",
++         "project": "integrity",
++         "spec_type": "IntentSpec",
++       },
++       "policy_decision": null,
++       "principal_id": null,
++       "run_id": "run_1792557624622_31paaujh",
++       "run_revision": 3,
++       "schema_version": "chord.contracts.v1",
++       "type": "spec_registered",
++     },
+    ],
+    "execution_results": [],
+    "pending_attempts": {},
+    "run": {
+      "causation_id": null,
+@@ -145,11 +163,19 @@
+      "run_id": "run_1792557624622_31paaujh",
+      "schema_version": "chord.contracts.v1",
+      "state": "created",
+    },
+    "specs": [
++     {
++       "do": [
++         "mock-effect",
++       ],
++       "phase": "verify",
++       "project": "integrity",
++       "schema_version": "chord.contracts.v1",
++       "spec_type": "IntentSpec",
++     },
+      {
+        "do": [
+          "mock-effect",
+        ],
+        "phase": "verify",
+
+- Expected  - 0
++ Received  + 28
+
+      at <anonymous> (/home/d/Workspace/other-projects/chord-v0.3.0/packages/core/tests/integrity.test.js:25:27)
+(fail) STATE-03/05: rejected compound candidate changes no collection or event [2.37ms]
+28 |   const { c, id } = setup(); const before = c.exportRegistry().registry;
+29 |   c.registry.tasks[id].status = 'completed'; c.getRegistry().run.state = 'failed';
+30 |   c.queryQueue()[0].status = 'completed'; c.inspectEvents()[0].payload.changed = true;
+31 |   c.inspectAudit().tasks[0].status = 'completed';
+32 |   c.exportRegistry().registry.tasks[id].status = 'completed';
+33 |   expect(c.getRegistry()).toEqual(before);
+                               ^
+error: expect(received).toEqual(expected)
+
+@@ -70,11 +70,11 @@
+        "causation_id": null,
+        "correlation_id": null,
+        "event_id": "evt_1792557624625_3rxfpwnt",
+        "payload": {
+          "authority_revision": 0,
++         "changed": true,
+        },
+        "policy_decision": null,
+        "principal_id": null,
+        "run_id": "run_1792557624625_ft80xovr",
+        "run_revision": 1,
+@@ -142,11 +142,11 @@
+      "causation_id": null,
+      "correlation_id": null,
+      "revision": 3,
+      "run_id": "run_1792557624625_ft80xovr",
+      "schema_version": "chord.contracts.v1",
+-     "state": "created",
++     "state": "failed",
+    },
+    "specs": [
+      {
+        "do": [
+          "mock-effect",
+@@ -164,11 +164,11 @@
+        "lease_expires_at": null,
+        "max_attempts": 3,
+        "priority": 0,
+        "queue_id": "queue_1792557624625_dj8u39h3",
+        "retry_count": 0,
+-       "status": "queued",
++       "status": "completed",
+        "target_entity": "default",
+        "task_id": "task_1792557624625_qhksfypw",
+      },
+    ],
+    "tasks": {
+@@ -219,11 +219,11 @@
+        "role": "implementer",
+        "schema_version": "chord.contracts.v1",
+        "source_spec_id": null,
+        "source_type": "IntentSpec",
+        "stance": "strict",
+-       "status": "queued",
++       "status": "completed",
+        "target_entity": "default",
+        "task_id": "task_1792557624625_qhksfypw",
+        "task_kind": "intent_execution",
+      },
+    },
+
+- Expected  - 3
++ Received  + 4
+
+      at <anonymous> (/home/d/Workspace/other-projects/chord-v0.3.0/packages/core/tests/integrity.test.js:33:27)
+(fail) STATE-04: reads and retained inputs cannot change canonical state [1.80ms]
+33 |   expect(c.getRegistry()).toEqual(before);
+34 | });
+35 | test('STATE-03: reservation and corresponding evidence share a revision', () => {
+36 |   const { c, id } = setup(); const before = c.getRunRevision();
+37 |   const n = c.inspectEvents().length; c.prepareAttempt(id);
+38 |   expect(c.getRunRevision()).toBe(before + 1);
+                                  ^
+error: expect(received).toBe(expected)
+
+Expected: 4
+Received: 3
+
+      at <anonymous> (/home/d/Workspace/other-projects/chord-v0.3.0/packages/core/tests/integrity.test.js:38:30)
+(fail) STATE-03: reservation and corresponding evidence share a revision [0.66ms]
+
+ 0 pass
+ 4 fail
+ 8 expect() calls
+Ran 4 tests across 1 file. [53.00ms]

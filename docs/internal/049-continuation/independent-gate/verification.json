@@ -1,0 +1,34 @@
+{
+  "artifact_sha256": "538987e90ecbaf7b2393d40d11b5cb95dfdee28c25c0a45e743f15526cd5dc9c",
+  "source_sha256": "66cc9c4a9f05aa849cfd80343edddeef5ba48a4d7078bafad8d28f5fa19c1282",
+  "source_entries": 72,
+  "payload_entries": 47,
+  "packed_bytes": 49050,
+  "unpacked_bytes": 177046,
+  "source_manifest_archive_current_equal": true,
+  "payload_manifest_source_installed_equal": true,
+  "installed_consumer": "/home/d/.hermes/cache/scratch/chord049-independent-security-1nvszb3z",
+  "fresh_installed_repack": {
+    "command": [
+      "npm",
+      "pack",
+      "--ignore-scripts",
+      "--json",
+      "--pack-destination",
+      "/home/d/.hermes/cache/scratch/chord049-pass8-gate-bybtkswz"
+    ],
+    "cwd": "/home/d/.hermes/cache/scratch/chord049-independent-security-1nvszb3z/node_modules/@weipertda/chord",
+    "exit_code": 0,
+    "path": "/home/d/.hermes/cache/scratch/chord049-pass8-gate-bybtkswz/weipertda-chord-0.4.0-preview.1.tgz",
+    "sha256": "538987e90ecbaf7b2393d40d11b5cb95dfdee28c25c0a45e743f15526cd5dc9c",
+    "byte_identical": true
+  },
+  "license_sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+  "readmes_equal_except_relative_links": true,
+  "readme_js_equals_quickstart": true,
+  "broken_payload_markdown_links": [],
+  "git_head": "ba3e37ea035a2862e06766ed7f90513babf945b0",
+  "git_branch": "main",
+  "test_evidence": "Prior raw logs and individual exits checked; no behavioral test rerun in Pass8",
+  "checks_passed": true
+}

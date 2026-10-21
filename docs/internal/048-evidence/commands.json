@@ -1,0 +1,77 @@
+[
+  {
+    "name": "core",
+    "command": [
+      "bun",
+      "test"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "exit": 0
+  },
+  {
+    "name": "runtime",
+    "command": [
+      "bun",
+      "run",
+      "src/verify-runtime.js"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "exit": 0
+  },
+  {
+    "name": "demo",
+    "command": [
+      "bun",
+      "run",
+      "demo:via"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "exit": 0
+  },
+  {
+    "name": "pack-dry-run",
+    "command": [
+      "npm",
+      "pack",
+      "--dry-run",
+      "--json"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "exit": 0
+  },
+  {
+    "name": "authority",
+    "command": [
+      "bun",
+      "test",
+      "tests/authorization.test.js",
+      "tests/adversarial.test.js"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "exit": 0
+  },
+  {
+    "name": "state-replay",
+    "command": [
+      "bun",
+      "test",
+      "tests/integrity.test.js",
+      "tests/lifecycle-integrity.test.js",
+      "tests/admission-integrity.test.js",
+      "tests/recovery-integrity.test.js",
+      "tests/replay-integrity.test.js"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "exit": 0
+  },
+  {
+    "name": "safety",
+    "command": [
+      "node",
+      "--test",
+      "docs/internal/046-state-probes.mjs"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0",
+    "exit": 0
+  }
+]

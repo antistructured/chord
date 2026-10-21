@@ -1,0 +1,13 @@
+# 047 — Pass 2: Canonical ownership and atomic commit
+
+Gate: COMPLETE for INV-STATE-01 through 05 in the supported single-process SDK owner. No distributed/durable claim.
+
+Root cause: disposable commit holder, captured live registry, progressive logical writes and returned aliases. Added registry/owner.js: private persistent owner, synchronous detached candidates, final RegistryData validation, exclusive exact +1 CAS and coupled state_committed event. Existing journal prefix cannot be rewritten. All SDK canonical writers use that transaction; rejected callbacks/validation install nothing. Retained inputs/results and every SDK inspection surface are detached. Raw registry property is now a snapshot, not a writable host handle. Low-level plumbing receives caller-owned data, never SDK ownership.
+
+Runtime claim and result are separate atomic transitions around external execution; post-await result resolves current owner and reevaluates authority/dispatch revision. Adapter still receives frozen packets/correlation only. No async function allowed within synchronous candidate commit; reentrant mutation rejected. No-ready/lease-cap observation returns without an artificial canonical mutation that could incorrectly stale a live attempt.
+
+Verification: new integrity.test.js 4/4 pass (baseline 0/4 after correcting the new test's own alias-prone comparison to use detached export). Whole core 130/0, including original 126, with unchanged authority expectations. Two old test mechanisms directly mutated registry views: migrated to actual governed host CAS for competing revision and trusted clock advancement for lease expiry. Safety expectations unchanged; no 046 audit/probe changed. Raw before/after/migration results retained in 047-evidence/.
+
+Exact tests: STATE-01/02 installed owner/revision-exclusive; STATE-03/05 rejected compound all-collection/event equality; STATE-04 detached SDK reads; STATE-03 reservation evidence/revision. Admission atomicity is already enforced by the shared owner transaction; projection disclosure still reserved for Pass 4. Lifecycle and uncertainty/replay P0s remain for ordered later passes. state_committed is coupling evidence only at this stage; full reconstruction payload/versioning remains Pass 6.
+
+Files changed: src/registry/{registry,owner}.js, src/sdk/chord.js, src/platform/runtime-loop.js, tests/integrity.test.js, narrow fixtures in tests/transitions.test.js. Package layout/dependencies/version unchanged. Compatibility: host administration commitRun now requires current expectedRevision and candidate exact +1; live registry mutation intentionally removed.

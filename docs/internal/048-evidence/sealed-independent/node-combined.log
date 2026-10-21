@@ -1,0 +1,18 @@
+✔ human exact-attempt approval; missing, service and wrong-attempt fail with zero effects (40.276943ms)
+✔ all common SDK read views detached; no-grant identity sees no tasks (21.071091ms)
+✔ same-revision CAS has one winner; rejected batch is byte-for-byte atomic (10.772425ms)
+✔ in-flight result loses to cancellation without changing terminal task or repeating effect (9.581407ms)
+✔ unknown effect quarantined across ID churn and restore; human evidence required before readmission (12.786936ms)
+✔ pure complete modern projection; malformed, missing-middle, tail and legacy reject; content diff detects edits (13.435652ms)
+{"mode":"same-run-unsupported","rejection":"INVALID_HISTORY","unchanged":true,"replay_intact":true,"next_valid_commit":true}
+{"mode":"foreign-run","rejection":"INVALID_SEMANTICS","unchanged":true,"replay_intact":true,"next_valid_commit":true}
+✔ same-run-unsupported caller-appended journal rejects atomically and preserves complete replay (6.568986ms)
+✔ foreign-run caller-appended journal rejects atomically and preserves complete replay (4.709898ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 341.045595

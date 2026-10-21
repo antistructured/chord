@@ -1,0 +1,40 @@
+bun test v1.3.14 (0d9b296a)
+
+journal-rejection.test.mjs:
+{"mode":"same-run-unsupported","rejection":"INVALID_HISTORY","unchanged":true,"replay_intact":true,"next_valid_commit":true}
+(pass) same-run-unsupported caller-appended journal rejects atomically and preserves complete replay [9.83ms]
+14 |     candidate.event_journal.push({ ...candidate.event_journal[0], event_id: `independent-${mode}`, type: mode === 'same-run-unsupported' ? 'unsupported-caller-event' : 'spec_registered', run_id: mode === 'foreign-run' ? 'independent-foreign-run' : before.run.run_id, run_revision: candidate.run.revision, payload: {} });
+15 |     let result;
+16 |     try { result = chord.commitRun({ expectedRevision: revision, nextRegistry: candidate }); }
+17 |     catch (error) { result = { ok: false, code: error.code, message: error.message }; }
+18 |     assert.equal(result.ok, false);
+19 |     assert.equal(result.code, 'INVALID_HISTORY');
+                ^
+AssertionError: Expected values to be strictly equal:
++ actual - expected
+
++ 'INVALID_SEMANTICS'
+- 'INVALID_HISTORY'
+           ^
+
+ generatedMessage: true,
+     actual: "INVALID_SEMANTICS",
+   expected: "INVALID_HISTORY",
+   operator: "strictEqual",
+       code: "ERR_ASSERTION"
+
+      at /home/d/.hermes/cache/scratch/chord-sealed-independent-gemjso3w/consumer/journal-rejection.test.mjs:19:12
+      at fn (node:test:215:18)
+(fail) foreign-run caller-appended journal rejects atomically and preserves complete replay [1.94ms]
+
+gate.test.mjs:
+(pass) human exact-attempt approval; missing, service and wrong-attempt fail with zero effects [39.91ms]
+(pass) all common SDK read views detached; no-grant identity sees no tasks [7.88ms]
+(pass) same-revision CAS has one winner; rejected batch is byte-for-byte atomic [13.74ms]
+(pass) in-flight result loses to cancellation without changing terminal task or repeating effect [31.90ms]
+(pass) unknown effect quarantined across ID churn and restore; human evidence required before readmission [55.78ms]
+(pass) pure complete modern projection; malformed, missing-middle, tail and legacy reject; content diff detects edits [31.64ms]
+
+ 7 pass
+ 1 fail
+Ran 8 tests across 2 files. [308.00ms]

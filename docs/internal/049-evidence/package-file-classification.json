@@ -1,0 +1,409 @@
+{
+  "existing_artifact_sha256": "b498bfb82729df17e8be5f0a1f73913d07f2a2ef53a31401bd2fdc8d9af74f18",
+  "file_count": 63,
+  "unpacked_bytes": 291025,
+  "categories": {
+    "consumer-example": 7,
+    "development-only": 2,
+    "public-documentation": 2,
+    "required-metadata": 1,
+    "required-runtime-or-script-support": 35,
+    "test-only": 16
+  },
+  "files": [
+    {
+      "path": "src/cli/_shared.js",
+      "bytes": 357,
+      "category": "required-runtime-or-script-support",
+      "retain_proposed": true
+    },
+    {
+      "path": "src/platform/adapter-routing.js",
+      "bytes": 454,
+      "category": "required-runtime-or-script-support",
+      "retain_proposed": true
+    },
+    {
+      "path": "src/runtime/adapter.js",
+      "bytes": 514,
+      "category": "required-runtime-or-script-support",
+      "retain_proposed": true
+    },
+    {
+      "path": "tests/admission-integrity.test.js",
+      "bytes": 3638,
+      "category": "test-only",
+      "retain_proposed": false
+    },
+    {
+      "path": "tests/adversarial.test.js",
+      "bytes": 34025,
+      "category": "test-only",
+      "retain_proposed": false
+    },
+    {
+      "path": "src/platform/approval-flow.js",
+      "bytes": 4596,
+      "category": "required-runtime-or-script-support",
+      "retain_proposed": true
+    },
+    {
+      "path": "tests/architecture-integrity.test.js",
+      "bytes": 1008,
+      "category": "test-only",
+      "retain_proposed": false
+    },
+    {
+      "path": "src/platform/attempts.js",
+      "bytes": 2048,
+      "category": "required-runtime-or-script-support",
+      "retain_proposed": true
+    },
+    {
+      "path": "src/platform/authorization.js",
+      "bytes": 8830,
+      "category": "required-runtime-or-script-support",
+      "retain_proposed": true
+    },
+    {
+      "path": "tests/authorization.test.js",
+      "bytes": 18394,
+      "category": "test-only",
+      "retain_proposed": false
+    },
+    {
+      "path": "src/demo/callaback-demo.js",
+      "bytes": 3110,
+      "category": "consumer-example",
+      "retain_proposed": true
+    },
+    {
+      "path": "tests/canonical-example.test.js",
+      "bytes": 873,
+      "category": "test-only",
+      "retain_proposed": false
+    },
+    {
+      "path": "src/sdk/chord.js",
+      "bytes": 19621,
+      "category": "required-runtime-or-script-support",
+      "retain_proposed": true
+    },
+    {
+      "path": "src/utils/clone.js",
+      "bytes": 81,
+      "category": "required-runtime-or-script-support",
+      "retain_proposed": true
+    },
+    {
+      "path": "tests/continuity.test.js",
+      "bytes": 4653,
+      "category": "test-only",
+      "retain_proposed": false
+    },
+    {
+      "path": "tests/contracts.test.js",
+      "bytes": 15931,
+      "category": "test-only",
+      "retain_proposed": false
+    },
+    {
+      "path": "src/platform/event-journal.js",
+      "bytes": 1297,
+      "category": "required-runtime-or-script-support",
+      "retain_proposed": true
+    },
+    {
+      "path": "src/demo/fake-sms-adapter.js",
+      "bytes": 648,
+      "category": "consumer-example",
+      "retain_proposed": true
+    },
+    {
+      "path": "src/demo/fake-user.js",
+      "bytes": 102,
+      "category": "consumer-example",
+      "retain_proposed": true
+    },
+    {
+      "path": "tests/fault-injection.test.js",
+      "bytes": 1767,
+      "category": "test-only",
+      "retain_proposed": false
+    },
+    {
+      "path": "src/platform/handoff.js",
+      "bytes": 6152,
+      "category": "required-runtime-or-script-support",
+      "retain_proposed": true
+    },
+    {
+      "path": "tests/hardening.test.js",
+      "bytes": 4590,
+      "category": "test-only",
+      "retain_proposed": false
+    },
+    {
+      "path": "src/platform/history.js",
+      "bytes": 2706,
+      "category": "required-runtime-or-script-support",
+      "retain_proposed": true
+    },
+    {
+      "path": "tests/fixtures/host.js",
+      "bytes": 3930,
+      "category": "test-only",
+      "retain_proposed": false
+    },
+    {
+      "path": "src/utils/id.js",
+      "bytes": 144,
+      "category": "required-runtime-or-script-support",
+      "retain_proposed": true
+    },
+    {
+      "path": "src/index.js",
+      "bytes": 236,
+      "category": "required-runtime-or-script-support",
+      "retain_proposed": true
+    },
+    {
+      "path": "src/platform/index.js",
+      "bytes": 342,
+      "category": "required-runtime-or-script-support",
+      "retain_proposed": true
+    },
+    {
+      "path": "src/sdk/index.js",
+      "bytes": 28,
+      "category": "required-runtime-or-script-support",
+      "retain_proposed": true
+    },
+    {
+      "path": "src/types/index.js",
+      "bytes": 1084,
+      "category": "required-runtime-or-script-support",
+      "retain_proposed": true
+    },
+    {
+      "path": "src/cli/inspect-audit.js",
+      "bytes": 170,
+      "category": "required-runtime-or-script-support",
+      "retain_proposed": true
+    },
+    {
+      "path": "tests/integrity.test.js",
+      "bytes": 4078,
+      "category": "test-only",
+      "retain_proposed": false
+    },
+    {
+      "path": "src/platform/journal-audit.js",
+      "bytes": 1083,
+      "category": "required-runtime-or-script-support",
+      "retain_proposed": true
+    },
+    {
+      "path": "tests/lifecycle-integrity.test.js",
+      "bytes": 2815,
+      "category": "test-only",
+      "retain_proposed": false
+    },
+    {
+      "path": "src/registry/owner.js",
+      "bytes": 3516,
+      "category": "required-runtime-or-script-support",
+      "retain_proposed": true
+    },
+    {
+      "path": "src/platform/policy.js",
+      "bytes": 769,
+      "category": "required-runtime-or-script-support",
+      "retain_proposed": true
+    },
+    {
+      "path": "src/registry/query.js",
+      "bytes": 799,
+      "category": "required-runtime-or-script-support",
+      "retain_proposed": true
+    },
+    {
+      "path": "src/platform/reconciliation.js",
+      "bytes": 4056,
+      "category": "required-runtime-or-script-support",
+      "retain_proposed": true
+    },
+    {
+      "path": "tests/recovery-integrity.test.js",
+      "bytes": 4122,
+      "category": "test-only",
+      "retain_proposed": false
+    },
+    {
+      "path": "src/platform/recovery-policy.js",
+      "bytes": 959,
+      "category": "required-runtime-or-script-support",
+      "retain_proposed": true
+    },
+    {
+      "path": "src/registry/registry.js",
+      "bytes": 8397,
+      "category": "required-runtime-or-script-support",
+      "retain_proposed": true
+    },
+    {
+      "path": "tests/replay-integrity.test.js",
+      "bytes": 5553,
+      "category": "test-only",
+      "retain_proposed": false
+    },
+    {
+      "path": "src/cli/replay.js",
+      "bytes": 465,
+      "category": "required-runtime-or-script-support",
+      "retain_proposed": true
+    },
+    {
+      "path": "src/execution/results.js",
+      "bytes": 471,
+      "category": "required-runtime-or-script-support",
+      "retain_proposed": true
+    },
+    {
+      "path": "src/cli/run.js",
+      "bytes": 572,
+      "category": "required-runtime-or-script-support",
+      "retain_proposed": true
+    },
+    {
+      "path": "src/platform/runtime-loop.js",
+      "bytes": 7431,
+      "category": "required-runtime-or-script-support",
+      "retain_proposed": true
+    },
+    {
+      "path": "src/contracts/sigils.js",
+      "bytes": 25674,
+      "category": "required-runtime-or-script-support",
+      "retain_proposed": true
+    },
+    {
+      "path": "src/registry/snapshot.js",
+      "bytes": 1765,
+      "category": "required-runtime-or-script-support",
+      "retain_proposed": true
+    },
+    {
+      "path": "src/platform/state-invariants.js",
+      "bytes": 2800,
+      "category": "required-runtime-or-script-support",
+      "retain_proposed": true
+    },
+    {
+      "path": "src/execution/task-packets.js",
+      "bytes": 3345,
+      "category": "required-runtime-or-script-support",
+      "retain_proposed": true
+    },
+    {
+      "path": "src/platform/task-queue.js",
+      "bytes": 4919,
+      "category": "required-runtime-or-script-support",
+      "retain_proposed": true
+    },
+    {
+      "path": "src/platform/trace-reducer.js",
+      "bytes": 3739,
+      "category": "required-runtime-or-script-support",
+      "retain_proposed": true
+    },
+    {
+      "path": "src/platform/transitions.js",
+      "bytes": 6164,
+      "category": "required-runtime-or-script-support",
+      "retain_proposed": true
+    },
+    {
+      "path": "tests/transitions.test.js",
+      "bytes": 26260,
+      "category": "test-only",
+      "retain_proposed": false
+    },
+    {
+      "path": "src/verify-runtime.js",
+      "bytes": 8392,
+      "category": "development-only",
+      "retain_proposed": false
+    },
+    {
+      "path": "package.json",
+      "bytes": 568,
+      "category": "required-metadata",
+      "retain_proposed": true
+    },
+    {
+      "path": "dev_flow.md",
+      "bytes": 1434,
+      "category": "development-only",
+      "retain_proposed": false
+    },
+    {
+      "path": "INTEGRITY.md",
+      "bytes": 8799,
+      "category": "public-documentation",
+      "retain_proposed": true
+    },
+    {
+      "path": "examples/basic-flow/README.md",
+      "bytes": 315,
+      "category": "consumer-example",
+      "retain_proposed": false
+    },
+    {
+      "path": "examples/failure-recovery/README.md",
+      "bytes": 907,
+      "category": "consumer-example",
+      "retain_proposed": false
+    },
+    {
+      "path": "examples/multi-entity-review/README.md",
+      "bytes": 503,
+      "category": "consumer-example",
+      "retain_proposed": false
+    },
+    {
+      "path": "README.md",
+      "bytes": 1873,
+      "category": "public-documentation",
+      "retain_proposed": true
+    },
+    {
+      "path": "tests/README.md",
+      "bytes": 1124,
+      "category": "test-only",
+      "retain_proposed": false
+    },
+    {
+      "path": "examples/cross-actor-workflow.mjs",
+      "bytes": 6029,
+      "category": "consumer-example",
+      "retain_proposed": true
+    }
+  ],
+  "proposed_existing_count": 42,
+  "proposed_existing_bytes": 146713,
+  "proposed_additions_pending_rights": [
+    "LICENSE",
+    "NOTICE only if required by actual provenance"
+  ],
+  "allowlist_proposal": [
+    "src",
+    "!src/verify-runtime.js",
+    "examples/cross-actor-workflow.mjs",
+    "README.md",
+    "INTEGRITY.md",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "applied": false
+}

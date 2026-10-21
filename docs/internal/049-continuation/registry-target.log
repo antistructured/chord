@@ -1,0 +1,15 @@
+npm error code E404
+npm error 404 Not Found - GET https://registry.npmjs.org/@weipertda%2fchord - Not found
+npm error 404
+npm error 404  The requested resource '@weipertda/chord@0.4.0-preview.1' could not be found or you do not have permission to access it.
+npm error 404
+npm error 404 Note that you can also install from a
+npm error 404 tarball, folder, http url, or git url.
+{
+  "error": {
+    "code": "E404",
+    "summary": "Not Found - GET https://registry.npmjs.org/@weipertda%2fchord - Not found",
+    "detail": "The requested resource '@weipertda/chord@0.4.0-preview.1' could not be found or you do not have permission to access it.\n\nNote that you can also install from a\ntarball, folder, http url, or git url."
+  }
+}
+npm error A complete log of this run can be found in: /home/d/.npm/_logs/2026-10-21T20_52_34_634Z-debug-0.log
