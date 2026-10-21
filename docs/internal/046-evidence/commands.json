@@ -1,0 +1,107 @@
+[
+  {
+    "name": "environment",
+    "command": [
+      "sh",
+      "-c",
+      "node --version; bun --version; npm --version; uname -a"
+    ],
+    "exit": 0,
+    "log": "/home/d/.hermes/cache/scratch/chord-046/environment.log"
+  },
+  {
+    "name": "core",
+    "command": [
+      "bun",
+      "test"
+    ],
+    "exit": 0,
+    "log": "/home/d/.hermes/cache/scratch/chord-046/core.log"
+  },
+  {
+    "name": "runtime",
+    "command": [
+      "bun",
+      "run",
+      "src/verify-runtime.js"
+    ],
+    "exit": 0,
+    "log": "/home/d/.hermes/cache/scratch/chord-046/runtime.log"
+  },
+  {
+    "name": "demo",
+    "command": [
+      "bun",
+      "run",
+      "demo:via"
+    ],
+    "exit": 0,
+    "log": "/home/d/.hermes/cache/scratch/chord-046/demo.log"
+  },
+  {
+    "name": "canonical-node",
+    "command": [
+      "node",
+      "examples/cross-actor-workflow.mjs"
+    ],
+    "exit": 0,
+    "log": "/home/d/.hermes/cache/scratch/chord-046/canonical-node.log"
+  },
+  {
+    "name": "pack-dry-run",
+    "command": [
+      "npm",
+      "pack",
+      "--dry-run",
+      "--json"
+    ],
+    "exit": 0,
+    "log": "/home/d/.hermes/cache/scratch/chord-046/pack-dry-run.log"
+  },
+  {
+    "name": "state-probes-node",
+    "command": [
+      "node",
+      "--test",
+      "--test-reporter=tap",
+      "docs/internal/046-state-probes.mjs"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0",
+    "exit": 1,
+    "log": "/home/d/.hermes/cache/scratch/chord-046/state-probes-node.log"
+  },
+  {
+    "name": "security",
+    "command": [
+      "bun",
+      "test",
+      "tests/authorization.test.js",
+      "tests/adversarial.test.js"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "exit": 0,
+    "log": "/home/d/.hermes/cache/scratch/chord-046/security.log"
+  },
+  {
+    "name": "continuity",
+    "command": [
+      "bun",
+      "test",
+      "tests/continuity.test.js"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "exit": 0,
+    "log": "/home/d/.hermes/cache/scratch/chord-046/continuity.log"
+  },
+  {
+    "name": "replay-existing",
+    "command": [
+      "bun",
+      "test",
+      "tests/fault-injection.test.js"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "exit": 0,
+    "log": "/home/d/.hermes/cache/scratch/chord-046/replay-existing.log"
+  }
+]

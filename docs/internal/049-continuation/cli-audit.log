@@ -1,0 +1,49 @@
+$ bun run src/cli/inspect-audit.js
+{
+  "audit_type": "chord.audit",
+  "audit_version": "0.3.0",
+  "created_at": "2026-10-21T20:54:37.203Z",
+  "counts": {
+    "artifacts": 0,
+    "domains": 0,
+    "tasks": 0,
+    "queued": 0,
+    "events": 1
+  },
+  "artifacts": [],
+  "domains": [],
+  "tasks": [],
+  "queue": [],
+  "replay": [
+    {
+      "sequence": 1,
+      "event_id": "evt_1792616077203_4zmhirsd",
+      "type": "state_initialized",
+      "at": 1792616077203,
+      "payload": {
+        "history_version": "chord.history.v1",
+        "sequence": 0,
+        "state": {
+          "run": {
+            "run_id": "run_1792616077202_sjqf6t8k",
+            "schema_version": "chord.contracts.v1",
+            "revision": 0,
+            "state": "created",
+            "causation_id": null,
+            "correlation_id": null
+          },
+          "artifacts": {},
+          "domains": {},
+          "tasks": {},
+          "task_queue": [],
+          "execution_results": [],
+          "trigger_state": {},
+          "specs": [],
+          "authority": null,
+          "pending_attempts": {},
+          "active_attempts": {}
+        }
+      }
+    }
+  ]
+}

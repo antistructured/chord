@@ -204,7 +204,9 @@ describe("guarded runtime: ambiguity and commit guards", () => {
     const chord = createChord();
     const host = installHost(chord);
     chord.setAdapterRouter({ fallback: { execute: async () => {
-      chord.registry.run.revision += 1; // another authoritative mutation won
+      // Consumer registry views are detached; exercise a real host CAS instead.
+      const next = chord.getRegistry(); next.run.revision += 1;
+      expect(chord.commitRun({ expectedRevision: chord.getRunRevision(), nextRegistry: next }).ok).toBe(true);
       return { status: "completed", outcome: "succeeded" };
     } } });
     chord.registerSpecAndQueue(intent, queueOptions(host));
@@ -238,11 +240,11 @@ describe("guarded runtime: ambiguity and commit guards", () => {
   });
 
   test("expired lease at commit marks uncertain", async () => {
-    const chord = createChord();
+    let now = 1000;
+    const chord = createChord({ trustedHost: { now: () => now } });
     const host = installHost(chord);
     chord.setAdapterRouter({ fallback: { execute: async () => {
-      const active = chord.registry.active_attempts[Object.keys(chord.registry.active_attempts)[0]];
-      active.attempt.lease_expires_at = 0; // lease expired mid-await
+      now += 30_001; // trusted clock advances beyond the actual lease
       return { status: "completed", outcome: "succeeded" };
     } } });
     chord.registerSpecAndQueue(intent, queueOptions(host));
@@ -353,7 +355,9 @@ describe("host reconciliation: cancel, replay, re-evaluation", () => {
     const taskId = packets[0].task_id;
     await chord.runCycle();
     expect(chord.registry.tasks[taskId].status).toBe("uncertain");
-    // Replay is a fresh queued attempt with a reset reservation.
+    // Permission alone is not evidence that the effect did not occur.
+    expect(() => chord.replayTask(taskId)).toThrow(/RECONCILIATION_REQUIRED/);
+    chord.reconcileTask({ task_id: taskId, principal_id: host.human_id, decision: "confirmed_not_executed", evidence: { kind: "no_effect_confirmation", reference: "mock-receipt-not-dispatched" }, expectedRevision: chord.getRunRevision() });
     chord.replayTask(taskId);
     expect(chord.registry.tasks[taskId].status).toBe("queued");
     expect(chord.registry.task_queue[0].status).toBe("queued");
@@ -406,7 +410,9 @@ describe("host reconciliation: cancel, replay, re-evaluation", () => {
     expect(chord.registry.tasks[taskId].status).toBe("blocked");
     // Not selectable while blocked.
     expect((await chord.runCycle()).skipped).toBe(true);
-    // Explicit host re-evaluation re-queues through fresh admission.
+    // Blocked is an adapter outcome, not proof that an effect never occurred.
+    expect(() => chord.replayTask(taskId)).toThrow(/RECONCILIATION_REQUIRED/);
+    chord.reconcileTask({ task_id: taskId, principal_id: host.human_id, decision: "confirmed_not_executed", evidence: { kind: "no_effect_confirmation", reference: "mock-blocked-no-effect" }, expectedRevision: chord.getRunRevision() });
     chord.replayTask(taskId);
     expect(chord.registry.tasks[taskId].status).toBe("queued");
     chord.setAdapterRouter({ fallback: { execute: () => ({ status: "completed", outcome: "succeeded" }) } });

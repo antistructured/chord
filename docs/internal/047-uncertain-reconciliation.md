@@ -1,0 +1,11 @@
+# 047 — Pass 5: Uncertain effect reconciliation
+
+Gate: COMPLETE for tested run-local operation quarantine and explicit host-attested evidence protocol; no universal semantic/exactly-once claim.
+
+Added stable run-local operation records, canonical payload signature excluding task/source-spec IDs, operation/attempt/reconciliation identities, SigilJS request/record contracts and atomic reconcileTask. Changing only task/spec IDs cannot admit the same operation again, including existing legacy task payloads. Exact semantic payload equivalence is structural, not NLP inference; hosts must preserve meaningful business identity/inputs. No provider idempotency assumed.
+
+Dispatch records dispatched before invocation; ambiguity and blocked/non-success results remain unknown. Unknown/blocked readmission requires confirmed_not_executed plus no_effect_confirmation evidence reference, active host-attested human and surviving exact task authority; fresh dispatch rechecks grants/approval/revision. confirmed_completed finalizes without repeating effects; still_unknown remains quarantined; authorized_compensated requires compensation receipt and terminates. Reconciliation does not execute compensation or external checks: host must actually authenticate the human and verify evidence before attesting. Claims in model/request text cannot install authority.
+
+New recovery tests: baseline 1 pass/5 fail; after 6/0. Focused recovery+original security/transitions/contracts/hardening: 119/0. Safety probes preserved. Existing unsafe uncertain/blocked requeue tests now first assert rejection, then provide explicit mock no-effect evidence and retain success expectations. Tests accidentally reusing identical completed/unknown work for unrelated validation now use distinct actions; capability/approval expectations unchanged.
+
+Snapshot import also preserves operation quarantine for in-flight work; full import evidence coupling follows Pass 6. New operation metadata is internal canonical state, never forwarded as adapter-authored permission. Trusted-host generic state administration remains trusted and must not be forwarded to actors. No cross-run/global dedupe or cross-process persistence is claimed; those require a host business-operation ledger.

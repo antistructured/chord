@@ -1,0 +1,602 @@
+✖ CAS success must install candidate in the SDK canonical owner (10.994628ms)
+✖ two same-revision whole-run commits cannot both succeed (1.923722ms)
+✖ paused run must invoke zero protected effects (2.234603ms)
+✖ failed run after approval rejection must invoke zero effects (1.12658ms)
+✖ denied compound registration must preserve state and journal (2.343361ms)
+✖ denied batch must not persist grants installed before its rejection (1.937928ms)
+✖ read-only context cannot expose canonical authority scope aliases (1.609711ms)
+✖ context for identity with no grants must not reveal all tasks (1.063117ms)
+✖ event inspection must not return writable canonical events (2.217558ms)
+✖ attempt reservation must advance revision and record the mutation (0.923307ms)
+✖ unknown effect must not be re-admitted without reconciliation evidence (2.817571ms)
+✖ replay must reconstruct committed task and queue state (2.413874ms)
+✖ trace diff must detect altered content under the same event identity (0.242686ms)
+✖ trace diff must detect reordered events with the same ID set (0.109116ms)
+✖ reducer must reject mixed run identities (0.099571ms)
+✖ reducer must reject incompatible event versions and unknown event types (0.103042ms)
+✖ reducer must reject determinably incomplete history (0.085332ms)
+✖ public exports must expose the advertised no-effect replay function (0.09134ms)
+✔ snapshot export is a detached view (control) (0.966256ms)
+✔ stale cancellation leaves canonical state unchanged (control) (1.652301ms)
+✔ snapshot malformed schema rejected (control) (1.28605ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 3
+ℹ fail 18
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 104.23522
+
+✖ failing tests:
+
+test at docs/internal/046-state-probes.mjs:18:1
+✖ CAS success must install candidate in the SDK canonical owner (10.994628ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'created'
+  - 'active'
+  
+      at TestContext.<anonymous> (file:///home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:25:10)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.start (node:internal/test_runner/test:1257:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'created',
+    expected: 'active',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs/internal/046-state-probes.mjs:28:1
+✖ two same-revision whole-run commits cannot both succeed (1.923722ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:35:10)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs/internal/046-state-probes.mjs:37:1
+✖ paused run must invoke zero protected effects (2.234603ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:41:10)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs/internal/046-state-probes.mjs:43:1
+✖ failed run after approval rejection must invoke zero effects (1.12658ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:48:10)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs/internal/046-state-probes.mjs:50:1
+✖ denied compound registration must preserve state and journal (2.343361ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    {
+      active_attempts: {},
+      artifacts: {},
+      authority: null,
+      domains: {},
+  +   event_journal: [
+  +     {
+  +       actor_id: null,
+  +       at: 1792557547565,
+  +       authority_revision: null,
+  +       causation_id: null,
+  +       correlation_id: null,
+  +       event_id: 'evt_1792557547565_umqpthzl',
+  +       payload: {
+  +         phase: 'verify',
+  +         project: 'audit',
+  +         spec_type: 'IntentSpec'
+  +       },
+  +       policy_decision: null,
+  +       principal_id: null,
+  +       run_id: 'run_1792557547565_qcmh2p5b',
+  +       run_revision: 0,
+  +       schema_version: 'chord.contracts.v1',
+  +       type: 'spec_registered'
+  +     }
+  +   ],
+  -   event_journal: [],
+      execution_results: [],
+      pending_attempts: {},
+      run: {
+        causation_id: null,
+        correlation_id: null,
+  ...
+      },
+  +   specs: [
+  +     {
+  +       do: [
+  +         'mock-effect'
+  +       ],
+  +       phase: 'verify',
+  +       project: 'audit',
+  +       schema_version: 'chord.contracts.v1',
+  +       spec_type: 'IntentSpec'
+  +     }
+  +   ],
+  -   specs: [],
+      task_queue: [],
+      tasks: {},
+      trigger_state: {}
+    }
+  
+      at TestContext.<anonymous> (file:///home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:54:10)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { run: { run_id: 'run_1792557547565_qcmh2p5b', schema_version: 'chord.contracts.v1', revision: 0, state: 'created', causation_id: null, correlation_id: null }, artifacts: {}, domains: {}, tasks: {}, task_queue: [], event_journal: [ [Object] ], execution_results: [], trigger_state: {}, specs: [ [Object] ], authority: null, pending_attempts: {}, active_attempts: {} },
+    expected: { run: { run_id: 'run_1792557547565_qcmh2p5b', schema_version: 'chord.contracts.v1', revision: 0, state: 'created', causation_id: null, correlation_id: null }, artifacts: {}, domains: {}, tasks: {}, task_queue: [], event_journal: [], execution_results: [], trigger_state: {}, specs: [], authority: null, pending_attempts: {}, active_attempts: {} },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at docs/internal/046-state-probes.mjs:56:1
+✖ denied batch must not persist grants installed before its rejection (1.937928ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    {
+      active_attempts: {},
+      artifacts: {},
+      authority: {
+        actors: [
+  ...
+        approvals: [],
+  +     authority_revision: 1,
+  +     grants: [
+  +       {
+  +         actor_id: 'worker-actor',
+  +         capability: 'execute',
+  +         effect: 'allow',
+  +         expires_at: 9007199254740991,
+  +         grant_id: 'grant_task_1792557547568_arhewi40',
+  +         issued_at: 0,
+  +         principal_id: 'host-principal',
+  +         requires_approval: false,
+  +         revoked_at: null,
+  +         scope: {
+  +           phase: 'verify',
+  +           project: 'audit',
+  +           resource: {
+  +             id: 'task_1792557547568_arhewi40',
+  +             kind: 'task'
+  +           },
+  +           run_id: 'run_1792557547567_fgg180p0',
+  +           target_entity: 'default',
+  +           task_id: 'task_1792557547568_arhewi40'
+  +         }
+  +       }
+  +     ],
+  -     authority_revision: 0,
+  -     grants: [],
+        principals: [
+          {
+            authenticated_at: 0,
+            expires_at: 9007199254740991,
+            issuer: 'test-host',
+  ...
+        },
+  +     {
+  +       actor_id: null,
+  +       at: 1792557547568,
+  +       authority_revision: 1,
+  +       causation_id: null,
+  +       correlation_id: null,
+  +       event_id: 'evt_1792557547568_kkb1mif9',
+  +       payload: {
+  +         count: 1
+  +       },
+  +       policy_decision: null,
+  +       principal_id: null,
+  +       run_id: 'run_1792557547567_fgg180p0',
+  +       run_revision: 2,
+  +       schema_version: 'chord.contracts.v1',
+  +       type: 'grants_installed'
+  +     }
+      ],
+      execution_results: [],
+      pending_attempts: {},
+      run: {
+        causation_id: null,
+        correlation_id: null,
+  +     revision: 2,
+  -     revision: 1,
+        run_id: 'run_1792557547567_fgg180p0',
+        schema_version: 'chord.contracts.v1',
+        state: 'created'
+      },
+      specs: [],
+  
+      at TestContext.<anonymous> (file:///home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:62:10)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { run: { run_id: 'run_1792557547567_fgg180p0', schema_version: 'chord.contracts.v1', revision: 2, state: 'created', causation_id: null, correlation_id: null }, artifacts: {}, domains: {}, tasks: {}, task_queue: [], event_journal: [ [Object], [Object] ], execution_results: [], trigger_state: {}, specs: [], authority: { schema_version: 'chord.contracts.v1', run_id: 'run_1792557547567_fgg180p0', authority_revision: 1, principals: [Array], actors: [Array], grants: [Array], approvals: [] }, pending_attempts: {}, active_attempts: {} },
+    expected: { run: { run_id: 'run_1792557547567_fgg180p0', schema_version: 'chord.contracts.v1', revision: 1, state: 'created', causation_id: null, correlation_id: null }, artifacts: {}, domains: {}, tasks: {}, task_queue: [], event_journal: [ [Object] ], execution_results: [], trigger_state: {}, specs: [], authority: { schema_version: 'chord.contracts.v1', run_id: 'run_1792557547567_fgg180p0', authority_revision: 0, principals: [Array], actors: [Array], grants: [], approvals: [] }, pending_attempts: {}, active_attempts: {} },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at docs/internal/046-state-probes.mjs:64:1
+✖ read-only context cannot expose canonical authority scope aliases (1.609711ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    {
+      actors: [
+        {
+          actor_id: 'worker-actor',
+          capabilities: [
+  ...
+            phase: 'verify',
+  +         project: 'changed-by-reader',
+  -         project: 'audit',
+            resource: {
+              id: 'task_1792557547570_4edw36zs',
+              kind: 'task'
+            },
+            run_id: 'run_1792557547569_bg29xn38',
+  
+      at TestContext.<anonymous> (file:///home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:70:10)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { schema_version: 'chord.contracts.v1', run_id: 'run_1792557547569_bg29xn38', authority_revision: 1, principals: [ [Object], [Object] ], actors: [ [Object] ], grants: [ [Object] ], approvals: [] },
+    expected: { schema_version: 'chord.contracts.v1', run_id: 'run_1792557547569_bg29xn38', authority_revision: 1, principals: [ [Object], [Object] ], actors: [ [Object] ], grants: [ [Object] ], approvals: [] },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at docs/internal/046-state-probes.mjs:73:1
+✖ context for identity with no grants must not reveal all tasks (1.063117ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:76:10)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs/internal/046-state-probes.mjs:79:1
+✖ event inspection must not return writable canonical events (2.217558ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    [
+      {
+        actor_id: null,
+        at: 1792557547573,
+        authority_revision: 0,
+  ...
+          authority_revision: 0,
+  +       changed_by_reader: true
+        },
+        policy_decision: null,
+        principal_id: null,
+        run_id: 'run_1792557547572_inv8201p',
+        run_revision: 1,
+  
+      at TestContext.<anonymous> (file:///home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:83:10)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ { event_id: 'evt_1792557547573_nvfussrl', type: 'authority_snapshot_set', at: 1792557547573, schema_version: 'chord.contracts.v1', run_id: 'run_1792557547572_inv8201p', run_revision: 1, actor_id: null, principal_id: null, correlation_id: null, causation_id: null, authority_revision: 0, policy_decision: null, payload: [Object] }, { event_id: 'evt_1792557547573_e2ducg98', type: 'spec_registered', at: 1792557547573, schema_version: 'chord.contracts.v1', run_id: 'run_1792557547572_inv8201p', run_revision: 1, actor_id: null, principal_id: null, correlation_id: null, causation_id: null, authority_revision: 0, policy_decision: null, payload: [Object] }, { event_id: 'evt_1792557547573_n9vou9k8', type: 'grants_installed', at: 1792557547573, schema_version: 'chord.contracts.v1', run_id: 'run_1792557547572_inv8201p', run_revision: 2, actor_id: null, principal_id: null, correlation_id: null, causation_id: null, authority_revision: 1, policy_decision: null, payload: [Object] }, { event_id: 'evt_1792557547573_vjvmy07o', type: 'task_enqueued', at: 1792557547573, schema_version: 'chord.contracts.v1', run_id: 'run_1792557547572_inv8201p', run_revision: 2, actor_id: null, principal_id: null, correlation_id: null, causation_id: null, authority_revision: 1, policy_decision: null, payload: [Object] } ],
+    expected: [ { event_id: 'evt_1792557547573_nvfussrl', type: 'authority_snapshot_set', at: 1792557547573, schema_version: 'chord.contracts.v1', run_id: 'run_1792557547572_inv8201p', run_revision: 1, actor_id: null, principal_id: null, correlation_id: null, causation_id: null, authority_revision: 0, policy_decision: null, payload: [Object] }, { event_id: 'evt_1792557547573_e2ducg98', type: 'spec_registered', at: 1792557547573, schema_version: 'chord.contracts.v1', run_id: 'run_1792557547572_inv8201p', run_revision: 1, actor_id: null, principal_id: null, correlation_id: null, causation_id: null, authority_revision: 0, policy_decision: null, payload: [Object] }, { event_id: 'evt_1792557547573_n9vou9k8', type: 'grants_installed', at: 1792557547573, schema_version: 'chord.contracts.v1', run_id: 'run_1792557547572_inv8201p', run_revision: 2, actor_id: null, principal_id: null, correlation_id: null, causation_id: null, authority_revision: 1, policy_decision: null, payload: [Object] }, { event_id: 'evt_1792557547573_vjvmy07o', type: 'task_enqueued', at: 1792557547573, schema_version: 'chord.contracts.v1', run_id: 'run_1792557547572_inv8201p', run_revision: 2, actor_id: null, principal_id: null, correlation_id: null, causation_id: null, authority_revision: 1, policy_decision: null, payload: [Object] } ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at docs/internal/046-state-probes.mjs:85:1
+✖ attempt reservation must advance revision and record the mutation (0.923307ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  3 !== 4
+  
+      at TestContext.<anonymous> (file:///home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:90:10)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 4,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs/internal/046-state-probes.mjs:93:1
+✖ unknown effect must not be re-admitted without reconciliation evidence (2.817571ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception.
+      at TestContext.<anonymous> (file:///home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:98:10)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at docs/internal/046-state-probes.mjs:101:1
+✖ replay must reconstruct committed task and queue state (2.413874ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + {}
+  - {
+  -   task_1792557547579_dfi6pq6i: {
+  -     authority_binding: {
+  -       actor_id: 'worker-actor',
+  -       approval_required: false,
+  -       capability: 'execute',
+  -       principal_id: 'host-principal',
+  -       scope: {
+  -         phase: 'verify',
+  -         project: 'audit',
+  -         resource: {
+  -           id: 'task_1792557547579_dfi6pq6i',
+  -           kind: 'task'
+  -         },
+  -         run_id: 'run_1792557547578_grrkr8to',
+  -         target_entity: 'default',
+  -         task_id: 'task_1792557547579_dfi6pq6i'
+  -       }
+  -     },
+  -     constraints: {
+  -       depends: [],
+  -       dont: [],
+  -       rules: []
+  -     },
+  -     created_at: 1792557547579,
+  -     inputs: {
+  -       files: [],
+  -       spec: {
+  -         do: [
+  -           'mock-effect'
+  -         ],
+  -         phase: 'verify',
+  -         project: 'audit',
+  -         schema_version: 'chord.contracts.v1',
+  -         spec_type: 'IntentSpec'
+  -       },
+  -       stop: [],
+  -       verify: []
+  -     },
+  -     last_result: {
+  -       attempt_id: 'attempt_1792557547579_jn1m1mv5',
+  -       outcome: 'succeeded',
+  -       queue_id: 'queue_1792557547579_jeq1wfau',
+  -       run_id: 'run_1792557547578_grrkr8to',
+  -       schema_version: 'chord.contracts.v1',
+  -       status: 'completed',
+  -       task_id: 'task_1792557547579_dfi6pq6i',
+  -       task_revision: 0
+  -     },
+  -     phase: 'verify',
+  -     project: 'audit',
+  -     requested_action: [
+  -       'mock-effect'
+  -     ],
+  -     retry_count: 0,
+  -     role: 'implementer',
+  -     schema_version: 'chord.contracts.v1',
+  -     source_spec_id: null,
+  -     source_type: 'IntentSpec',
+  -     stance: 'strict',
+  -     status: 'completed',
+  -     target_entity: 'default',
+  -     task_id: 'task_1792557547579_dfi6pq6i',
+  -     task_kind: 'intent_execution'
+  -   }
+  - }
+  
+      at TestContext.<anonymous> (file:///home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:106:10)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: {},
+    expected: { task_1792557547579_dfi6pq6i: { schema_version: 'chord.contracts.v1', task_id: 'task_1792557547579_dfi6pq6i', task_kind: 'intent_execution', source_type: 'IntentSpec', source_spec_id: null, project: 'audit', phase: 'verify', target_entity: 'default', role: 'implementer', stance: 'strict', requested_action: [Array], inputs: [Object], constraints: [Object], authority_binding: [Object], status: 'completed', created_at: 1792557547579, retry_count: 0, last_result: [Object] } },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at docs/internal/046-state-probes.mjs:109:1
+✖ trace diff must detect altered content under the same event identity (0.242686ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:113:10)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs/internal/046-state-probes.mjs:115:1
+✖ trace diff must detect reordered events with the same ID set (0.109116ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:117:10)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs/internal/046-state-probes.mjs:119:1
+✖ reducer must reject mixed run identities (0.099571ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception.
+      at TestContext.<anonymous> (file:///home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:120:10)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at docs/internal/046-state-probes.mjs:122:1
+✖ reducer must reject incompatible event versions and unknown event types (0.103042ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception.
+      at TestContext.<anonymous> (file:///home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:123:10)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at docs/internal/046-state-probes.mjs:125:1
+✖ reducer must reject determinably incomplete history (0.085332ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception.
+      at TestContext.<anonymous> (file:///home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:126:10)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at docs/internal/046-state-probes.mjs:128:1
+✖ public exports must expose the advertised no-effect replay function (0.09134ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'undefined'
+  - 'function'
+  
+      at TestContext.<anonymous> (file:///home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:129:10)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

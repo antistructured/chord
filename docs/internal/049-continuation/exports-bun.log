@@ -1,0 +1,20 @@
+@weipertda/chord [
+  "SCHEMA_VERSION", "appendRegistryEvent", "canonicalProjection", "computeBackoffDelayMs",
+  "createAdapterRouter", "createChord", "createDeterministicAuditReport", "createRuntimePolicy",
+  "createTaskQueue", "dequeueReadyTask", "diffTraces", "enqueueTask", "exportRegistry", "importRegistry",
+  "leaseTaskEntry", "listDeadLetterTasks", "listQueuedTasks", "listRegistryEvents", "markQueueEntryStatus",
+  "queryArtifacts", "queryDomains", "reduceTrace", "replayDeadLetterTask", "replayNoSideEffects",
+  "replayRegistryJournal", "resolveAdapter", "runRuntimeCycle", "scheduleTaskRetry", "selectReadyTask",
+  "serializeRegistry"
+]
+@weipertda/chord/sdk [ "createChord" ]
+@weipertda/chord/platform [
+  "appendRegistryEvent", "canonicalProjection", "computeBackoffDelayMs", "createAdapterRouter",
+  "createDeterministicAuditReport", "createRuntimePolicy", "createTaskQueue", "dequeueReadyTask",
+  "diffTraces", "enqueueTask", "leaseTaskEntry", "listQueuedTasks", "listRegistryEvents", "markQueueEntryStatus",
+  "reduceTrace", "replayDeadLetterTask", "replayNoSideEffects", "replayRegistryJournal", "resolveAdapter",
+  "runRuntimeCycle", "scheduleTaskRetry", "selectReadyTask"
+]
+error: Cannot find module '@weipertda/chord/src/sdk/chord.js' from '/home/d/.hermes/cache/scratch/chord049-consumer-nqrh_nt5/exports.mjs'
+
+Bun v1.3.14 (Linux x64)

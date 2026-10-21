@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "@chord/core",
+      "name": "@weipertda/chord",
       "dependencies": {
         "@weipertda/sigiljs": "0.18.0",
       },

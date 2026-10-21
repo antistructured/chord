@@ -1,0 +1,84 @@
+{
+  "name": "@weipertda/sigiljs",
+  "version": "0.18.0",
+  "description": "Executable data contracts for JavaScript runtime boundaries.",
+  "types": "./index.d.ts",
+  "keywords": [
+    "bun",
+    "cli",
+    "contracts",
+    "data-contracts",
+    "executable-contracts",
+    "javascript",
+    "json-schema",
+    "openapi",
+    "runtime",
+    "runtime-contracts",
+    "runtime-validation",
+    "schema",
+    "sigil",
+    "type-checking",
+    "types",
+    "typescript",
+    "validation",
+    "zero-dependency"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/antistructured/sigiljs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/antistructured/sigiljs/issues"
+  },
+  "homepage": "https://github.com/antistructured/sigiljs#readme",
+  "license": "MIT",
+  "author": {
+    "name": "Daniel Weipert",
+    "email": "weipertda@gmail.com"
+  },
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./src/index.js"
+    }
+  },
+  "main": "./src/index.js",
+  "files": [
+    "bin",
+    "CHANGELOG.md",
+    "docs",
+    "!docs/internal",
+    "examples",
+    "index.d.ts",
+    "LICENSE",
+    "README.md",
+    "src"
+  ],
+  "bin": {
+    "sigil": "./src/playground.js"
+  },
+  "scripts": {
+    "format": "prettier --write src/",
+    "lint": "eslint src/",
+    "test": "bun test",
+    "check:types": "tsc --noEmit -p tests/typescript-declarations/tsconfig.json",
+    "check:release": "bun run lint && bun test && bun run check:types && npm pack --dry-run",
+    "bench": "bun run bench/validate-user.js"
+  },
+  "engines": {
+    "bun": ">=1",
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.6.0",
+    "globals": "^17.7.0",
+    "typescript": "^6.0.3",
+    "zod": "^4.4.3"
+  }
+}

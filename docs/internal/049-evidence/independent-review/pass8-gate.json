@@ -1,0 +1,21 @@
+{
+  "verdict": "NO-GO",
+  "sequence": "Pass8 evaluated after completion of Pass7",
+  "mandatory_criteria": {
+    "current_source_security_baseline": "PASS; bounded, not publication approval",
+    "explicit_license_choice": "Apache License 2.0 selected only",
+    "copyright_holders_redistribution_authority_contributor_copied_AI_assisted_rights": "UNANSWERED / BLOCKED",
+    "approved_package_name_scope_control": "UNANSWERED / BLOCKED; prior E404 does not prove control",
+    "applied_approved_license_metadata_required_notices": "NOT PREPARED",
+    "approved_version_source_candidate": "NOT PREPARED; actual @chord/core@0.3.0; 0.4.0-preview.1 proposal only",
+    "applied_payload_curation_public_docs": "NOT PREPARED; proposed 42 existing files before legal additions, not actual RC",
+    "new_exact_candidate_seal_scan_repack": "NOT PREPARED / NOT RUN",
+    "new_candidate_public_API_consumer": "NOT RUN; old0.3.0 consumer PASS is not new-candidate PASS"
+  },
+  "smallest_maintainer_inputs": [
+    "Identify actual copyright holders and affirm authority to license intended first-party material under selected Apache-2.0; confirm relevant contributors/copied/generated/AI-assisted material rights and disclose/resolve attribution or permission exceptions.",
+    "Confirm control/authority for @chord/core under @chord (or explicitly approve another controlled name), and approve exact preview version.",
+    "After clearance authorize preparation of approved legal artifacts/metadata, curated payload and public documentation, and an exact new candidate plus fresh outside-repo public-only verification. Publication remains separately gated."
+  ],
+  "resumption_point": "Resume049 Pass2 rights/provenance clearance, not kernel redesign. Then Pass3 actual curation/legal artifacts, Pass4 public docs, Pass5 approved identity/version/source, Pass6 exact newly sealed/scanned/repacked candidate + fresh consumer. Re-run independent Pass7 and Pass8 against final source/artifact. No commit/tag/push/publish without separate explicit authorization."
+}

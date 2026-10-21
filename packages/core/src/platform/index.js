@@ -4,3 +4,5 @@ export * from "./adapter-routing.js";
 export * from "./policy.js";
 export * from "./journal-audit.js";
 export * from "./runtime-loop.js";
+export { reduceTrace, replayNoSideEffects, diffTraces } from "./trace-reducer.js";
+export { canonicalProjection } from "./history.js";

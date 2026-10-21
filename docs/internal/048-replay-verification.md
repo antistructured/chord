@@ -1,0 +1,9 @@
+# 048 — Resumed Block 6A Pass 4: Evidence/replay verification
+
+Gate: READY for the explicit modern baseline/committed projection. See047-replay-and-evidence.md and tests/replay-integrity.test.js. Pure reducer reconstructs all serializable canonical fields; journal recursion excluded from canonicalProjection only and separately returned validated. Successful admissions, dispatches, results, handoffs, human approval consumption, pauses, uncertainty, reconciliation, cancellation and imported in-flight quarantine tested against original state. Actual adapter counters remain unchanged during replay.
+
+Version/run/sequence/revision/commit linkage, ordered diagnostic completeness, before-values, legal transitions, malformed/duplicate/conflicting/incompatible/unknown records checked. Diff compares ordered content. Empty/legacy insufficient histories reject rather than invent state. Truncation exactly at a complete earlier commit requires external expected endpoint; no cryptographic signing/tamper-proof/complete-global-history claim.
+
+Current adapter protocol records requested/dispatched/reported-confirmed versus uncertain, and explicit host no-effect/compensation decisions. It does not infer provider acknowledgement or independent real-world success from a task outcome. Optional provider receipt/progress channels and simulation are not marketed as implemented. Failed pre-dispatch routing is distinguishable from post-dispatch unknown work and cannot authorize blind retries. Modern history replays recorded evidence; retry admission executes separately and requires reconciliation evidence when unknown.
+
+Safety/adversarial/state/replay suites and installed canonical projection comparison are repeated in the independent final gate. Authoritative reconstruction covers records present from declared baseline, not missing pre-baseline legacy execution.

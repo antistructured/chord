@@ -1,0 +1,114 @@
+bun test v1.3.14 (0d9b296a)
+
+tests/recovery-integrity.test.js:
+ 7 |   const h = installHost(c); const { packets } = c.registerSpecAndQueue(intent, queueOptions(h)); const id = packets[0].task_id; await c.runCycle();
+ 8 |   return { c, h, id, calls: () => calls };
+ 9 | }
+10 | function decision(f, outcome) { return { task_id: f.id, principal_id: f.h.human_id, decision: outcome, evidence: { kind: outcome === 'confirmed_not_executed' ? 'no_effect_confirmation' : outcome === 'confirmed_completed' ? 'receipt' : 'operator_review', reference: 'host-evidence-1' }, expectedRevision: f.c.getRunRevision() }; }
+11 | test('RECOVERY: uncertainty cannot replay or evade quarantine with a new task ID', async () => {
+12 |   const f = await fixture(); expect(() => f.c.replayTask(f.id)).toThrow(/RECONCILIATION_REQUIRED/);
+                                                                     ^
+error: expect(received).toThrow(expected)
+
+Expected pattern: /RECONCILIATION_REQUIRED/
+
+Received function did not throw
+Received value: {
+  schema_version: "chord.contracts.v1",
+  task_id: "task_1792557970786_muwqne0y",
+  task_kind: "intent_execution",
+  source_type: "IntentSpec",
+  source_spec_id: null,
+  project: "recovery",
+  phase: "verify",
+  target_entity: "default",
+  role: "implementer",
+  stance: "strict",
+  requested_action: [ "protected-business-operation" ],
+  inputs: {
+    spec: {
+      schema_version: "chord.contracts.v1",
+      spec_type: "IntentSpec",
+      project: "recovery",
+      phase: "verify",
+      do: [ "protected-business-operation" ],
+    },
+    files: [],
+    verify: [],
+    stop: [],
+  },
+  constraints: {
+    dont: [],
+    rules: [],
+    depends: [],
+  },
+  authority_binding: {
+    principal_id: "host-principal",
+    actor_id: "worker-actor",
+    capability: "execute",
+    scope: {
+      run_id: "run_1792557970783_ga5d4fxy",
+      project: "recovery",
+      phase: "verify",
+      task_id: "task_1792557970786_muwqne0y",
+      target_entity: "default",
+      resource: {
+        kind: "task",
+        id: "task_1792557970786_muwqne0y",
+      },
+    },
+    approval_required: false,
+  },
+  status: "queued",
+  created_at: 1792557970788,
+  retry_count: 0,
+}
+
+      at <anonymous> (/home/d/Workspace/other-projects/chord-v0.3.0/packages/core/tests/recovery-integrity.test.js:12:65)
+(fail) RECOVERY: uncertainty cannot replay or evade quarantine with a new task ID [11.47ms]
+(pass) RECOVERY: missing authority/evidence rejected unchanged [2.28ms]
+17 |   expect(() => f.c.reconcileTask({ ...decision(f, 'confirmed_not_executed'), principal_id: 'unknown' })).toThrow();
+18 |   expect(() => f.c.reconcileTask({ ...decision(f, 'confirmed_not_executed'), evidence: { kind: 'operator_review', reference: '' } })).toThrow();
+19 |   expect(f.c.getRegistry()).toEqual(before);
+20 | });
+21 | test('RECOVERY: still unknown stays quarantined', async () => {
+22 |   const f = await fixture(); f.c.reconcileTask(decision(f, 'still_unknown')); expect(() => f.c.replayTask(f.id)).toThrow(); await f.c.runCycle(); expect(f.calls()).toBe(1);
+                                      ^
+TypeError: f.c.reconcileTask is not a function. (In 'f.c.reconcileTask(decision(f, "still_unknown"))', 'f.c.reconcileTask' is undefined)
+      at <anonymous> (/home/d/Workspace/other-projects/chord-v0.3.0/packages/core/tests/recovery-integrity.test.js:22:34)
+(fail) RECOVERY: still unknown stays quarantined [1.92ms]
+20 | });
+21 | test('RECOVERY: still unknown stays quarantined', async () => {
+22 |   const f = await fixture(); f.c.reconcileTask(decision(f, 'still_unknown')); expect(() => f.c.replayTask(f.id)).toThrow(); await f.c.runCycle(); expect(f.calls()).toBe(1);
+23 | });
+24 | test('RECOVERY: confirmed completion is never executed again', async () => {
+25 |   const f = await fixture(); f.c.reconcileTask(decision(f, 'confirmed_completed')); expect(f.c.registry.tasks[f.id].status).toBe('completed'); expect(() => f.c.replayTask(f.id)).toThrow(); await f.c.runCycle(); expect(f.calls()).toBe(1);
+                                      ^
+TypeError: f.c.reconcileTask is not a function. (In 'f.c.reconcileTask(decision(f, "confirmed_completed"))', 'f.c.reconcileTask' is undefined)
+      at <anonymous> (/home/d/Workspace/other-projects/chord-v0.3.0/packages/core/tests/recovery-integrity.test.js:25:34)
+(fail) RECOVERY: confirmed completion is never executed again [1.96ms]
+23 | });
+24 | test('RECOVERY: confirmed completion is never executed again', async () => {
+25 |   const f = await fixture(); f.c.reconcileTask(decision(f, 'confirmed_completed')); expect(f.c.registry.tasks[f.id].status).toBe('completed'); expect(() => f.c.replayTask(f.id)).toThrow(); await f.c.runCycle(); expect(f.calls()).toBe(1);
+26 | });
+27 | test('RECOVERY: no-effect evidence enables explicit fresh authorized attempt', async () => {
+28 |   const f = await fixture(); f.c.reconcileTask(decision(f, 'confirmed_not_executed'));
+                                      ^
+TypeError: f.c.reconcileTask is not a function. (In 'f.c.reconcileTask(decision(f, "confirmed_not_executed"))', 'f.c.reconcileTask' is undefined)
+      at <anonymous> (/home/d/Workspace/other-projects/chord-v0.3.0/packages/core/tests/recovery-integrity.test.js:28:34)
+(fail) RECOVERY: no-effect evidence enables explicit fresh authorized attempt [1.81ms]
+28 |   const f = await fixture(); f.c.reconcileTask(decision(f, 'confirmed_not_executed'));
+29 |   f.c.replayTask(f.id, { expectedRevision: f.c.getRunRevision() }); f.c.setAdapterRouter({ fallback: { execute: () => ({ status: 'completed', outcome: 'succeeded' }) } });
+30 |   expect((await f.c.runCycle()).ok).toBe(true); expect(f.calls()).toBe(1); expect(f.c.registry.tasks[f.id].status).toBe('completed');
+31 | });
+32 | test('RECOVERY: competing/duplicate reconciliation cannot both commit', async () => {
+33 |   const f = await fixture(); const d = decision(f, 'confirmed_not_executed'); f.c.reconcileTask(d); const before = f.c.getRegistry();
+                                                                                       ^
+TypeError: f.c.reconcileTask is not a function. (In 'f.c.reconcileTask(d)', 'f.c.reconcileTask' is undefined)
+      at <anonymous> (/home/d/Workspace/other-projects/chord-v0.3.0/packages/core/tests/recovery-integrity.test.js:33:83)
+(fail) RECOVERY: competing/duplicate reconciliation cannot both commit [1.76ms]
+
+ 1 pass
+ 5 fail
+ 4 expect() calls
+Ran 6 tests across 1 file. [54.00ms]

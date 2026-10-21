@@ -1,0 +1,28 @@
+bun test v1.3.14 (0d9b296a)
+
+tests/recovery-integrity.test.js:
+(pass) RECOVERY: uncertainty cannot replay or evade quarantine with a new task ID [20.32ms]
+(pass) RECOVERY: missing authority/evidence rejected unchanged [6.46ms]
+(pass) RECOVERY: still unknown stays quarantined [6.02ms]
+(pass) RECOVERY: confirmed completion is never executed again [6.15ms]
+(pass) RECOVERY: no-effect evidence enables explicit fresh authorized attempt [12.05ms]
+(pass) RECOVERY: competing/duplicate reconciliation cannot both commit [5.52ms]
+35 | });
+36 | test('RECOVERY: cancellation preserves unknown effect and supports explicit compensation receipt', async () => {
+37 |   let finish;
+38 |   const c = createChord({ adapterRouter: { fallback: { execute: () => new Promise(resolve => { finish = resolve; }) } } }); const h = installHost(c); const { packets } = c.registerSpecAndQueue(intent, queueOptions(h)); const id = packets[0].task_id;
+39 |   const cycle = c.runCycle(); c.cancelRun();
+40 |   expect(Object.values(c.registry.operations)[0].state).toBe('unknown');
+                                                             ^
+error: expect(received).toBe(expected)
+
+Expected: "unknown"
+Received: "dispatched"
+
+      at <anonymous> (/home/d/Workspace/other-projects/chord-v0.3.0/packages/core/tests/recovery-integrity.test.js:40:57)
+(fail) RECOVERY: cancellation preserves unknown effect and supports explicit compensation receipt [6.08ms]
+
+ 6 pass
+ 1 fail
+ 17 expect() calls
+Ran 7 tests across 1 file. [100.00ms]

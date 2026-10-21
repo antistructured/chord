@@ -336,7 +336,7 @@ describe("trusted-host seam and runtime gate", () => {
     // Consumption is kernel-owned and recorded on the live snapshot.
     expect(chord.getAuthority().approvals[0].consumed_by_attempt_id).toBe(attempt.attempt_id);
     // A consumed approval cannot be replayed for another attempt.
-    const { packets: more } = chord.registerSpecAndQueue(intent, queueOptions(host, { priority: 1 }));
+    const { packets: more } = chord.registerSpecAndQueue({ ...intent, do: ["separate-protected-operation"] }, queueOptions(host, { priority: 1 }));
     const secondDenied = await chord.runCycle();
     expect(secondDenied.code).toBe("APPROVAL_REQUIRED");
     expect(calls).toBe(1);

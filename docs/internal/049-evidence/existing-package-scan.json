@@ -1,0 +1,6 @@
+{
+  "artifact_sha256": "b498bfb82729df17e8be5f0a1f73913d07f2a2ef53a31401bd2fdc8d9af74f18",
+  "files_scanned": 63,
+  "findings": [],
+  "limits": "Known credential/private-key/filename patterns only. Existing internal0.3.0 artifact; not new release-candidate clearance."
+}

@@ -1,0 +1,15 @@
+bun test v1.3.14 (0d9b296a)
+
+tests/continuity.test.js:
+(pass) Block 3 continuity: concurrency and interruption > stale expectedRevision rejected on cancelRun [7.60ms]
+(pass) Block 3 continuity: concurrency and interruption > pause/resume/cancel flow with CAS [2.58ms]
+(pass) Block 3 continuity: concurrency and interruption > cancelRun cancels tasks and clears attempts [1.28ms]
+(pass) Block 3 continuity: concurrency and interruption > approval rejection fails run [1.28ms]
+(pass) Block 3 continuity: concurrency and interruption > context projection filters and has provenance [1.25ms]
+(pass) Block 3 continuity: concurrency and interruption > handoff proposal/accept with CAS and causation/correlation [1.29ms]
+(pass) Block 3 continuity: concurrency and interruption > handoff reject and wrong actor [1.00ms]
+
+ 7 pass
+ 0 fail
+ 25 expect() calls
+Ran 7 tests across 1 file. [41.00ms]

@@ -1,0 +1,50 @@
+[
+  {
+    "name": "install",
+    "command": "npm install ./weipertda-chord-0.4.0-preview.1.tgz --ignore-scripts --no-audit --no-fund",
+    "cwd": "/home/d/.hermes/cache/scratch/chord049-consumer-nqrh_nt5",
+    "exit_code": 0
+  },
+  {
+    "name": "consumer-node",
+    "command": "node --test public.test.mjs journal.test.mjs",
+    "cwd": "/home/d/.hermes/cache/scratch/chord049-consumer-nqrh_nt5",
+    "exit_code": 0
+  },
+  {
+    "name": "consumer-bun",
+    "command": "bun test public.test.mjs journal.test.mjs",
+    "cwd": "/home/d/.hermes/cache/scratch/chord049-consumer-nqrh_nt5",
+    "exit_code": 0
+  },
+  {
+    "name": "installed-quickstart-node",
+    "command": "node node_modules/@weipertda/chord/examples/quickstart.mjs",
+    "cwd": "/home/d/.hermes/cache/scratch/chord049-consumer-nqrh_nt5",
+    "exit_code": 0
+  },
+  {
+    "name": "installed-quickstart-bun",
+    "command": "bun node_modules/@weipertda/chord/examples/quickstart.mjs",
+    "cwd": "/home/d/.hermes/cache/scratch/chord049-consumer-nqrh_nt5",
+    "exit_code": 0
+  },
+  {
+    "name": "installed-workflow-node",
+    "command": "node node_modules/@weipertda/chord/examples/cross-actor-workflow.mjs",
+    "cwd": "/home/d/.hermes/cache/scratch/chord049-consumer-nqrh_nt5",
+    "exit_code": 0
+  },
+  {
+    "name": "installed-workflow-bun",
+    "command": "bun node_modules/@weipertda/chord/examples/cross-actor-workflow.mjs",
+    "cwd": "/home/d/.hermes/cache/scratch/chord049-consumer-nqrh_nt5",
+    "exit_code": 0
+  },
+  {
+    "name": "dependency-tree",
+    "command": "npm ls --all",
+    "cwd": "/home/d/.hermes/cache/scratch/chord049-consumer-nqrh_nt5",
+    "exit_code": 0
+  }
+]

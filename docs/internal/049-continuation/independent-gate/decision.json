@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "pass": "Block6C continuation Pass8",
+  "package": "@weipertda/chord",
+  "version": "0.4.0-preview.1",
+  "artifact": "docs/internal/049-continuation/artifacts/weipertda-chord-0.4.0-preview.1.tgz",
+  "artifact_sha256": "538987e90ecbaf7b2393d40d11b5cb95dfdee28c25c0a45e743f15526cd5dc9c",
+  "source_sha256": "66cc9c4a9f05aa849cfd80343edddeef5ba48a4d7078bafad8d28f5fa19c1282",
+  "local_candidate": {
+    "decision": "GO",
+    "scope": "Bounded local developer evaluation only; experimental trusted-host single-process in-memory kernel",
+    "production_approved": false
+  },
+  "publication": {
+    "decision": "BLOCKED",
+    "authorized": false,
+    "blockers": [
+      "Authenticated npm identity and target scope/package publishing authority unverified; prior checks reported E401",
+      "Explicit authorization to publish exact candidate absent"
+    ]
+  },
+  "namespace": {
+    "decision": "CONDITIONAL",
+    "accepted_identity": "@weipertda/chord",
+    "fallback_explicitly_maintainer_accepted": true,
+    "control_basis": "maintainer attestation",
+    "authenticated_control_verified": false,
+    "verified_namespace_requirement": "UNMET for publication",
+    "prior_auth_result": "E401 reported in license-and-namespace.md and supplied context; raw E401 logs not located",
+    "auth_retried_in_pass8": false
+  },
+  "legal": {
+    "license": "Apache-2.0",
+    "holder_wording": "Antistructured Labs LLC",
+    "ownership_basis": "Maintainer attestation: sole ownership, no outside contributors, AI assistance",
+    "legal_clearance": false,
+    "independent_chain_of_title_established": false,
+    "dependency": "@weipertda/sigiljs@0.18.0, separately installed MIT; notice retained"
+  },
+  "mandatory_technical_criteria": {
+    "source_archive_manifest_current_equality": "PASS",
+    "payload_allowlist_and_safety": "PASS",
+    "payload_manifest_source_installed_equality": "PASS",
+    "fresh_byte_identical_installed_repack": "PASS",
+    "license_notice_bytes": "PASS",
+    "readme_consistency_links_and_example_equality": "PASS",
+    "source_and_safety_raw_evidence": "PASS",
+    "node_bun_consumer_raw_evidence": "PASS",
+    "independent_security_review": "PASS"
+  },
+  "test_policy": "Prior raw output/exit records validated; behavioral tests not rerun; fresh hashes, current installed bytes and fresh repack checked",
+  "verification": "independent-gate/verification.json",
+  "evidence_hashes": "independent-gate/evidence-hashes.json",
+  "report": "independent-release-gate.md",
+  "nonblocking_findings": [
+    "handoff.js no-secrets comment overstates redaction; controlling README/INTEGRITY disclaim it",
+    "Prior Bun export probe error-code assumption corrected; original failed log retained"
+  ],
+  "next_pass": "Pass9 bounded local handoff only",
+  "release_actions_taken": []
+}

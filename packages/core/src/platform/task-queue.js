@@ -1,5 +1,7 @@
 import { stableId } from "../utils/id.js";
-import { transitionTaskStatus, transitionQueueEntryStatus } from "./transitions.js";
+import { transitionTaskStatus, transitionQueueEntryStatus, canQueueTransition } from "./transitions.js";
+import { evaluateAuthority, authorityError } from "./authorization.js";
+import { invalidatePendingAttempt, clearActiveAttempt } from "./attempts.js";
 
 export function createTaskQueue() {
   return [];
@@ -90,5 +92,42 @@ export function scheduleTaskRetry(registry, taskId, delayMs, error = null, optio
   }
   registry.run.revision += 1;
 
+  return entry;
+}
+
+/** Fresh-admission dead-letter replay (design §5: "Dead-letter replay must
+ *  go through fresh admission and attempt allocation, not reset a prior
+ *  attempt/approval"). Retained on the historical `@chord/core/platform`
+ *  export surface, but its semantics are corrected: replay is a *new*
+ *  queued attempt, not an in-place status reset. Authority is re-evaluated
+ *  at admission; a revoked or denied grant leaves the task untouched.
+ *  Previously consumed approvals stay consumed (kernel-owned) — only the
+ *  attempt reservations and retry counters are reset.
+ */
+export function replayDeadLetterTask(registry, taskId, options = {}) {
+  const task = registry.tasks[taskId];
+  if (!task || typeof task.task_id !== "string") return null;
+  const entry = registry.task_queue.find(x => x.task_id === taskId);
+  if (!entry || entry.status !== "dead_letter" || task.status !== "dead_letter") return null;
+  const now = options.now ?? Date.now();
+  const decision = evaluateAuthority({
+    stage: "admit",
+    now,
+    run: registry.run,
+    task: { ...task, status: "queued" },
+    attempt: null,
+    authority: registry.authority ?? null
+  });
+  if (!decision.allowed) throw authorityError(decision.code);
+  transitionTaskStatus(registry, taskId, "queued");
+  task.retry_count = 0;
+  if (canQueueTransition(entry.status, "queued")) entry.status = "queued";
+  entry.retry_count = 0;
+  entry.available_at = now;
+  entry.lease_expires_at = null;
+  entry.last_error = null;
+  invalidatePendingAttempt(registry, taskId);
+  clearActiveAttempt(registry, taskId);
+  registry.run.revision += 1;
   return entry;
 }

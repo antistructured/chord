@@ -1,0 +1,222 @@
+[
+  {
+    "name": "git",
+    "command": [
+      "git",
+      "status",
+      "--short"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "core-baseline",
+    "command": [
+      "bun",
+      "test"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "probes-baseline",
+    "command": [
+      "node",
+      "--test",
+      "docs/internal/046-state-probes.mjs"
+    ],
+    "exit": 1
+  },
+  {
+    "name": "core-pass7",
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "command": [
+      "bun",
+      "test"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "safety-pass7",
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0",
+    "command": [
+      "node",
+      "--test",
+      "docs/internal/046-state-probes.mjs"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "authority-pass7",
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "command": [
+      "bun",
+      "test",
+      "tests/authorization.test.js",
+      "tests/adversarial.test.js"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "runtime-pass7",
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "command": [
+      "bun",
+      "run",
+      "src/verify-runtime.js"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "canonical-node-pass7",
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "command": [
+      "node",
+      "examples/cross-actor-workflow.mjs"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "canonical-bun-pass7",
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "command": [
+      "bun",
+      "examples/cross-actor-workflow.mjs"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "demo-pass7",
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "command": [
+      "bun",
+      "run",
+      "demo:via"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "core-pass7-final",
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "command": [
+      "bun",
+      "test"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "new-block6b-pass7",
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "command": [
+      "bun",
+      "test",
+      "tests/integrity.test.js",
+      "tests/lifecycle-integrity.test.js",
+      "tests/admission-integrity.test.js",
+      "tests/recovery-integrity.test.js",
+      "tests/replay-integrity.test.js",
+      "tests/architecture-integrity.test.js"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "continuity-pass7",
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "command": [
+      "bun",
+      "test",
+      "tests/continuity.test.js"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "replay-regression-pass7",
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "command": [
+      "bun",
+      "test",
+      "tests/fault-injection.test.js",
+      "tests/replay-integrity.test.js"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "host-operation-after",
+    "command": [
+      "bun",
+      "test",
+      "tests/integrity.test.js",
+      "tests/replay-integrity.test.js"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "exit": 0
+  },
+  {
+    "name": "core-pass7-closed",
+    "command": [
+      "bun",
+      "test"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "exit": 0
+  },
+  {
+    "name": "safety-pass7-closed",
+    "command": [
+      "node",
+      "--test",
+      "docs/internal/046-state-probes.mjs"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0",
+    "exit": 0
+  },
+  {
+    "name": "original-126-final",
+    "command": [
+      "bun",
+      "test",
+      "tests/canonical-example.test.js",
+      "tests/hardening.test.js",
+      "tests/continuity.test.js",
+      "tests/contracts.test.js",
+      "tests/fault-injection.test.js",
+      "tests/authorization.test.js",
+      "tests/transitions.test.js",
+      "tests/adversarial.test.js"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "exit": 0
+  },
+  {
+    "name": "new-6b-final",
+    "command": [
+      "bun",
+      "test",
+      "tests/integrity.test.js",
+      "tests/lifecycle-integrity.test.js",
+      "tests/admission-integrity.test.js",
+      "tests/recovery-integrity.test.js",
+      "tests/replay-integrity.test.js",
+      "tests/architecture-integrity.test.js"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "exit": 0
+  },
+  {
+    "name": "core-final",
+    "command": [
+      "bun",
+      "test"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+    "exit": 0
+  },
+  {
+    "name": "safety-final",
+    "command": [
+      "node",
+      "--test",
+      "docs/internal/046-state-probes.mjs"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0",
+    "exit": 0
+  }
+]

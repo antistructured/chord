@@ -23,8 +23,8 @@ yarn-error.log*
 pnpm-debug.log*
 
 # IDE/Editor configurations
-./history/*
-./.agent/*
+.history/*
+.agent/*
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json

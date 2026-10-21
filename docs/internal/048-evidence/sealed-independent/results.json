@@ -1,0 +1,148 @@
+{
+  "results": [
+    {
+      "name": "repack",
+      "command": [
+        "npm",
+        "pack",
+        "--json",
+        "--pack-destination",
+        "/home/d/.hermes/cache/scratch/chord-sealed-independent-gemjso3w/repack"
+      ],
+      "cwd": "/home/d/.hermes/cache/scratch/chord-sealed-independent-gemjso3w/source/source",
+      "exit": 0,
+      "log": "/home/d/.hermes/cache/scratch/chord-sealed-independent-gemjso3w/repack.log"
+    },
+    {
+      "name": "install",
+      "command": [
+        "npm",
+        "install",
+        "--ignore-scripts",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "/home/d/.hermes/cache/scratch/chord-sealed-independent-gemjso3w/consumer",
+      "exit": 0,
+      "log": "/home/d/.hermes/cache/scratch/chord-sealed-independent-gemjso3w/install.log"
+    },
+    {
+      "name": "core-sealed",
+      "command": [
+        "bun",
+        "test"
+      ],
+      "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+      "exit": 0,
+      "log": "/home/d/.hermes/cache/scratch/chord-sealed-independent-gemjso3w/core-sealed.log"
+    },
+    {
+      "name": "new-6b-sealed",
+      "command": [
+        "bun",
+        "test",
+        "tests/integrity.test.js",
+        "tests/lifecycle-integrity.test.js",
+        "tests/admission-integrity.test.js",
+        "tests/recovery-integrity.test.js",
+        "tests/replay-integrity.test.js",
+        "tests/architecture-integrity.test.js"
+      ],
+      "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+      "exit": 0,
+      "log": "/home/d/.hermes/cache/scratch/chord-sealed-independent-gemjso3w/new-6b-sealed.log"
+    },
+    {
+      "name": "safety-sealed",
+      "command": [
+        "node",
+        "--test",
+        "docs/internal/046-state-probes.mjs"
+      ],
+      "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0",
+      "exit": 0,
+      "log": "/home/d/.hermes/cache/scratch/chord-sealed-independent-gemjso3w/safety-sealed.log"
+    },
+    {
+      "name": "runtime-sealed",
+      "command": [
+        "bun",
+        "run",
+        "src/verify-runtime.js"
+      ],
+      "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+      "exit": 0,
+      "log": "/home/d/.hermes/cache/scratch/chord-sealed-independent-gemjso3w/runtime-sealed.log"
+    },
+    {
+      "name": "authority-sealed",
+      "command": [
+        "bun",
+        "test",
+        "tests/authorization.test.js",
+        "tests/adversarial.test.js"
+      ],
+      "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0/packages/core",
+      "exit": 0,
+      "log": "/home/d/.hermes/cache/scratch/chord-sealed-independent-gemjso3w/authority-sealed.log"
+    },
+    {
+      "name": "workflow-node",
+      "command": [
+        "node",
+        "workflow.mjs"
+      ],
+      "cwd": "/home/d/.hermes/cache/scratch/chord-sealed-independent-gemjso3w/consumer",
+      "exit": 0,
+      "log": "/home/d/.hermes/cache/scratch/chord-sealed-independent-gemjso3w/workflow-node.log"
+    },
+    {
+      "name": "workflow-bun",
+      "command": [
+        "bun",
+        "workflow.mjs"
+      ],
+      "cwd": "/home/d/.hermes/cache/scratch/chord-sealed-independent-gemjso3w/consumer",
+      "exit": 0,
+      "log": "/home/d/.hermes/cache/scratch/chord-sealed-independent-gemjso3w/workflow-bun.log"
+    },
+    {
+      "name": "gate-node",
+      "command": [
+        "node",
+        "--test",
+        "gate.test.mjs"
+      ],
+      "cwd": "/home/d/.hermes/cache/scratch/chord-sealed-independent-gemjso3w/consumer",
+      "exit": 0,
+      "log": "/home/d/.hermes/cache/scratch/chord-sealed-independent-gemjso3w/gate-node.log"
+    },
+    {
+      "name": "gate-bun",
+      "command": [
+        "bun",
+        "test",
+        "gate.test.mjs"
+      ],
+      "cwd": "/home/d/.hermes/cache/scratch/chord-sealed-independent-gemjso3w/consumer",
+      "exit": 0,
+      "log": "/home/d/.hermes/cache/scratch/chord-sealed-independent-gemjso3w/gate-bun.log"
+    },
+    {
+      "name": "engines",
+      "command": [
+        "sh",
+        "-c",
+        "command -v node npm bun; node --version; npm --version; bun --version"
+      ],
+      "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0",
+      "exit": 0,
+      "log": "/home/d/.hermes/cache/scratch/chord-sealed-independent-gemjso3w/engines.log"
+    }
+  ],
+  "artifact_sha256": "b498bfb82729df17e8be5f0a1f73913d07f2a2ef53a31401bd2fdc8d9af74f18",
+  "source_archive_sha256": "a45940faf07fc31f44d8374b3abcd5295f8642cb9b53a3a7402ca1024d479b45",
+  "source_files": 64,
+  "exact_repack": true,
+  "consumer": "/home/d/.hermes/cache/scratch/chord-sealed-independent-gemjso3w/consumer"
+}

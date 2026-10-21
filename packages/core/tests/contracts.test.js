@@ -189,14 +189,14 @@ describe("contract ingress and prerequisite result repairs", () => {
     expect((await chord.runCycle()).ok).toBe(true);
     expect(chord.queryQueue({ status: "completed" }).length).toBe(1);
     chord.setAdapterRouter({ fallback: { execute: () => undefined } });
-    chord.registerSpecAndQueue(intent, queueOptions(host));
+    chord.registerSpecAndQueue({ ...intent, do: ["absent-output-operation"] }, queueOptions(host));
     const invalid = await chord.runCycle();
     expect(invalid.ok).toBe(false);
     expect(chord.registry.execution_results.length).toBe(1);
     expect(chord.queryQueue({ status: "completed" }).length).toBe(1);
     await expect(executeTask({ execute() { throw new Error("provider-secret"); } }, packet)).rejects.toThrow("ADAPTER_ERROR");
     chord.setAdapterRouter({ fallback: { execute() { throw new Error("provider-secret"); } } });
-    chord.registerSpecAndQueue(intent, queueOptions(host)); await chord.runCycle();
+    chord.registerSpecAndQueue({ ...intent, do: ["redaction-operation"] }, queueOptions(host)); await chord.runCycle();
     expect(JSON.stringify(chord.registry)).not.toContain("provider-secret");
   });
   test("snapshot validates version, counts, nested records, clones and reconciles in-flight import", () => {

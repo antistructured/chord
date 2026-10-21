@@ -1,0 +1,43 @@
+✔ human exact-attempt approval; missing, service and wrong-attempt fail with zero effects (51.879245ms)
+✔ all common SDK read views detached; no-grant identity sees no tasks (12.485769ms)
+✔ same-revision CAS has one winner; rejected batch is byte-for-byte atomic (8.851189ms)
+✔ in-flight result loses to cancellation without changing terminal task or repeating effect (14.621995ms)
+✔ unknown effect quarantined across ID churn and restore; human evidence required before readmission (20.489919ms)
+✔ pure complete modern projection; malformed, missing-middle, tail and legacy reject; content diff detects edits (16.321829ms)
+{"mode":"same-run-unsupported","rejection":"INVALID_HISTORY","unchanged":true,"replay_intact":true,"next_valid_commit":true}
+✔ same-run-unsupported caller-appended journal rejects atomically and preserves complete replay (8.118055ms)
+✖ foreign-run caller-appended journal rejects atomically and preserves complete replay (1.40584ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 7
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 241.949439
+
+✖ failing tests:
+
+test at journal-rejection.test.mjs:5:3
+✖ foreign-run caller-appended journal rejects atomically and preserves complete replay (1.40584ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'INVALID_SEMANTICS'
+  - 'INVALID_HISTORY'
+             ^
+  
+      at TestContext.<anonymous> (file:///home/d/.hermes/cache/scratch/chord-sealed-independent-gemjso3w/consumer/journal-rejection.test.mjs:19:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'INVALID_SEMANTICS',
+    expected: 'INVALID_HISTORY',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

@@ -1,0 +1,9 @@
+# 048 — Resumed Block 6A Pass 7: Architecture/API conformance
+
+Gate: READY for the documented in-memory trusted-host preview.047-standards-conformance.md and047-public-api-compatibility.md provide exact surface classification/migration;048 final artifact contains those current public README/INTEGRITY claims.
+
+No TS/compiler/new runtime dependency/framework/provider/cloud requirement. JS/ESM/plain records/SigilJS contracts, pure policy/delta/replay and explicit effect shell retained. Private canonical ownership, exact single-process commits and detached reads now enforced. Host authentication/authority/evidence remains an application integration responsibility, not model strings or schema validity. Low-level exports/generic CAS/full inspection remain privileged host plumbing; scoped context is not a network authentication layer. All APIs experimental, stable none.
+
+Independent actor identities and shared context/handoff/approval/revision continuation supported within one embedding process. Thin public adapter integration demonstrated by installed tarball; no copied internal kernel required. No claim of independently deployed multiwriter processes, durability, distributed CAS, hostile-plugin sandbox, provider/global semantic exactly-once, simulation or cryptographic evidence authenticity. Rich host traces may contain sensitive inputs; filtering is not universal redaction.
+
+Known P1 operational tradeoffs: full candidate/history validation cloning, bounded contract limits, small tested runtime matrix, package whitelist and license decision. Unexpected/malformed history or host-input data fails closed. Public docs distinguish diagnostic view, authoritative recorded projection and new execution. Final release gate must decide whether remaining package/provenance decisions preclude GO; publication always remains maintainer-only.

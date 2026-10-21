@@ -1,0 +1,403 @@
+M .gitignore
+ D .history/README_20260321202149.md
+ D .history/README_20260411020147.md
+ D .history/packages/core/package_20260321201233.json
+ D .history/packages/core/package_20260411020147.json
+ M .vscode/settings.json
+ M README.md
+ M packages/core/bun.lock
+ M packages/core/dev_flow.md
+ M packages/core/examples/basic-flow/README.md
+ M packages/core/examples/failure-recovery/README.md
+ M packages/core/examples/multi-entity-review/README.md
+ M packages/core/package.json
+ M packages/core/src/contracts/sigils.js
+ M packages/core/src/execution/task-packets.js
+ M packages/core/src/index.js
+ M packages/core/src/platform/event-journal.js
+ M packages/core/src/platform/index.js
+ M packages/core/src/platform/runtime-loop.js
+ M packages/core/src/platform/task-queue.js
+ M packages/core/src/platform/transitions.js
+ M packages/core/src/registry/registry.js
+ M packages/core/src/registry/snapshot.js
+ M packages/core/src/sdk/chord.js
+ M packages/core/src/verify-runtime.js
+ M packages/core/tests/README.md
+ M packages/core/tests/authorization.test.js
+ M packages/core/tests/contracts.test.js
+ M packages/core/tests/hardening.test.js
+ M packages/core/tests/transitions.test.js
+?? LICENSE
+?? NOTICE
+?? docs/internal/041-block2-final-report.md
+?? docs/internal/042-approval-lifecycle.md
+?? docs/internal/042-context-handoff.md
+?? docs/internal/042-continuity-gap-audit.md
+?? docs/internal/042-continuity-tests.md
+?? docs/internal/042-coordination-guide.md
+?? docs/internal/042-final-report.md
+?? docs/internal/042-run-lifecycle.md
+?? docs/internal/042-state-implementation.md
+?? docs/internal/043-evidence-audit.md
+?? docs/internal/043-evidence-model.md
+?? docs/internal/043-fault-injection-tests.md
+?? docs/internal/043-final-report.md
+?? docs/internal/043-recovery-policy.md
+?? docs/internal/043-replay-diff.md
+?? docs/internal/043-trace-guarantees.md
+?? docs/internal/043-trace-reducer.md
+?? docs/internal/044-canonical-example-design.md
+?? docs/internal/044-cli-usage.md
+?? docs/internal/044-consumer-smoke.md
+?? docs/internal/044-developer-guide.md
+?? docs/internal/044-developer-surface-audit.md
+?? docs/internal/044-example-implementation.md
+?? docs/internal/044-example-tests.md
+?? docs/internal/044-final-report.md
+?? docs/internal/045-final-report.md
+?? docs/internal/045-go-no-go.md
+?? docs/internal/045-release-prerequisites.md
+?? docs/internal/046-evidence/baseline-hashes.json
+?? docs/internal/046-evidence/cached.txt
+?? docs/internal/046-evidence/canonical-node.log
+?? docs/internal/046-evidence/commands.json
+?? docs/internal/046-evidence/continuity.log
+?? docs/internal/046-evidence/core.log
+?? docs/internal/046-evidence/demo.log
+?? docs/internal/046-evidence/diff.txt
+?? docs/internal/046-evidence/ending-git.txt
+?? docs/internal/046-evidence/environment.log
+?? docs/internal/046-evidence/ignored.txt
+?? docs/internal/046-evidence/pack-dry-run.log
+?? docs/internal/046-evidence/preservation.json
+?? docs/internal/046-evidence/replay-existing.log
+?? docs/internal/046-evidence/runtime.log
+?? docs/internal/046-evidence/security.log
+?? docs/internal/046-evidence/state-probes-node.log
+?? docs/internal/046-evidence/status.txt
+?? docs/internal/046-evidence/unknown-redispatch.log
+?? docs/internal/046-evidence/unknown-redispatch.mjs
+?? docs/internal/046-final-report.md
+?? docs/internal/046-independent-stop-review.md
+?? docs/internal/046-mutation-inventory.md
+?? docs/internal/046-release-go-no-go.md
+?? docs/internal/046-repository-reality-audit.md
+?? docs/internal/046-standards-conformance-matrix.md
+?? docs/internal/046-state-atomicity-audit.md
+?? docs/internal/046-state-probes.mjs
+?? docs/internal/047-admission-and-projection.md
+?? docs/internal/047-canonical-state-commit.md
+?? docs/internal/047-contract-addendum.md
+?? docs/internal/047-evidence/admission-after.log
+?? docs/internal/047-evidence/admission-before.log
+?? docs/internal/047-evidence/authority-pass7.log
+?? docs/internal/047-evidence/baseline-hashes.json
+?? docs/internal/047-evidence/cancel-effect-after.log
+?? docs/internal/047-evidence/cancel-effect-before.log
+?? docs/internal/047-evidence/canonical-after.log
+?? docs/internal/047-evidence/canonical-bun-pass7.log
+?? docs/internal/047-evidence/canonical-node-pass7.log
+?? docs/internal/047-evidence/changed-files.json
+?? docs/internal/047-evidence/commands.json
+?? docs/internal/047-evidence/continuity-pass7.log
+?? docs/internal/047-evidence/core-baseline.log
+?? docs/internal/047-evidence/core-final.log
+?? docs/internal/047-evidence/core-pass7-closed.log
+?? docs/internal/047-evidence/core-pass7-final.log
+?? docs/internal/047-evidence/core-pass7.log
+?? docs/internal/047-evidence/core-review-final.log
+?? docs/internal/047-evidence/cross-record-regressions.log
+?? docs/internal/047-evidence/demo-pass7.log
+?? docs/internal/047-evidence/diff-content-ignored.log
+?? docs/internal/047-evidence/dispatch-no-run-guards.log
+?? docs/internal/047-evidence/ending-git.txt
+?? docs/internal/047-evidence/git.log
+?? docs/internal/047-evidence/handoff-contract-after.log
+?? docs/internal/047-evidence/handoff-contract-before.log
+?? docs/internal/047-evidence/host-journal-after.log
+?? docs/internal/047-evidence/host-journal-before.log
+?? docs/internal/047-evidence/host-journal-regression-before.log
+?? docs/internal/047-evidence/host-operation-after.log
+?? docs/internal/047-evidence/host-operation-before.log
+?? docs/internal/047-evidence/lifecycle-after-final.log
+?? docs/internal/047-evidence/lifecycle-after.log
+?? docs/internal/047-evidence/lifecycle-before.log
+?? docs/internal/047-evidence/mutation-checks.json
+?? docs/internal/047-evidence/new-6b-final.log
+?? docs/internal/047-evidence/new-block6b-pass7.log
+?? docs/internal/047-evidence/original-126-final.log
+?? docs/internal/047-evidence/owner-no-install.log
+?? docs/internal/047-evidence/preservation.json
+?? docs/internal/047-evidence/probes-after.log
+?? docs/internal/047-evidence/probes-baseline.log
+?? docs/internal/047-evidence/probes-final-pre-review.log
+?? docs/internal/047-evidence/public-surface.json
+?? docs/internal/047-evidence/recovery-after.log
+?? docs/internal/047-evidence/recovery-before.log
+?? docs/internal/047-evidence/recovery-regressions-before-migration.log
+?? docs/internal/047-evidence/recovery-regressions.log
+?? docs/internal/047-evidence/replay-after.log
+?? docs/internal/047-evidence/replay-before.log
+?? docs/internal/047-evidence/replay-edge-after.log
+?? docs/internal/047-evidence/replay-edge-before.log
+?? docs/internal/047-evidence/replay-import-cancel.log
+?? docs/internal/047-evidence/replay-regression-pass7.log
+?? docs/internal/047-evidence/replay-regressions-migrated.log
+?? docs/internal/047-evidence/replay-regressions.log
+?? docs/internal/047-evidence/review-callbacks-after.log
+?? docs/internal/047-evidence/review-callbacks-before-final.log
+?? docs/internal/047-evidence/review-callbacks-before.log
+?? docs/internal/047-evidence/runtime-after.log
+?? docs/internal/047-evidence/runtime-pass7.log
+?? docs/internal/047-evidence/safety-final.log
+?? docs/internal/047-evidence/safety-pass7-closed.log
+?? docs/internal/047-evidence/safety-pass7.log
+?? docs/internal/047-evidence/shared-transition-regressions.log
+?? docs/internal/047-evidence/state-after.log
+?? docs/internal/047-evidence/state-before.log
+?? docs/internal/047-evidence/state-regressions-migrated.log
+?? docs/internal/047-evidence/state-regressions.log
+?? docs/internal/047-final-report.md
+?? docs/internal/047-history-ownership-addendum.md
+?? docs/internal/047-independent-verification.md
+?? docs/internal/047-invariant-verification.md
+?? docs/internal/047-lifecycle-dispatch.md
+?? docs/internal/047-public-api-compatibility.md
+?? docs/internal/047-regression-results.md
+?? docs/internal/047-replay-and-evidence.md
+?? docs/internal/047-root-cause-matrix.md
+?? docs/internal/047-standards-conformance.md
+?? docs/internal/047-uncertain-reconciliation.md
+?? docs/internal/048-adversarial-verification.md
+?? docs/internal/048-architecture-compatibility.md
+?? docs/internal/048-consumer-package-verification.md
+?? docs/internal/048-evidence/artifact-manifest-initial.json
+?? docs/internal/048-evidence/artifact-manifest-prior-journal.json
+?? docs/internal/048-evidence/artifact-manifest.json
+?? docs/internal/048-evidence/artifacts/chord-core-source.tar.gz
+?? docs/internal/048-evidence/artifacts/final/chord-core-source.tar.gz
+?? docs/internal/048-evidence/artifacts/sealed/chord-core-source.tar.gz
+?? docs/internal/048-evidence/authority-sealed.log
+?? docs/internal/048-evidence/authority.log
+?? docs/internal/048-evidence/bun-consumer-final.log
+?? docs/internal/048-evidence/bun-consumer-sealed.log
+?? docs/internal/048-evidence/bun-consumer.log
+?? docs/internal/048-evidence/commands.json
+?? docs/internal/048-evidence/consumer-install-final.log
+?? docs/internal/048-evidence/consumer-install-sealed.log
+?? docs/internal/048-evidence/consumer-install.log
+?? docs/internal/048-evidence/core-sealed.log
+?? docs/internal/048-evidence/core.log
+?? docs/internal/048-evidence/demo.log
+?? docs/internal/048-evidence/final-verification.json
+?? docs/internal/048-evidence/import-boundary.log
+?? docs/internal/048-evidence/independent-public-tests.mjs
+?? docs/internal/048-evidence/installed-dependencies.json
+?? docs/internal/048-evidence/new-6b-sealed.log
+?? docs/internal/048-evidence/node-consumer-final.log
+?? docs/internal/048-evidence/node-consumer-sealed.log
+?? docs/internal/048-evidence/node-consumer.log
+?? docs/internal/048-evidence/pack-dry-run.log
+?? docs/internal/048-evidence/pack-final.log
+?? docs/internal/048-evidence/pack-sealed.log
+?? docs/internal/048-evidence/pack.log
+?? docs/internal/048-evidence/prior-independent-gate/046.log
+?? docs/internal/048-evidence/prior-independent-gate/consumer-bun.log
+?? docs/internal/048-evidence/prior-independent-gate/consumer-node.log
+?? docs/internal/048-evidence/prior-independent-gate/demo.log
+?? docs/internal/048-evidence/prior-independent-gate/dry-run.log
+?? docs/internal/048-evidence/prior-independent-gate/host-journal-fixed-source.log
+?? docs/internal/048-evidence/prior-independent-gate/host-journal-repro.log
+?? docs/internal/048-evidence/prior-independent-gate/independent-bun.log
+?? docs/internal/048-evidence/prior-independent-gate/independent-node.log
+?? docs/internal/048-evidence/prior-independent-gate/install.log
+?? docs/internal/048-evidence/prior-independent-gate/runtime.log
+?? docs/internal/048-evidence/prior-independent-gate/tests-after-parent-fix.log
+?? docs/internal/048-evidence/prior-independent-gate/tests.log
+?? docs/internal/048-evidence/repack-final.log
+?? docs/internal/048-evidence/repack-sealed.log
+?? docs/internal/048-evidence/repack.log
+?? docs/internal/048-evidence/runtime-sealed.log
+?? docs/internal/048-evidence/runtime.log
+?? docs/internal/048-evidence/safety-sealed.log
+?? docs/internal/048-evidence/safety.log
+?? docs/internal/048-evidence/sealed-commands.json
+?? docs/internal/048-evidence/sealed-independent/VERDICT.md
+?? docs/internal/048-evidence/sealed-independent/authority-sealed.log
+?? docs/internal/048-evidence/sealed-independent/bun-combined.log
+?? docs/internal/048-evidence/sealed-independent/bun-initial-expectation.log
+?? docs/internal/048-evidence/sealed-independent/combined-results.json
+?? docs/internal/048-evidence/sealed-independent/core-sealed.log
+?? docs/internal/048-evidence/sealed-independent/engines.log
+?? docs/internal/048-evidence/sealed-independent/gate-bun.log
+?? docs/internal/048-evidence/sealed-independent/gate-node.log
+?? docs/internal/048-evidence/sealed-independent/install.log
+?? docs/internal/048-evidence/sealed-independent/installed-verification.json
+?? docs/internal/048-evidence/sealed-independent/journal-rejection.test.mjs
+?? docs/internal/048-evidence/sealed-independent/new-6b-sealed.log
+?? docs/internal/048-evidence/sealed-independent/node-combined.log
+?? docs/internal/048-evidence/sealed-independent/node-initial-expectation.log
+?? docs/internal/048-evidence/sealed-independent/repack.log
+?? docs/internal/048-evidence/sealed-independent/results.json
+?? docs/internal/048-evidence/sealed-independent/runtime-sealed.log
+?? docs/internal/048-evidence/sealed-independent/safety-sealed.log
+?? docs/internal/048-evidence/sealed-independent/source-equality.json
+?? docs/internal/048-evidence/sealed-independent/workflow-bun.log
+?? docs/internal/048-evidence/sealed-independent/workflow-node.log
+?? docs/internal/048-evidence/state-replay.log
+?? docs/internal/048-final-report.md
+?? docs/internal/048-governed-workflow.md
+?? docs/internal/048-release-go-no-go.md
+?? docs/internal/048-release-review-prior.md
+?? docs/internal/048-replay-verification.md
+?? docs/internal/048-revalidation.md
+?? docs/internal/049-artifact-integrity.md
+?? docs/internal/049-consumer-verification.md
+?? docs/internal/049-continuation/artifacts/chord-0.4.0-preview.1-source.tar.gz
+?? docs/internal/049-continuation/baseline.json
+?? docs/internal/049-continuation/commands.json
+?? docs/internal/049-continuation/core.log
+?? docs/internal/049-continuation/install-lock.log
+?? docs/internal/049-continuation/license-and-namespace.md
+?? docs/internal/049-continuation/npm-test.log
+?? docs/internal/049-continuation/package-curation.md
+?? docs/internal/049-continuation/prior-reports/049-artifact-integrity.md
+?? docs/internal/049-continuation/prior-reports/049-consumer-verification.md
+?? docs/internal/049-continuation/prior-reports/049-final-report.md
+?? docs/internal/049-continuation/prior-reports/049-license-decision.md
+?? docs/internal/049-continuation/prior-reports/049-license-provenance.md
+?? docs/internal/049-continuation/prior-reports/049-maintainer-handoff.md
+?? docs/internal/049-continuation/prior-reports/049-package-curation.md
+?? docs/internal/049-continuation/prior-reports/049-package-manifest.md
+?? docs/internal/049-continuation/prior-reports/049-public-documentation-review.md
+?? docs/internal/049-continuation/prior-reports/049-release-baseline.md
+?? docs/internal/049-continuation/prior-reports/049-release-go-no-go.md
+?? docs/internal/049-continuation/prior-reports/049-release-notes-draft.md
+?? docs/internal/049-continuation/prior-reports/049-security-release-review.md
+?? docs/internal/049-continuation/prior-reports/049-version-and-source-candidate.md
+?? docs/internal/049-continuation/public-documentation.md
+?? docs/internal/049-continuation/quickstart-bun.log
+?? docs/internal/049-continuation/quickstart-node.log
+?? docs/internal/049-continuation/registry-target.log
+?? docs/internal/049-continuation/runtime.log
+?? docs/internal/049-continuation/source-manifest.json
+?? docs/internal/049-continuation/workflow-bun.log
+?? docs/internal/049-continuation/workflow-node.log
+?? docs/internal/049-evidence/authority.log
+?? docs/internal/049-evidence/baseline.json
+?? docs/internal/049-evidence/block6b.log
+?? docs/internal/049-evidence/bun-existing-public-tests.log
+?? docs/internal/049-evidence/bun-sealed-consumer.log
+?? docs/internal/049-evidence/cached-diff.log
+?? docs/internal/049-evidence/canonical-bun.log
+?? docs/internal/049-evidence/canonical-node.log
+?? docs/internal/049-evidence/commands.json
+?? docs/internal/049-evidence/continuity.log
+?? docs/internal/049-evidence/contributors.log
+?? docs/internal/049-evidence/core.log
+?? docs/internal/049-evidence/dependency-provenance.log
+?? docs/internal/049-evidence/diff.log
+?? docs/internal/049-evidence/existing-package-scan.json
+?? docs/internal/049-evidence/exports.log
+?? docs/internal/049-evidence/final-verification.json
+?? docs/internal/049-evidence/independent-review/after-files.json
+?? docs/internal/049-evidence/independent-review/after-status.log
+?? docs/internal/049-evidence/independent-review/before-files.json
+?? docs/internal/049-evidence/independent-review/before-status.log
+?? docs/internal/049-evidence/independent-review/block6b.log
+?? docs/internal/049-evidence/independent-review/continuity.log
+?? docs/internal/049-evidence/independent-review/core.log
+?? docs/internal/049-evidence/independent-review/old-consumer-bun.log
+?? docs/internal/049-evidence/independent-review/old-consumer-node.log
+?? docs/internal/049-evidence/independent-review/pass7-commands.json
+?? docs/internal/049-evidence/independent-review/pass7-integrity.json
+?? docs/internal/049-evidence/independent-review/pass7-review.json
+?? docs/internal/049-evidence/independent-review/pass8-gate.json
+?? docs/internal/049-evidence/independent-review/probes.log
+?? docs/internal/049-evidence/independent-review/replay.log
+?? docs/internal/049-evidence/independent-review/runtime.log
+?? docs/internal/049-evidence/independent-review/security.log
+?? docs/internal/049-evidence/independent-review/verification.json
+?? docs/internal/049-evidence/maintainer-decisions.json
+?? docs/internal/049-evidence/node-existing-public-tests.log
+?? docs/internal/049-evidence/node-sealed-consumer.log
+?? docs/internal/049-evidence/package-file-classification.json
+?? docs/internal/049-evidence/preservation.json
+?? docs/internal/049-evidence/proposed-source-review.json
+?? docs/internal/049-evidence/registry-exact-candidate.log
+?? docs/internal/049-evidence/registry-package.log
+?? docs/internal/049-evidence/remote-tags.log
+?? docs/internal/049-evidence/replay.log
+?? docs/internal/049-evidence/runtime.log
+?? docs/internal/049-evidence/safety.log
+?? docs/internal/049-evidence/static-import-audit.json
+?? docs/internal/049-evidence/status.log
+?? docs/internal/049-final-report.md
+?? docs/internal/049-license-decision.md
+?? docs/internal/049-license-provenance.md
+?? docs/internal/049-maintainer-handoff.md
+?? docs/internal/049-package-curation.md
+?? docs/internal/049-package-manifest.md
+?? docs/internal/049-public-documentation-review.md
+?? docs/internal/049-release-baseline.md
+?? docs/internal/049-release-go-no-go.md
+?? docs/internal/049-release-notes-draft.md
+?? docs/internal/049-security-release-review.md
+?? docs/internal/049-version-and-source-candidate.md
+?? packages/core/CHANGELOG.md
+?? packages/core/INTEGRITY.md
+?? packages/core/LICENSE
+?? packages/core/NOTICE
+?? packages/core/README.md
+?? packages/core/THIRD_PARTY_NOTICES.md
+?? packages/core/examples/cross-actor-workflow.mjs
+?? packages/core/examples/quickstart.mjs
+?? packages/core/src/platform/approval-flow.js
+?? packages/core/src/platform/handoff.js
+?? packages/core/src/platform/history.js
+?? packages/core/src/platform/reconciliation.js
+?? packages/core/src/platform/recovery-policy.js
+?? packages/core/src/platform/state-invariants.js
+?? packages/core/src/platform/trace-reducer.js
+?? packages/core/src/registry/owner.js
+?? packages/core/tests/admission-integrity.test.js
+?? packages/core/tests/architecture-integrity.test.js
+?? packages/core/tests/canonical-example.test.js
+?? packages/core/tests/continuity.test.js
+?? packages/core/tests/fault-injection.test.js
+?? packages/core/tests/integrity.test.js
+?? packages/core/tests/lifecycle-integrity.test.js
+?? packages/core/tests/recovery-integrity.test.js
+?? packages/core/tests/replay-integrity.test.js
+ .gitignore                                         |   4 +-
+ .history/README_20260321202149.md                  |  32 ---
+ .history/README_20260411020147.md                  |  32 ---
+ .history/packages/core/package_20260321201233.json |  21 --
+ .history/packages/core/package_20260411020147.json |  21 --
+ .vscode/settings.json                              |  26 +--
+ README.md                                          | 201 +++++++++++++++--
+ packages/core/bun.lock                             |   2 +-
+ packages/core/dev_flow.md                          |  34 ++-
+ packages/core/examples/basic-flow/README.md        |   7 +-
+ packages/core/examples/failure-recovery/README.md  |  16 +-
+ .../core/examples/multi-entity-review/README.md    |  10 +-
+ packages/core/package.json                         |  40 +++-
+ packages/core/src/contracts/sigils.js              |  44 +++-
+ packages/core/src/execution/task-packets.js        |  24 +-
+ packages/core/src/index.js                         |   1 +
+ packages/core/src/platform/event-journal.js        |  23 +-
+ packages/core/src/platform/index.js                |   2 +
+ packages/core/src/platform/runtime-loop.js         | 245 ++++++++-------------
+ packages/core/src/platform/task-queue.js           |  41 +++-
+ packages/core/src/platform/transitions.js          |   3 +
+ packages/core/src/registry/registry.js             |  27 ++-
+ packages/core/src/registry/snapshot.js             |  14 +-
+ packages/core/src/sdk/chord.js                     | 110 ++++++---
+ packages/core/src/verify-runtime.js                |   4 +-
+ packages/core/tests/README.md                      |  31 ++-
+ packages/core/tests/authorization.test.js          |   2 +-
+ packages/core/tests/contracts.test.js              |   4 +-
+ packages/core/tests/hardening.test.js              |   2 +-
+ packages/core/tests/transitions.test.js            |  18 +-
+ 30 files changed, 662 insertions(+), 379 deletions(-)

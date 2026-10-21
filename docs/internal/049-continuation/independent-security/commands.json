@@ -1,0 +1,143 @@
+[
+  {
+    "label": "environment",
+    "command": [
+      "bash",
+      "-c",
+      "node --version; bun --version; npm --version; git rev-parse HEAD; git status --short"
+    ],
+    "cwd": "/home/d/Workspace/other-projects/chord-v0.3.0",
+    "exit": 0
+  },
+  {
+    "label": "install",
+    "command": [
+      "npm",
+      "install",
+      "./weipertda-chord-0.4.0-preview.1.tgz",
+      "--ignore-scripts",
+      "--no-audit",
+      "--no-fund"
+    ],
+    "cwd": "/home/d/.hermes/cache/scratch/chord049-independent-security-1nvszb3z",
+    "exit": 0
+  },
+  {
+    "label": "dependencies",
+    "command": [
+      "npm",
+      "ls",
+      "--all",
+      "--json"
+    ],
+    "cwd": "/home/d/.hermes/cache/scratch/chord049-independent-security-1nvszb3z",
+    "exit": 0
+  },
+  {
+    "label": "tests-node",
+    "command": [
+      "node",
+      "--test",
+      "public.test.mjs",
+      "journal.test.mjs"
+    ],
+    "cwd": "/home/d/.hermes/cache/scratch/chord049-independent-security-1nvszb3z",
+    "exit": 0
+  },
+  {
+    "label": "exports-node",
+    "command": [
+      "node",
+      "exports.mjs"
+    ],
+    "cwd": "/home/d/.hermes/cache/scratch/chord049-independent-security-1nvszb3z",
+    "exit": 0
+  },
+  {
+    "label": "quickstart-node",
+    "command": [
+      "node",
+      "/home/d/.hermes/cache/scratch/chord049-independent-security-1nvszb3z/node_modules/@weipertda/chord/examples/quickstart.mjs"
+    ],
+    "cwd": "/home/d/.hermes/cache/scratch/chord049-independent-security-1nvszb3z",
+    "exit": 0
+  },
+  {
+    "label": "cross-actor-workflow-node",
+    "command": [
+      "node",
+      "/home/d/.hermes/cache/scratch/chord049-independent-security-1nvszb3z/node_modules/@weipertda/chord/examples/cross-actor-workflow.mjs"
+    ],
+    "cwd": "/home/d/.hermes/cache/scratch/chord049-independent-security-1nvszb3z",
+    "exit": 0
+  },
+  {
+    "label": "readme-node",
+    "command": [
+      "node",
+      "readme-example.mjs"
+    ],
+    "cwd": "/home/d/.hermes/cache/scratch/chord049-independent-security-1nvszb3z",
+    "exit": 0
+  },
+  {
+    "label": "tests-bun",
+    "command": [
+      "bun",
+      "test",
+      "public.test.mjs",
+      "journal.test.mjs"
+    ],
+    "cwd": "/home/d/.hermes/cache/scratch/chord049-independent-security-1nvszb3z",
+    "exit": 0
+  },
+  {
+    "label": "exports-bun",
+    "command": [
+      "bun",
+      "exports.mjs"
+    ],
+    "cwd": "/home/d/.hermes/cache/scratch/chord049-independent-security-1nvszb3z",
+    "exit": 0
+  },
+  {
+    "label": "quickstart-bun",
+    "command": [
+      "bun",
+      "/home/d/.hermes/cache/scratch/chord049-independent-security-1nvszb3z/node_modules/@weipertda/chord/examples/quickstart.mjs"
+    ],
+    "cwd": "/home/d/.hermes/cache/scratch/chord049-independent-security-1nvszb3z",
+    "exit": 0
+  },
+  {
+    "label": "cross-actor-workflow-bun",
+    "command": [
+      "bun",
+      "/home/d/.hermes/cache/scratch/chord049-independent-security-1nvszb3z/node_modules/@weipertda/chord/examples/cross-actor-workflow.mjs"
+    ],
+    "cwd": "/home/d/.hermes/cache/scratch/chord049-independent-security-1nvszb3z",
+    "exit": 0
+  },
+  {
+    "label": "readme-bun",
+    "command": [
+      "bun",
+      "readme-example.mjs"
+    ],
+    "cwd": "/home/d/.hermes/cache/scratch/chord049-independent-security-1nvszb3z",
+    "exit": 0
+  },
+  {
+    "label": "repack",
+    "command": [
+      "npm",
+      "pack",
+      "--ignore-scripts",
+      "--json",
+      "--pack-destination",
+      "/home/d/.hermes/cache/scratch/chord049-independent-security-1nvszb3z"
+    ],
+    "cwd": "/home/d/.hermes/cache/scratch/chord049-independent-security-1nvszb3z/node_modules/@weipertda/chord",
+    "exit": 0
+  }
+]

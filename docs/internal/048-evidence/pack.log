@@ -1,0 +1,331 @@
+{
+  "@chord/core": {
+    "id": "@chord/core@0.3.0",
+    "name": "@chord/core",
+    "version": "0.3.0",
+    "size": 68652,
+    "unpackedSize": 288268,
+    "shasum": "6a1ab3ea6620d5fd22fda397d5c12af6034e9245",
+    "integrity": "sha512-ZqI+pbTYuyZsHFkPtDd/F0fMBBKx0LTqZTZMPJeAXPKssa+E0pDkMdoeiyPJDYqUeUtsPPZsdYJMFVsJCx154g==",
+    "filename": "chord-core-0.3.0.tgz",
+    "files": [
+      {
+        "path": "INTEGRITY.md",
+        "size": 8587,
+        "mode": 420
+      },
+      {
+        "path": "README.md",
+        "size": 1873,
+        "mode": 420
+      },
+      {
+        "path": "dev_flow.md",
+        "size": 1434,
+        "mode": 420
+      },
+      {
+        "path": "examples/basic-flow/README.md",
+        "size": 315,
+        "mode": 420
+      },
+      {
+        "path": "examples/cross-actor-workflow.mjs",
+        "size": 6029,
+        "mode": 420
+      },
+      {
+        "path": "examples/failure-recovery/README.md",
+        "size": 907,
+        "mode": 420
+      },
+      {
+        "path": "examples/multi-entity-review/README.md",
+        "size": 503,
+        "mode": 420
+      },
+      {
+        "path": "package.json",
+        "size": 568,
+        "mode": 420
+      },
+      {
+        "path": "src/cli/_shared.js",
+        "size": 357,
+        "mode": 420
+      },
+      {
+        "path": "src/cli/inspect-audit.js",
+        "size": 170,
+        "mode": 420
+      },
+      {
+        "path": "src/cli/replay.js",
+        "size": 465,
+        "mode": 420
+      },
+      {
+        "path": "src/cli/run.js",
+        "size": 572,
+        "mode": 420
+      },
+      {
+        "path": "src/contracts/sigils.js",
+        "size": 24241,
+        "mode": 420
+      },
+      {
+        "path": "src/demo/callaback-demo.js",
+        "size": 3110,
+        "mode": 420
+      },
+      {
+        "path": "src/demo/fake-sms-adapter.js",
+        "size": 648,
+        "mode": 420
+      },
+      {
+        "path": "src/demo/fake-user.js",
+        "size": 102,
+        "mode": 420
+      },
+      {
+        "path": "src/execution/results.js",
+        "size": 471,
+        "mode": 420
+      },
+      {
+        "path": "src/execution/task-packets.js",
+        "size": 3345,
+        "mode": 420
+      },
+      {
+        "path": "src/index.js",
+        "size": 236,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/adapter-routing.js",
+        "size": 454,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/approval-flow.js",
+        "size": 4596,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/attempts.js",
+        "size": 2048,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/authorization.js",
+        "size": 8830,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/event-journal.js",
+        "size": 1297,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/handoff.js",
+        "size": 6020,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/history.js",
+        "size": 2706,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/index.js",
+        "size": 342,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/journal-audit.js",
+        "size": 1083,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/policy.js",
+        "size": 769,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/reconciliation.js",
+        "size": 4056,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/recovery-policy.js",
+        "size": 959,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/runtime-loop.js",
+        "size": 7431,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/state-invariants.js",
+        "size": 2800,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/task-queue.js",
+        "size": 4919,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/trace-reducer.js",
+        "size": 3739,
+        "mode": 420
+      },
+      {
+        "path": "src/platform/transitions.js",
+        "size": 6164,
+        "mode": 420
+      },
+      {
+        "path": "src/registry/owner.js",
+        "size": 3391,
+        "mode": 420
+      },
+      {
+        "path": "src/registry/query.js",
+        "size": 799,
+        "mode": 420
+      },
+      {
+        "path": "src/registry/registry.js",
+        "size": 8397,
+        "mode": 420
+      },
+      {
+        "path": "src/registry/snapshot.js",
+        "size": 1765,
+        "mode": 420
+      },
+      {
+        "path": "src/runtime/adapter.js",
+        "size": 514,
+        "mode": 420
+      },
+      {
+        "path": "src/sdk/chord.js",
+        "size": 19621,
+        "mode": 420
+      },
+      {
+        "path": "src/sdk/index.js",
+        "size": 28,
+        "mode": 420
+      },
+      {
+        "path": "src/types/index.js",
+        "size": 1084,
+        "mode": 420
+      },
+      {
+        "path": "src/utils/clone.js",
+        "size": 81,
+        "mode": 420
+      },
+      {
+        "path": "src/utils/id.js",
+        "size": 144,
+        "mode": 420
+      },
+      {
+        "path": "src/verify-runtime.js",
+        "size": 8392,
+        "mode": 420
+      },
+      {
+        "path": "tests/admission-integrity.test.js",
+        "size": 3638,
+        "mode": 420
+      },
+      {
+        "path": "tests/adversarial.test.js",
+        "size": 34025,
+        "mode": 420
+      },
+      {
+        "path": "tests/architecture-integrity.test.js",
+        "size": 1008,
+        "mode": 420
+      },
+      {
+        "path": "tests/authorization.test.js",
+        "size": 18394,
+        "mode": 420
+      },
+      {
+        "path": "tests/canonical-example.test.js",
+        "size": 873,
+        "mode": 420
+      },
+      {
+        "path": "tests/continuity.test.js",
+        "size": 4653,
+        "mode": 420
+      },
+      {
+        "path": "tests/contracts.test.js",
+        "size": 15931,
+        "mode": 420
+      },
+      {
+        "path": "tests/fault-injection.test.js",
+        "size": 1767,
+        "mode": 420
+      },
+      {
+        "path": "tests/fixtures/host.js",
+        "size": 3930,
+        "mode": 420
+      },
+      {
+        "path": "tests/hardening.test.js",
+        "size": 4590,
+        "mode": 420
+      },
+      {
+        "path": "tests/integrity.test.js",
+        "size": 3223,
+        "mode": 420
+      },
+      {
+        "path": "tests/lifecycle-integrity.test.js",
+        "size": 2815,
+        "mode": 420
+      },
+      {
+        "path": "tests/README.md",
+        "size": 1124,
+        "mode": 420
+      },
+      {
+        "path": "tests/recovery-integrity.test.js",
+        "size": 4122,
+        "mode": 420
+      },
+      {
+        "path": "tests/replay-integrity.test.js",
+        "size": 5553,
+        "mode": 420
+      },
+      {
+        "path": "tests/transitions.test.js",
+        "size": 26260,
+        "mode": 420
+      }
+    ],
+    "entryCount": 63,
+    "bundled": []
+  }
+}

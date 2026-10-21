@@ -1,0 +1,17 @@
+{
+  "repository_file_hashes_unchanged": false,
+  "git_status_unchanged": false,
+  "changed_paths": [
+    "docs/internal/049-evidence/maintainer-decisions.json",
+    "docs/internal/049-evidence/preservation.json"
+  ],
+  "head": "ba3e37ea035a2862e06766ed7f90513babf945b0",
+  "pass7_all_command_exits_zero": true,
+  "pass8_verdict": "NO-GO",
+  "pre_existing_paths_unchanged": true,
+  "added_paths": [
+    "docs/internal/049-evidence/maintainer-decisions.json",
+    "docs/internal/049-evidence/preservation.json"
+  ],
+  "note": "Review wrote scratch logs only. Two049 evidence JSON files appeared concurrently from outside this reviewer; inspected: consistent unanswered rights/scope and no new artifact. Do not assert whole repository/status unchanged; every pre-existing captured path hash unchanged."
+}

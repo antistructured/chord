@@ -186,26 +186,36 @@ export const RuntimePolicy = define('{ globalMaxLeased: number, perEntityMaxLeas
 export const RuntimePolicyInput = define('{ globalMaxLeased?: number, perEntityMaxLeased?: number, retry?: { strategy?: "fixed" | "linear" | "exponential", baseDelayMs?: number, maxAttempts?: number } }');
 // Current registry shape; transition legality validated by the guarded
 // transition module (pass 5), cross-record invariants enforced here.
-export const RegistryData = define(`{ run: { run_id: string, ${version}, revision: number }, artifacts: object, domains: object, tasks: object, task_queue: object[], event_journal: object[], execution_results: object[], trigger_state: object, specs: object[], authority: object | null, pending_attempts: object, active_attempts: object }`, v => {
+export const RegistryData = define(`{ run: { run_id: string, ${version}, revision: number, state?: "created" | "active" | "paused" | "cancelling" | "cancelled" | "completed" | "failed", causation_id?: string | null, correlation_id?: string | null }, artifacts: object, domains: object, tasks: object, task_queue: object[], event_journal: object[], execution_results: object[], trigger_state: object, specs: object[], authority: object | null, pending_attempts: object, active_attempts: object, handoffs?: object, approval_pause?: object | null, operations?: object, reconciliations?: object }`, v => {
   for (const [key, record] of Object.entries(v.tasks)) {
     requireTrue(id(key));
     const task = StoredTask.assert(record);
-    requireTrue(key === task.task_id);
+    requireTrue(key === task.task_id && task.authority_binding.scope.run_id === v.run.run_id);
   }
   for (const [key, record] of Object.entries(v.artifacts)) { ArtifactRecord.assert(record); requireTrue(id(key) && key === record.name); }
   for (const [key, record] of Object.entries(v.domains)) { DomainRecord.assert(record); requireTrue(id(key) && key === record.name); }
   for (const [key, value] of Object.entries(v.trigger_state)) requireTrue(id(key) && typeof value === "boolean");
+  for (const [key, value] of Object.entries(v.operations || {})) {
+    OperationRecord.assert(value); requireTrue(key === value.operation_id && Object.hasOwn(v.tasks, value.task_id) && v.tasks[value.task_id].operation_id === key);
+  }
+  for (const [key, value] of Object.entries(v.reconciliations || {})) { ReconciliationRecord.assert(value); requireTrue(key === value.reconciliation_id && Object.hasOwn(v.operations || {}, value.operation_id)); }
+  for (const [key, value] of Object.entries(v.handoffs || {})) { HandoffRecord.assert(value); requireTrue(key === value.handoff_id && value.run_id === v.run.run_id); }
+  if (v.approval_pause !== undefined && v.approval_pause !== null) ApprovalPause.assert(v.approval_pause);
   v.specs.forEach(assertSpec);
-  v.execution_results.forEach(x => Outcome.assert(x));
+  v.execution_results.forEach(x => { Outcome.assert(x); requireTrue(x.run_id === v.run.run_id && Object.hasOwn(v.tasks, x.task_id)); });
   v.task_queue.forEach(x => { QueueRecord.assert(x); requireTrue(Object.hasOwn(v.tasks, x.task_id)); });
-  requireTrue(ids(v.task_queue.map(x => x.queue_id)));
-  v.event_journal.forEach(x => JournalRecord.assert(x));
+  requireTrue(ids(v.task_queue.map(x => x.queue_id)) && ids(v.task_queue.map(x => x.task_id)));
+  v.task_queue.forEach(q => requireTrue(q.target_entity === v.tasks[q.task_id].target_entity));
+  v.event_journal.forEach(x => {
+    JournalRecord.assert(x);
+    requireTrue((x.run_id === undefined || x.run_id === null || x.run_id === v.run.run_id) && (x.schema_version === undefined || x.schema_version === null || x.schema_version === v.run.schema_version));
+  });
   requireTrue(ids(v.event_journal.map(x => x.event_id)));
   if (v.authority !== null) { AuthoritySnapshot.assert(v.authority); requireTrue(v.authority.run_id === v.run.run_id); }
   requireTrue(ids(Object.keys(v.pending_attempts)));
   for (const [key, record] of Object.entries(v.pending_attempts)) {
     const attempt = Attempt.assert(record);
-    requireTrue(key === attempt.task_id && Object.hasOwn(v.tasks, key) && v.tasks[key].status === "queued");
+    requireTrue(key === attempt.task_id && Object.hasOwn(v.tasks, key) && v.tasks[key].status === "queued" && attempt.run_id === v.run.run_id && v.task_queue.some(q => q.task_id === key && q.queue_id === attempt.queue_id));
   }
   // Active attempts exist only for mid-await dispatched tasks; the commit
   // guard revision never exceeds the run revision it was captured from.
@@ -214,29 +224,41 @@ export const RegistryData = define(`{ run: { run_id: string, ${version}, revisio
     requireTrue(id(key) && Object.hasOwn(v.tasks, key) && v.tasks[key].status === "running");
     requireTrue(record !== null && typeof record === "object" && !Array.isArray(record));
     const attempt = Attempt.assert(record.attempt);
-    requireTrue(key === attempt.task_id && integer(record.dispatch_revision) && record.dispatch_revision <= v.run.revision);
+    requireTrue(key === attempt.task_id && integer(record.dispatch_revision) && record.dispatch_revision <= v.run.revision && attempt.run_id === v.run.run_id && v.task_queue.some(q => q.task_id === key && q.queue_id === attempt.queue_id));
   }
 });
-const StoredTask = define(`{ ${packetFields}, authority_binding: ${taskAuthorityShape}, status: "queued" | "leased" | "running" | "blocked" | "completed" | "failed" | "cancelled" | "uncertain" | "dead_letter", created_at: number, retry_count: number, last_result?: object }`, v => {
-  const { status, created_at, retry_count, last_result, authority_binding, ...packet } = v;
+const StoredTask = define(`{ ${packetFields}, operation_id?: string, authority_binding: ${taskAuthorityShape}, status: "queued" | "leased" | "running" | "blocked" | "completed" | "failed" | "cancelled" | "uncertain" | "dead_letter", created_at: number, retry_count: number, last_result?: object }`, v => {
+  const { status, created_at, retry_count, last_result, authority_binding, operation_id, ...packet } = v;
   TaskPacket.assert(packet); requireTrue(integer(retry_count));
   TaskAuthority.assert(authority_binding);
   requireTrue(authority_binding.scope.task_id === v.task_id && authority_binding.scope.project === v.project && authority_binding.scope.phase === v.phase && authority_binding.scope.target_entity === v.target_entity);
   if (last_result) { Outcome.assert(last_result); requireTrue(last_result.task_id === v.task_id); }
 });
 const QueueRecord = define('{ queue_id: string, task_id: string, target_entity: string, status: "queued" | "leased" | "running" | "blocked" | "completed" | "failed" | "cancelled" | "uncertain" | "dead_letter", priority: number, available_at: number, lease_expires_at: number | null, max_attempts: number, retry_count: number, last_error: string | null }', v => requireTrue(Number.isSafeInteger(v.priority) && integer(v.max_attempts) && v.max_attempts > 0 && integer(v.retry_count)));
-const JournalRecord = define('{ event_id: string, type: string, at: number, payload: object }', v => requireTrue(integer(v.at) && id(v.type)));
+export const JournalRecord = define('{ event_id: string, type: string, at: number, payload: object, schema_version?: string | null, run_id?: string | null, run_revision?: number | null, actor_id?: string | null, principal_id?: string | null, correlation_id?: string | null, causation_id?: string | null, authority_revision?: number | null, policy_decision?: object | null }', v => requireTrue(integer(v.at) && id(v.type)));
 const ArtifactRecord = define('{ name: string, status: "declared" | "produced" | "accepted" | "rejected" | "superseded", producers: string[], consumers: string[], project: string, phase: string, history: { from: string | null, to: string, at: number }[] }', v => { requireTrue(id(v.name) && ids(v.producers) && ids(v.consumers)); v.history.forEach(x => requireTrue(integer(x.at))); });
 const DomainRecord = define('{ name: string, owner: string | null, delegates: string[], state: string, project: string, phase: string, state_history: { to: string, at: number }[] }', v => { requireTrue(id(v.name) && ids(v.delegates)); v.state_history.forEach(x => requireTrue(integer(x.at))); });
 // A validated snapshot is data, not authenticated authority.
 
 // walk disabled: created_at is an ISO string validated explicitly below; nested records are fully asserted.
-export const Snapshot = define(`{ snapshot_type: "chord.registry", snapshot_version: "0.3.0", ${version}, run: { run_id: string, ${version}, revision: number }, created_at: string, counts: { artifacts: number, domains: number, tasks: number, queued_tasks: number, journal_events: number }, registry: object }`, v => {
+export const Snapshot = define(`{ snapshot_type: "chord.registry", snapshot_version: "0.3.0", ${version}, run: { run_id: string, ${version}, revision: number, state?: "created" | "active" | "paused" | "cancelling" | "cancelled" | "completed" | "failed", causation_id?: string | null, correlation_id?: string | null }, created_at: string, counts: { artifacts: number, domains: number, tasks: number, queued_tasks: number, journal_events: number }, registry: object }`, v => {
   requireTrue(Object.values(v.counts).every(integer) && Number.isFinite(Date.parse(v.created_at)));
   RegistryData.assert(v.registry);
   requireTrue(v.run.run_id === v.registry.run.run_id && v.run.revision === v.registry.run.revision);
   requireTrue(v.counts.artifacts === Object.keys(v.registry.artifacts).length && v.counts.domains === Object.keys(v.registry.domains).length && v.counts.tasks === Object.keys(v.registry.tasks).length && v.counts.queued_tasks === v.registry.task_queue.length && v.counts.journal_events === v.registry.event_journal.length);
 }, { walk: false });
+export const HandoffProposal = define('{ from_actor_id: string, to_actor_id: string, correlation_id?: string | null, causation_id?: string | null, expectedRevision?: number, payload?: object, expires_at?: number | null }');
+export const HandoffResponse = define('{ handoff_id: string, actor_id: string, action: "accept" | "reject", expectedRevision?: number, correlation_id?: string | null, causation_id?: string | null, reason?: string | null }');
+export const HandoffRecord = define('{ handoff_id: string, run_id: string, from_actor_id: string, to_actor_id: string, correlation_id: string | null, causation_id: string | null, expected_revision: number, payload: object, expires_at: number | null, status: "proposed" | "accepted" | "rejected", created_at: number, responded_at?: number, responded_by?: string, reason?: string | null }');
+export const ApprovalPause = define('{ reason: string, expires_at: number | null, paused_at: number }');
+export const HostCommitRequest = define('{ expectedRevision: number, nextRegistry: object }', v => { requireTrue(integer(v.expectedRevision)); RegistryData.assert(v.nextRegistry); });
+export const HistoryCommit = define('{ history_version: "chord.history.v1", sequence: number, operation: string, previous_commit_id: string | null, previous_revision: number, changes: { path: string[], before: object, after: object }[], diagnostic_ids: string[] }', v => { requireTrue(integer(v.sequence) && integer(v.previous_revision)); });
+export const HistoryGenesis = define('{ history_version: "chord.history.v1", sequence: number, state: object }', v => { requireTrue(v.sequence === 0); RegistryData.assert({ ...v.state, event_journal: [] }); });
+export const OperationRecord = define('{ operation_id: string, signature: string, task_id: string, state: "requested" | "dispatched" | "confirmed" | "unknown" | "not_executed" | "compensated", attempt_id: string | null, reconciliation_id: string | null }');
+export const ReconciliationRequest = define('{ task_id: string, principal_id: string, decision: "confirmed_completed" | "confirmed_not_executed" | "still_unknown" | "authorized_compensated", evidence: { kind: "receipt" | "no_effect_confirmation" | "operator_review" | "compensation_receipt", reference: string }, expectedRevision: number }', v => { requireTrue(id(v.evidence.reference)); });
+export const ReconciliationRecord = define('{ reconciliation_id: string, operation_id: string, task_id: string, attempt_id: string | null, principal_id: string, decision: "confirmed_completed" | "confirmed_not_executed" | "still_unknown" | "authorized_compensated", evidence: { kind: "receipt" | "no_effect_confirmation" | "operator_review" | "compensation_receipt", reference: string }, at: number }');
+export const ContextRequest = define('{ actor_id: string, principal_id: string, correlation_id?: string | null, now?: number }');
+export const ContextProjection = define(`{ ${version}, projection_version: "1.0", run_id: string, run_state: string, run_revision: number, actor_id: string, principal_id: string, correlation_id: string | null, authorized_scopes: object[], tasks: object[], queue_summary: object[], artifacts: object[], domains: object[], pending_approvals: object[], recent_events: object[], handoff_expectations: object[], constraints: object[], trusted_decisions: object[], provenance: { generated_at: number, authority_revision: number } }`);
 export const assertTaskPacket = value => TaskPacket.assert(value);
 export const assertExecutionResult = value => ExecutionResult.assert(value);
 export function assertObject(value) {

@@ -1,0 +1,33 @@
+$ bun run src/cli/replay.js --journal
+[
+  {
+    "sequence": 1,
+    "event_id": "evt_1792616077304_9p8y4vic",
+    "type": "state_initialized",
+    "at": 1792616077304,
+    "payload": {
+      "history_version": "chord.history.v1",
+      "sequence": 0,
+      "state": {
+        "run": {
+          "run_id": "run_1792616077303_ahl8ruz5",
+          "schema_version": "chord.contracts.v1",
+          "revision": 0,
+          "state": "created",
+          "causation_id": null,
+          "correlation_id": null
+        },
+        "artifacts": {},
+        "domains": {},
+        "tasks": {},
+        "task_queue": [],
+        "execution_results": [],
+        "trigger_state": {},
+        "specs": [],
+        "authority": null,
+        "pending_attempts": {},
+        "active_attempts": {}
+      }
+    }
+  }
+]

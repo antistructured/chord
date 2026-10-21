@@ -1,0 +1,15 @@
+{
+  "protected_files_checked": 468,
+  "changed_preexisting_files": [],
+  "candidate_sha256_after": "538987e90ecbaf7b2393d40d11b5cb95dfdee28c25c0a45e743f15526cd5dc9c",
+  "source_sha256_after": "66cc9c4a9f05aa849cfd80343edddeef5ba48a4d7078bafad8d28f5fa19c1282",
+  "new_authorized_files": [
+    "docs/internal/049-continuation/independent-gate/decision.json",
+    "docs/internal/049-continuation/independent-gate/evidence-hashes.json",
+    "docs/internal/049-continuation/independent-gate/repack.log",
+    "docs/internal/049-continuation/independent-gate/verification.json",
+    "docs/internal/049-continuation/independent-release-gate.md",
+    "docs/internal/049-continuation/independent-gate/preservation.json"
+  ],
+  "no_candidate_or_preexisting_evidence_changes": true
+}

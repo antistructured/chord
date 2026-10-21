@@ -1,0 +1,41 @@
+bun test v1.3.14 (0d9b296a)
+
+tests/integrity.test.js:
+(pass) STATE-01/02: installed owner and revision-exclusive commits [56.79ms]
+(pass) STATE-03/05: rejected compound candidate changes no collection or event [14.10ms]
+(pass) STATE-04: reads and retained inputs cannot change canonical state [7.79ms]
+(pass) STATE-03: reservation and corresponding evidence share a revision [7.19ms]
+(pass) STATE: host commit cannot validate one operation while recording another [10.60ms]
+46 |   expect(() => c.commitRun({ expectedRevision: c.getRunRevision(), nextRegistry: next, operation: 'cancel_run' })).toThrow();
+47 |   expect(c.getRegistry()).toEqual(before);
+48 | });
+49 | test('STATE: malformed handoff identity cannot enter persisted canonical metadata', () => {
+50 |   const { c } = setup(); const before = c.getRegistry();
+51 |   expect(() => c.proposeHandoff({ from_actor_id: { forged: true }, to_actor_id: 'reviewer' })).toThrow();
+                                                                                                    ^
+error: expect(received).toThrow()
+
+Received function did not throw
+Received value: {
+  handoff_id: "handoff_1792559535030_jpevogyl",
+  run_id: "run_1792559535028_k92xajcc",
+  from_actor_id: {
+    forged: true,
+  },
+  to_actor_id: "reviewer",
+  correlation_id: null,
+  causation_id: null,
+  expected_revision: 2,
+  payload: {},
+  expires_at: null,
+  status: "proposed",
+  created_at: 1792559535030,
+}
+
+      at <anonymous> (/home/d/Workspace/other-projects/chord-v0.3.0/packages/core/tests/integrity.test.js:51:96)
+(fail) STATE: malformed handoff identity cannot enter persisted canonical metadata [9.29ms]
+
+ 5 pass
+ 1 fail
+ 16 expect() calls
+Ran 6 tests across 1 file. [834.00ms]

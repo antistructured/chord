@@ -1,0 +1,410 @@
+bun test v1.3.14 (0d9b296a)
+
+tests/replay-integrity.test.js:
+ 5 | const intent = { schema_version: 'chord.contracts.v1', spec_type: 'IntentSpec', project: 'history', phase: 'verify', do: ['mock'] };
+ 6 | function projection(registry) { const { event_journal, ...state } = registry; return state; }
+ 7 | test('REPLAY: committed admission/dispatch/result projection equals original with zero effects', async () => {
+ 8 |   let calls = 0; const c = createChord({ adapterRouter: { fallback: { execute: () => { calls++; return { status: 'completed', outcome: 'succeeded' }; } } } });
+ 9 |   const h = installHost(c); c.registerSpecAndQueue(intent, queueOptions(h));
+10 |   expect(projection(reduceTrace(c.inspectEvents()))).toEqual(projection(c.getRegistry()));
+                                                          ^
+error: expect(received).toEqual(expected)
+
+  {
+-   "active_attempts": {},
+    "artifacts": {},
+-   "authority": {
+-     "actors": [
+-       {
+-         "actor_id": "worker-actor",
+-         "capabilities": [
+-           "execute",
+-         ],
+-         "kind": "agent",
+-         "principal_id": "host-principal",
+-         "revoked_at": null,
+-         "roles": [
+-           "implementer",
+-         ],
+-       },
+-     ],
+-     "approvals": [],
+-     "authority_revision": 1,
+-     "grants": [
+-       {
+-         "actor_id": "worker-actor",
+-         "capability": "execute",
+-         "effect": "allow",
+-         "expires_at": 9007199254740991,
+-         "grant_id": "grant_task_1792558145653_n43xu34p",
+-         "issued_at": 0,
+-         "principal_id": "host-principal",
+-         "requires_approval": false,
+-         "revoked_at": null,
+-         "scope": {
+-           "phase": "verify",
+-           "project": "history",
+-           "resource": {
+-             "id": "task_1792558145653_n43xu34p",
+-             "kind": "task",
+-           },
+-           "run_id": "run_1792558145650_jgki24y1",
+-           "target_entity": "default",
+-           "task_id": "task_1792558145653_n43xu34p",
+-         },
+-       },
+-     ],
+-     "principals": [
+-       {
+-         "authenticated_at": 0,
+-         "expires_at": 9007199254740991,
+-         "issuer": "test-host",
+-         "kind": "service",
+-         "principal_id": "host-principal",
+-       },
+-       {
+-         "authenticated_at": 0,
+-         "expires_at": 9007199254740991,
+-         "issuer": "test-host",
+-         "kind": "human",
+-         "principal_id": "human-approver",
+-       },
+-     ],
+-     "run_id": "run_1792558145650_jgki24y1",
+-     "schema_version": "chord.contracts.v1",
+-   },
+    "domains": {},
+-   "execution_results": [],
+-   "operations": {
+-     "operation_1792558145655_zkle8qnf": {
+-       "attempt_id": null,
+-       "operation_id": "operation_1792558145655_zkle8qnf",
+-       "reconciliation_id": null,
+-       "signature": "{"constraints":{"depends":[],"dont":[],"rules":[]},"inputs":{"files":[],"spec":{"do":["mock"],"phase":"verify","project":"history","schema_version":"chord.contracts.v1","spec_type":"IntentSpec"},"stop":[],"verify":[]},"phase":"verify","project":"history","requested_action":["mock"],"role":"implementer","schema_version":"chord.contracts.v1","source_type":"IntentSpec","stance":"strict","target_entity":"default","task_kind":"intent_execution"}",
+-       "state": "requested",
+-       "task_id": "task_1792558145653_n43xu34p",
+-     },
+-   },
+-   "pending_attempts": {},
+    "run": {
+-     "causation_id": null,
+-     "correlation_id": null,
+      "revision": 2,
+      "run_id": "run_1792558145650_jgki24y1",
+      "schema_version": "chord.contracts.v1",
+-     "state": "created",
+    },
+-   "specs": [
+-     {
+-       "do": [
+-         "mock",
+-       ],
+-       "phase": "verify",
+-       "project": "history",
+-       "schema_version": "chord.contracts.v1",
+-       "spec_type": "IntentSpec",
+-     },
+-   ],
+-   "task_queue": [
+-     {
+-       "available_at": 1792558145653,
+-       "last_error": null,
+-       "lease_expires_at": null,
+-       "max_attempts": 3,
+-       "priority": 0,
+-       "queue_id": "queue_1792558145655_1kiwngyc",
+-       "retry_count": 0,
+-       "status": "queued",
+-       "target_entity": "default",
+-       "task_id": "task_1792558145653_n43xu34p",
+-     },
+-   ],
+-   "tasks": {
+-     "task_1792558145653_n43xu34p": {
+-       "authority_binding": {
+-         "actor_id": "worker-actor",
+-         "approval_required": false,
+-         "capability": "execute",
+-         "principal_id": "host-principal",
+-         "scope": {
+-           "phase": "verify",
+-           "project": "history",
+-           "resource": {
+-             "id": "task_1792558145653_n43xu34p",
+-             "kind": "task",
+-           },
+-           "run_id": "run_1792558145650_jgki24y1",
+-           "target_entity": "default",
+-           "task_id": "task_1792558145653_n43xu34p",
+-         },
+-       },
+-       "constraints": {
+-         "depends": [],
+-         "dont": [],
+-         "rules": [],
+-       },
+-       "created_at": 1792558145654,
+-       "inputs": {
+-         "files": [],
+-         "spec": {
+-           "do": [
+-             "mock",
+-           ],
+-           "phase": "verify",
+-           "project": "history",
+-           "schema_version": "chord.contracts.v1",
+-           "spec_type": "IntentSpec",
+-         },
+-         "stop": [],
+-         "verify": [],
+-       },
+-       "operation_id": "operation_1792558145655_zkle8qnf",
+-       "phase": "verify",
+-       "project": "history",
+-       "requested_action": [
+-         "mock",
+-       ],
+-       "retry_count": 0,
+-       "role": "implementer",
+-       "schema_version": "chord.contracts.v1",
+-       "source_spec_id": null,
+-       "source_type": "IntentSpec",
+-       "stance": "strict",
+-       "status": "queued",
+-       "target_entity": "default",
+-       "task_id": "task_1792558145653_n43xu34p",
+-       "task_kind": "intent_execution",
+-     },
+-   },
+-   "trigger_state": {},
++   "task_queue": [],
++   "tasks": {},
+  }
+
+- Expected  - 159
++ Received  + 2
+
+      at <anonymous> (/home/d/Workspace/other-projects/chord-v0.3.0/packages/core/tests/replay-integrity.test.js:10:54)
+(fail) REPLAY: committed admission/dispatch/result projection equals original with zero effects [7.33ms]
+12 |   expect(projection(replayNoSideEffects(c.inspectEvents()).projected)).toEqual(projection(c.getRegistry())); expect(calls).toBe(before);
+13 | });
+14 | test('REPLAY: uncertainty, reconciliation, handoff, pause and cancellation are recorded', async () => {
+15 |   const c = createChord({ adapterRouter: { fallback: { execute: () => { throw Error('unknown'); } } } }); const h = installHost(c); const { packets } = c.registerSpecAndQueue(intent, queueOptions(h));
+16 |   const handoff = c.proposeHandoff({ from_actor_id: h.actor_id, to_actor_id: 'reviewer' }); c.respondToHandoff({ handoff_id: handoff.handoff_id, actor_id: 'reviewer', action: 'accept' });
+17 |   await c.runCycle(); expect(projection(reduceTrace(c.inspectEvents()))).toEqual(projection(c.getRegistry()));
+                                                                              ^
+error: expect(received).toEqual(expected)
+
+  {
+-   "active_attempts": {},
+    "artifacts": {},
+-   "authority": {
+-     "actors": [
+-       {
+-         "actor_id": "worker-actor",
+-         "capabilities": [
+-           "execute",
+-         ],
+-         "kind": "agent",
+-         "principal_id": "host-principal",
+-         "revoked_at": null,
+-         "roles": [
+-           "implementer",
+-         ],
+-       },
+-     ],
+-     "approvals": [],
+-     "authority_revision": 1,
+-     "grants": [
+-       {
+-         "actor_id": "worker-actor",
+-         "capability": "execute",
+-         "effect": "allow",
+-         "expires_at": 9007199254740991,
+-         "grant_id": "grant_task_1792558145657_71h97bjz",
+-         "issued_at": 0,
+-         "principal_id": "host-principal",
+-         "requires_approval": false,
+-         "revoked_at": null,
+-         "scope": {
+-           "phase": "verify",
+-           "project": "history",
+-           "resource": {
+-             "id": "task_1792558145657_71h97bjz",
+-             "kind": "task",
+-           },
+-           "run_id": "run_1792558145656_gadii36y",
+-           "target_entity": "default",
+-           "task_id": "task_1792558145657_71h97bjz",
+-         },
+-       },
+-     ],
+-     "principals": [
+-       {
+-         "authenticated_at": 0,
+-         "expires_at": 9007199254740991,
+-         "issuer": "test-host",
+-         "kind": "service",
+-         "principal_id": "host-principal",
+-       },
+-       {
+-         "authenticated_at": 0,
+-         "expires_at": 9007199254740991,
+-         "issuer": "test-host",
+-         "kind": "human",
+-         "principal_id": "human-approver",
+-       },
+-     ],
+-     "run_id": "run_1792558145656_gadii36y",
+-     "schema_version": "chord.contracts.v1",
+-   },
+    "domains": {},
+-   "execution_results": [],
+-   "handoffs": {
+-     "handoff_1792558145658_maix0dpo": {
+-       "causation_id": null,
+-       "correlation_id": null,
+-       "created_at": 1792558145658,
+-       "expected_revision": 2,
+-       "expires_at": null,
+-       "from_actor_id": "worker-actor",
+-       "handoff_id": "handoff_1792558145658_maix0dpo",
+-       "payload": {},
+-       "reason": null,
+-       "responded_at": 1792558145658,
+-       "responded_by": "reviewer",
+-       "run_id": "run_1792558145656_gadii36y",
+-       "status": "accepted",
+-       "to_actor_id": "reviewer",
+-     },
+-   },
+-   "operations": {
+-     "operation_1792558145657_lhfjtmgs": {
+-       "attempt_id": "attempt_1792558145660_t7q70llw",
+-       "operation_id": "operation_1792558145657_lhfjtmgs",
+-       "reconciliation_id": null,
+-       "signature": "{"constraints":{"depends":[],"dont":[],"rules":[]},"inputs":{"files":[],"spec":{"do":["mock"],"phase":"verify","project":"history","schema_version":"chord.contracts.v1","spec_type":"IntentSpec"},"stop":[],"verify":[]},"phase":"verify","project":"history","requested_action":["mock"],"role":"implementer","schema_version":"chord.contracts.v1","source_type":"IntentSpec","stance":"strict","target_entity":"default","task_kind":"intent_execution"}",
+-       "state": "unknown",
+-       "task_id": "task_1792558145657_71h97bjz",
+-     },
+-   },
+-   "pending_attempts": {},
+    "run": {
+-     "causation_id": null,
+-     "correlation_id": null,
+      "revision": 6,
+      "run_id": "run_1792558145656_gadii36y",
+      "schema_version": "chord.contracts.v1",
+-     "state": "created",
+    },
+-   "specs": [
+-     {
+-       "do": [
+-         "mock",
+-       ],
+-       "phase": "verify",
+-       "project": "history",
+-       "schema_version": "chord.contracts.v1",
+-       "spec_type": "IntentSpec",
+-     },
+-   ],
+-   "task_queue": [
+-     {
+-       "available_at": 1792558145657,
+-       "last_error": null,
+-       "lease_expires_at": 1792558175660,
+-       "max_attempts": 3,
+-       "priority": 0,
+-       "queue_id": "queue_1792558145657_qoppxdxf",
+-       "retry_count": 0,
+-       "status": "uncertain",
+-       "target_entity": "default",
+-       "task_id": "task_1792558145657_71h97bjz",
+-     },
+-   ],
+-   "tasks": {
+-     "task_1792558145657_71h97bjz": {
+-       "authority_binding": {
+-         "actor_id": "worker-actor",
+-         "approval_required": false,
+-         "capability": "execute",
+-         "principal_id": "host-principal",
+-         "scope": {
+-           "phase": "verify",
+-           "project": "history",
+-           "resource": {
+-             "id": "task_1792558145657_71h97bjz",
+-             "kind": "task",
+-           },
+-           "run_id": "run_1792558145656_gadii36y",
+-           "target_entity": "default",
+-           "task_id": "task_1792558145657_71h97bjz",
+-         },
+-       },
+-       "constraints": {
+-         "depends": [],
+-         "dont": [],
+-         "rules": [],
+-       },
+-       "created_at": 1792558145657,
+-       "inputs": {
+-         "files": [],
+-         "spec": {
+-           "do": [
+-             "mock",
+-           ],
+-           "phase": "verify",
+-           "project": "history",
+-           "schema_version": "chord.contracts.v1",
+-           "spec_type": "IntentSpec",
+-         },
+-         "stop": [],
+-         "verify": [],
+-       },
+-       "operation_id": "operation_1792558145657_lhfjtmgs",
+-       "phase": "verify",
+-       "project": "history",
+-       "requested_action": [
+-         "mock",
+-       ],
+-       "retry_count": 0,
+-       "role": "implementer",
+-       "schema_version": "chord.contracts.v1",
+-       "source_spec_id": null,
+-       "source_type": "IntentSpec",
+-       "stance": "strict",
+-       "status": "uncertain",
+-       "target_entity": "default",
+-       "task_id": "task_1792558145657_71h97bjz",
+-       "task_kind": "intent_execution",
+-     },
+-   },
+-   "trigger_state": {},
++   "task_queue": [],
++   "tasks": {},
+  }
+
+- Expected  - 177
++ Received  + 2
+
+      at <anonymous> (/home/d/Workspace/other-projects/chord-v0.3.0/packages/core/tests/replay-integrity.test.js:17:74)
+(fail) REPLAY: uncertainty, reconciliation, handoff, pause and cancellation are recorded [6.64ms]
+18 |   c.reconcileTask({ task_id: packets[0].task_id, principal_id: h.human_id, decision: 'still_unknown', evidence: { kind: 'operator_review', reference: 'review-1' }, expectedRevision: c.getRunRevision() });
+19 |   c.pauseForApproval(); c.cancelRun(); expect(projection(reduceTrace(c.inspectEvents()))).toEqual(projection(c.getRegistry()));
+20 | });
+21 | test('REPLAY: changed content/order, missing middle/tail, duplicate/mixed-run/version records reject', () => {
+22 |   const c = createChord(); const h = installHost(c); c.registerSpecAndQueue(intent, queueOptions(h)); const events = c.inspectEvents();
+23 |   const changed = structuredClone(events); changed.at(-1).payload.changed = true; expect(diffTraces(events, changed).equal).toBe(false);
+                                                                                                                                 ^
+error: expect(received).toBe(expected)
+
+Expected: false
+Received: true
+
+      at <anonymous> (/home/d/Workspace/other-projects/chord-v0.3.0/packages/core/tests/replay-integrity.test.js:23:125)
+(fail) REPLAY: changed content/order, missing middle/tail, duplicate/mixed-run/version records reject [1.38ms]
+
+ 0 pass
+ 3 fail
+ 3 expect() calls
+Ran 3 tests across 1 file. [44.00ms]

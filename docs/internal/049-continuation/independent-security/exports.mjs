@@ -1,0 +1,1 @@
+for (const p of ['@weipertda/chord','@weipertda/chord/sdk','@weipertda/chord/platform']) console.log(p,Object.keys(await import(p)).sort()); let rejected = false; try { await import('@weipertda/chord/src/sdk/chord.js'); } catch(e) { rejected = true; console.log('deep import rejected', e.code); } if (!rejected) throw Error('DEEP_IMPORT_ALLOWED');

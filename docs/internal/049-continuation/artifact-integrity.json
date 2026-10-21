@@ -1,0 +1,19 @@
+{
+  "package": "@weipertda/chord",
+  "version": "0.4.0-preview.1",
+  "tarball": "/home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/049-continuation/artifacts/weipertda-chord-0.4.0-preview.1.tgz",
+  "sha256": "538987e90ecbaf7b2393d40d11b5cb95dfdee28c25c0a45e743f15526cd5dc9c",
+  "entries": 47,
+  "packed_bytes": 49050,
+  "unpacked_bytes": 177046,
+  "source_snapshot": "/home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/049-continuation/artifacts/chord-0.4.0-preview.1-source.tar.gz",
+  "source_sha256": "66cc9c4a9f05aa849cfd80343edddeef5ba48a4d7078bafad8d28f5fa19c1282",
+  "repack_sha256": "538987e90ecbaf7b2393d40d11b5cb95dfdee28c25c0a45e743f15526cd5dc9c",
+  "installed_payload_mismatches": [],
+  "credential_pattern_findings": [],
+  "broken_links": [],
+  "consumer_directory": "/home/d/.hermes/cache/scratch/chord049-consumer-nqrh_nt5",
+  "npm_authenticated_authority": "UNVERIFIED E401",
+  "namespace_basis": "maintainer-attested control and explicit fallback acceptance",
+  "publication_authorized": false
+}

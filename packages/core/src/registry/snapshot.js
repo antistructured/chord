@@ -1,4 +1,5 @@
 import { Snapshot, SCHEMA_VERSION, contractError } from "../contracts/sigils.js";
+import { createStateOwner } from "./owner.js";
 
 export function exportRegistry(registry) {
   return Snapshot.assert({
@@ -27,13 +28,20 @@ export function importRegistry(snapshot) {
   // Design §6: imported in-flight work is uncertain, never silently
   // executable. Attempt state does not survive import; the host
   // reconciles through explicit replay (fresh admission).
-  const registry = value.registry;
+  if (!Object.values(value.registry.tasks).some(t => ["leased", "running"].includes(t.status))) return value.registry;
+  const owner = createStateOwner(value.registry);
+  owner.transact("import_quarantine", registry => {
   registry.active_attempts = {};
   for (const task of Object.values(registry.tasks)) {
-    if (task.status === "leased" || task.status === "running") task.status = "uncertain";
+    if (task.status === "leased" || task.status === "running") {
+      task.status = "uncertain";
+      const operation = registry.operations?.[task.operation_id];
+      if (operation) operation.state = "unknown";
+    }
   }
   for (const entry of registry.task_queue) {
     if (entry.status === "leased" || entry.status === "running") entry.status = "uncertain";
   }
-  return registry;
+  });
+  return owner.read();
 }

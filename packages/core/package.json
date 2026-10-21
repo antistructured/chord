@@ -1,8 +1,8 @@
 {
-  "name": "@chord/core",
-  "version": "0.3.0",
+  "name": "@weipertda/chord",
+  "version": "0.4.0-preview.1",
   "type": "module",
-  "description": "Chord Core — Mixed-Entity Coordination Kernel",
+  "description": "Governed coordination for humans, AI agents, and services.",
   "exports": {
     ".": "./src/index.js",
     "./sdk": "./src/sdk/index.js",
@@ -17,5 +17,39 @@
   },
   "dependencies": {
     "@weipertda/sigiljs": "0.18.0"
+  },
+  "keywords": [
+    "coordination",
+    "agents",
+    "governance",
+    "workflow",
+    "javascript"
+  ],
+  "author": "Daniel Weipert (Antistructured Labs LLC) <danny.weipert@gmail.com>",
+  "license": "Apache-2.0",
+  "files": [
+    "src/**/*.js",
+    "!src/verify-runtime.js",
+    "examples/cross-actor-workflow.mjs",
+    "examples/quickstart.mjs",
+    "README.md",
+    "INTEGRITY.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "NOTICE",
+    "THIRD_PARTY_NOTICES.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/weipertda/chord.git",
+    "directory": "packages/core"
+  },
+  "homepage": "https://github.com/weipertda/chord#readme",
+  "bugs": {
+    "url": "https://github.com/weipertda/chord/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }

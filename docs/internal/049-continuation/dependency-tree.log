@@ -1,0 +1,3 @@
+chord-candidate-consumer@ /home/d/.hermes/cache/scratch/chord049-consumer-nqrh_nt5
+└─┬ @weipertda/chord@0.4.0-preview.1
+  └── @weipertda/sigiljs@0.18.0

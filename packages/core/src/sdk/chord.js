@@ -1,4 +1,8 @@
-import { createRegistry, registerSpec, transitionArtifact } from "../registry/registry.js";
+import { createRegistry, registerSpec } from "../registry/registry.js";
+import { createStateOwner } from "../registry/owner.js";
+import { admitOperation, operationFor, reconcileTask } from "../platform/reconciliation.js";
+import { projectContext, proposeHandoff, respondToHandoff } from "../platform/handoff.js";
+import { pauseForApproval, resumeRun, rejectApproval, cancelRun } from "../platform/approval-flow.js";
 import { queryArtifacts, queryDomains, listDeadLetterTasks } from "../registry/query.js";
 import { serializeRegistry, exportRegistry } from "../registry/snapshot.js";
 import { createIntentTaskPacket, createHandoffTaskPackets } from "../execution/task-packets.js";
@@ -13,10 +17,21 @@ import { evaluateAuthority, authorityError } from "../platform/authorization.js"
 import { prepareAttemptRecord, invalidatePendingAttempt, clearActiveAttempt } from "../platform/attempts.js";
 import { transitionTaskStatus, canQueueTransition } from "../platform/transitions.js";
 import { deepClone } from "../utils/clone.js";
-import { assertTaskPacket, assertSpec, RegistryData, AuthoritySnapshot, TaskAuthority, Grant, SCHEMA_VERSION, CONTRACT_LIMITS, contractError } from "../contracts/sigils.js";
+import { assertTaskPacket, assertSpec, ContextRequest, RegistryData, AuthoritySnapshot, TaskAuthority, Grant, SCHEMA_VERSION, CONTRACT_LIMITS, contractError } from "../contracts/sigils.js";
 
 export function createChord(options = {}) {
-  const registry = options.registry === undefined ? createRegistry() : RegistryData.assert(options.registry);
+  const owner = createStateOwner(options.registry === undefined ? createRegistry() : options.registry);
+  let registry = owner.read();
+  function mutate(operation, action, expectedRevision) {
+    const result = owner.transact(operation, draft => {
+      const previous = registry;
+      registry = draft;
+      try { return action(draft); } finally { registry = previous; }
+    }, expectedRevision);
+    registry = owner.read();
+    return result;
+  }
+  const read = () => deepClone(owner.read());
   registry.task_queue ||= createTaskQueue();
   registry.pending_attempts ||= {};
   registry.active_attempts ||= {};
@@ -169,6 +184,7 @@ export function createChord(options = {}) {
       if (!decision.allowed) throw authorityError(decision.code);
     }
     registerTaskPackets(registry, packets, bindings);
+    packets.forEach(packet => admitOperation(registry, packet));
     packets.forEach(packet => {
       enqueueTask(registry, packet, {
         priority: queueOptions.priority ?? 0,
@@ -205,6 +221,8 @@ export function createChord(options = {}) {
     if (!task || typeof task.task_id !== "string") throw contractError("INVALID_DATA");
     if (cancelOptions.expectedRevision !== undefined && cancelOptions.expectedRevision !== registry.run.revision) throw authorityError("STALE_REVISION");
     transitionTaskStatus(registry, taskId, "cancelled");
+    const operation = operationFor(registry, taskId);
+    if (operation?.state === "dispatched") operation.state = "unknown";
     const entry = registry.task_queue.find(x => x.task_id === taskId);
     if (entry && canQueueTransition(entry.status, "cancelled")) entry.status = "cancelled";
     invalidatePendingAttempt(registry, taskId);
@@ -226,11 +244,14 @@ export function createChord(options = {}) {
     if (!task || typeof task.task_id !== "string") throw contractError("INVALID_DATA");
     if (replayOptions.expectedRevision !== undefined && replayOptions.expectedRevision !== registry.run.revision) throw authorityError("STALE_REVISION");
     const previousStatus = task.status;
+    const operation = operationFor(registry, taskId);
+    if (["uncertain", "blocked"].includes(previousStatus) && (!operation || operation.state !== "not_executed" || !operation.reconciliation_id)) throw authorityError("RECONCILIATION_REQUIRED");
     if (!["dead_letter", "uncertain", "blocked"].includes(previousStatus)) throw authorityError("INVALID_TRANSITION");
     const now = hostNow();
     const decision = evaluateAuthority({ stage: "admit", now, run: registry.run, task: { ...task, status: "queued" }, attempt: null, authority: registry.authority });
     if (!decision.allowed) throw authorityError(decision.code);
     transitionTaskStatus(registry, taskId, "queued");
+    if (operation) { operation.state = "requested"; operation.attempt_id = null; }
     task.retry_count = 0;
     const entry = registry.task_queue.find(x => x.task_id === taskId);
     if (entry) {
@@ -248,34 +269,69 @@ export function createChord(options = {}) {
   }
 
   if (trustedHost && trustedHost.authoritySnapshot !== undefined && trustedHost.authoritySnapshot !== null) {
-    setAuthoritySnapshot(trustedHost.authoritySnapshot);
+    mutate("authority_snapshot", () => setAuthoritySnapshot(trustedHost.authoritySnapshot));
   }
 
   return {
-    registry,
+    get registry() { return read(); },
     parseText,
-    registerSpec: register,
-    registerSpecAndQueue,
+    registerSpec: spec => mutate("register_spec", () => register(spec)),
+    registerSpecAndQueue: (spec, opts = {}) => mutate("admit_spec", () => registerSpecAndQueue(spec, opts), opts.expectedRevision),
     createTaskPackets,
-    queueTaskPackets,
-    setAuthoritySnapshot,
-    prepareAttempt,
-    cancelTask,
-    getAuthority: () => (registry.authority ? deepClone(registry.authority) : null),
-    getRunRevision: () => registry.run.revision,
-    runCycle: async () => runRuntimeCycle(registry, router, policy, { now: () => hostNow() }),
-    setAdapterRouter(value) { router = createAdapterRouter(value); return router; },
-    setRuntimePolicy(value) { policy = createRuntimePolicy(value); return policy; },
-    queryArtifacts: (criteria = {}) => queryArtifacts(registry, criteria),
-    queryDomains: (criteria = {}) => queryDomains(registry, criteria),
-    queryQueue: (criteria = {}) => listQueuedTasks(registry, criteria),
-    queryDeadLetters: () => listDeadLetterTasks(registry),
-    replayTask,
-    replayJournal: (replayOptions = {}) => replayRegistryJournal(registry, replayOptions),
-    inspectAudit: (auditOptions = {}) => createDeterministicAuditReport(registry, auditOptions),
-    inspectEvents: (filters = {}) => listRegistryEvents(registry, filters),
-    exportRegistry: () => exportRegistry(registry),
-    serializeRegistry: () => serializeRegistry(registry),
-    _invalidatePendingAttempt: (taskId) => invalidatePendingAttempt(registry, taskId)
+    queueTaskPackets: (packets, opts = {}) => mutate("admit_tasks", () => queueTaskPackets(packets, opts), opts.expectedRevision),
+    setAuthoritySnapshot: (snapshot, opts = {}) => mutate("authority_snapshot", () => setAuthoritySnapshot(snapshot, opts), opts.expectedRevision),
+    prepareAttempt: id => mutate("prepare_attempt", () => prepareAttempt(id)),
+    cancelTask: (id, opts = {}) => mutate("cancel_task", () => cancelTask(id, opts), opts.expectedRevision),
+    getAuthority: () => deepClone(owner.read().authority),
+    getRegistry: read,
+    getRunState: () => owner.read().run.state || "unknown",
+    getRunRevision: () => owner.read().run.revision,
+    // Trusted-host administrative CAS, not an actor request endpoint.
+    commitRun: args => { const result = owner.install(args); registry = owner.read(); return result; },
+    projectContext: (opts = {}) => {
+      const input = ContextRequest.assert(opts);
+      const at = hostNow();
+      return projectContext(read(), { ...input, now: at });
+    },
+    proposeHandoff: (opts = {}) => mutate("propose_handoff", () => proposeHandoff(registry, opts), opts.expectedRevision),
+    respondToHandoff: (opts = {}) => mutate("respond_handoff", () => respondToHandoff(registry, opts), opts.expectedRevision),
+    pauseForApproval: (opts = {}) => mutate("pause_run", () => pauseForApproval(registry, opts), opts.expectedRevision),
+    resumeRun: (opts = {}) => mutate("resume_run", () => {
+      if (registry.run.state !== "paused") throw authorityError("INVALID_TRANSITION");
+      const at = hostNow();
+      const human = registry.authority?.principals.find(p => p.principal_id === opts.principal_id && p.kind === "human" && p.authenticated_at <= at && at < p.expires_at);
+      if (!human) throw authorityError("PRINCIPAL_INVALID");
+      for (const task of Object.values(registry.tasks)) {
+        if (task.status !== "queued") continue;
+        const required = task.authority_binding.approval_required || registry.authority.grants.some(g => g.scope.task_id === task.task_id && g.requires_approval && g.effect === "allow" && g.revoked_at === null && g.issued_at <= at && at < g.expires_at);
+        if (!required) continue;
+        const attempt = registry.pending_attempts[task.task_id];
+        const decision = evaluateAuthority({ stage: "dispatch", now: at, run: registry.run, task, attempt: attempt || null, authority: registry.authority });
+        const approval = registry.authority.approvals.find(a => a.approval_id === decision.approval_id);
+        if (!decision.allowed || !approval || approval.approver_principal_id !== human.principal_id || (opts.approval_id && opts.approval_id !== approval.approval_id)) throw authorityError("APPROVAL_REQUIRED");
+      }
+      return resumeRun(registry, opts);
+    }, opts.expectedRevision),
+    rejectApproval: (opts = {}) => mutate("reject_approval", () => rejectApproval(registry, opts), opts.expectedRevision),
+    cancelRun: (opts = {}) => mutate("cancel_run", () => {
+      const result = cancelRun(registry, opts);
+      for (const operation of Object.values(registry.operations || {})) if (operation.state === "dispatched") operation.state = "unknown";
+      return result;
+    }, opts.expectedRevision),
+    runCycle: async () => runRuntimeCycle({ read: () => owner.read(), transact: (op, fn) => mutate(op, fn) }, router, policy, { now: hostNow }),
+    setAdapterRouter(value) { router = createAdapterRouter(value); return { ...router, exact: { ...router.exact }, prefix: { ...router.prefix } }; },
+    setRuntimePolicy(value) { policy = createRuntimePolicy(value); return deepClone(policy); },
+    queryArtifacts: (criteria = {}) => queryArtifacts(read(), criteria),
+    queryDomains: (criteria = {}) => queryDomains(read(), criteria),
+    queryQueue: (criteria = {}) => listQueuedTasks(read(), criteria),
+    queryDeadLetters: () => listDeadLetterTasks(read()),
+    reconcileTask: request => mutate("reconcile_effect", () => reconcileTask(registry, request, hostNow()), request?.expectedRevision),
+    replayTask: (id, opts = {}) => mutate("readmit_task", () => replayTask(id, opts), opts.expectedRevision),
+    replayJournal: (opts = {}) => replayRegistryJournal(read(), opts),
+    inspectAudit: (opts = {}) => createDeterministicAuditReport(read(), opts),
+    inspectEvents: (opts = {}) => listRegistryEvents(read(), opts),
+    exportRegistry: () => exportRegistry(owner.read()),
+    serializeRegistry: () => serializeRegistry(owner.read()),
+    _invalidatePendingAttempt: id => mutate("invalidate_attempt", () => invalidatePendingAttempt(registry, id))
   };
 }

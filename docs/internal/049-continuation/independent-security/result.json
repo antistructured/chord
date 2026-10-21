@@ -1,0 +1,251 @@
+{
+  "verdict": "PASS",
+  "artifact": "docs/internal/049-continuation/artifacts/weipertda-chord-0.4.0-preview.1.tgz",
+  "sha256": "538987e90ecbaf7b2393d40d11b5cb95dfdee28c25c0a45e743f15526cd5dc9c",
+  "source_sha256": "66cc9c4a9f05aa849cfd80343edddeef5ba48a4d7078bafad8d28f5fa19c1282",
+  "entries": 47,
+  "packed_bytes": 49050,
+  "unpacked_bytes": 177046,
+  "consumer": "/home/d/.hermes/cache/scratch/chord049-independent-security-1nvszb3z",
+  "payload": [
+    {
+      "path": "CHANGELOG.md",
+      "sha256": "b5efaba825cd7a060d74a14629168e9b0fdce0f957aba9ba48f0577722537553",
+      "bytes": 2437
+    },
+    {
+      "path": "INTEGRITY.md",
+      "sha256": "1372c4e6625edf33c2932bc66e47b699884d0298a086f28b51d0935c3fbf9437",
+      "bytes": 8960
+    },
+    {
+      "path": "LICENSE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "bytes": 11358
+    },
+    {
+      "path": "NOTICE",
+      "sha256": "820072ab281afdb040891d2a52b7164df973a55cb05454b67156a48d4711f1c3",
+      "bytes": 259
+    },
+    {
+      "path": "README.md",
+      "sha256": "579ba3c30ea0e58f03f62614eb473ff766471a382f5653e133aa71146b2faf89",
+      "bytes": 13855
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "sha256": "6e63263e0916216021a0b353c0b8e16cdca38b1bf68dc7d959a9e8cebcd375f0",
+      "bytes": 1425
+    },
+    {
+      "path": "examples/cross-actor-workflow.mjs",
+      "sha256": "fc81bee3437b5a771012a46426fbab074c7b6a9cbf989d12030e6785cf030fbf",
+      "bytes": 6034
+    },
+    {
+      "path": "examples/quickstart.mjs",
+      "sha256": "ae3d5f19155d9df075d638ed038a9d446e0728e8a7db165433e97eedef3dd3ef",
+      "bytes": 1852
+    },
+    {
+      "path": "package.json",
+      "sha256": "c7aaa4ac4ac2344d362e94863e9413b2b14b00eee547580f06ecf364ea8c8500",
+      "bytes": 1422
+    },
+    {
+      "path": "src/cli/_shared.js",
+      "sha256": "6735668c5bd8ce8e65722edc58ef8709889555f7c80a78a29c6a249f53d8c2c6",
+      "bytes": 357
+    },
+    {
+      "path": "src/cli/inspect-audit.js",
+      "sha256": "1069443082828336b34d9a2ec504998b428457d56a8b5867118f8467a31a1c0b",
+      "bytes": 170
+    },
+    {
+      "path": "src/cli/replay.js",
+      "sha256": "3a48c88c557a006ee0ee5a381f2406e4c37fa76d2510b8b81fc73a854f764aa9",
+      "bytes": 465
+    },
+    {
+      "path": "src/cli/run.js",
+      "sha256": "5f3cb4654e41ba44c9541ce2996e60e74aa3e3efbcf1df7260b91ca290508a04",
+      "bytes": 572
+    },
+    {
+      "path": "src/contracts/sigils.js",
+      "sha256": "43b5af096c9279b2eb3bba79ba482067d31b9119eead9c4bbb02835a610099e2",
+      "bytes": 25674
+    },
+    {
+      "path": "src/demo/callaback-demo.js",
+      "sha256": "654f31ff35df0aceb4a736d16afe206775990d2626404b48686f700672058cf4",
+      "bytes": 3110
+    },
+    {
+      "path": "src/demo/fake-sms-adapter.js",
+      "sha256": "7c1778f0a7e16f6230a138f7618709975628cec03b9f019c085fd43134e0d4b0",
+      "bytes": 648
+    },
+    {
+      "path": "src/demo/fake-user.js",
+      "sha256": "a9e2a07cd21e1373d27b32cf0bd7d5b02a88bc76ddd957d71cf894325f18dcc4",
+      "bytes": 102
+    },
+    {
+      "path": "src/execution/results.js",
+      "sha256": "be96f38973fa8560e6de84504587c1ba79adc79e03ff31471537de1485768956",
+      "bytes": 471
+    },
+    {
+      "path": "src/execution/task-packets.js",
+      "sha256": "f5e0ce19412e266d10d553685b8f3df3cd611638b7a978ae48235f2465f19594",
+      "bytes": 3345
+    },
+    {
+      "path": "src/index.js",
+      "sha256": "fa41c033be3cea22c7e66b079a7adc99eee095ed4a79e63a2db65e8ea3e50284",
+      "bytes": 236
+    },
+    {
+      "path": "src/platform/adapter-routing.js",
+      "sha256": "4390ced5e563e3e4d38499b5eeb9ce8f8497c090f5a48bf9f4e6cd8596a47b72",
+      "bytes": 454
+    },
+    {
+      "path": "src/platform/approval-flow.js",
+      "sha256": "47dde9af514d81babb09edaafac956efcc85f3bb3c9df82e6384202b3fbb8624",
+      "bytes": 4596
+    },
+    {
+      "path": "src/platform/attempts.js",
+      "sha256": "47431df92cf007aba99773444596729b5b341bdf8c8ab4ca8baa70f80ce0640b",
+      "bytes": 2048
+    },
+    {
+      "path": "src/platform/authorization.js",
+      "sha256": "66c8edd5383344b35635f23b4bc7047bc55f74e4adbc5aed2c132883615ea880",
+      "bytes": 8830
+    },
+    {
+      "path": "src/platform/event-journal.js",
+      "sha256": "d38bd521d5b0bad755a2b684e078b7805d4d2e80788a7260442a0d896fb31f64",
+      "bytes": 1297
+    },
+    {
+      "path": "src/platform/handoff.js",
+      "sha256": "7255e3eaf9cd09286dd77447e9510e9aab2f2b167c6d81a877c356469c93e060",
+      "bytes": 6152
+    },
+    {
+      "path": "src/platform/history.js",
+      "sha256": "7cae2c2b114e3cc80dc35a5757f162da0f2e68767ab3c42cd911bae0b8f90f5b",
+      "bytes": 2706
+    },
+    {
+      "path": "src/platform/index.js",
+      "sha256": "733fa977b852aa8b42898d1648dea3253682170131c606475d8e18f63b9f463e",
+      "bytes": 342
+    },
+    {
+      "path": "src/platform/journal-audit.js",
+      "sha256": "9629c9ca4c586dfbc5ed3432fc0f43a80984c58584d3c80e91bc0d1e3d2db56f",
+      "bytes": 1083
+    },
+    {
+      "path": "src/platform/policy.js",
+      "sha256": "77bcd446d85ad8c32fb6bbd3671ebad2e495f34e483de69fbec0bcf6c36b0e98",
+      "bytes": 769
+    },
+    {
+      "path": "src/platform/reconciliation.js",
+      "sha256": "1252650e822480be704721afba0f0652ef81be70d3c29eb759180dc085d93191",
+      "bytes": 4056
+    },
+    {
+      "path": "src/platform/recovery-policy.js",
+      "sha256": "78f52d44e8a512978607ceeeb9bb6218c7ddc18a577cf8d93ede6eb548c2fb50",
+      "bytes": 959
+    },
+    {
+      "path": "src/platform/runtime-loop.js",
+      "sha256": "82237604150699c58323cbfac52ab1cc89dfbdd55ab781da45bed5d365df330b",
+      "bytes": 7431
+    },
+    {
+      "path": "src/platform/state-invariants.js",
+      "sha256": "38cfad6a20fed28b00f45c448db2db42ce06ac9bb46326886ead15f2427cca65",
+      "bytes": 2800
+    },
+    {
+      "path": "src/platform/task-queue.js",
+      "sha256": "ef6c4ef7f0ff91a71e0c46b3fa5439d148f01771ceae68e33396391f5b7b5cec",
+      "bytes": 4919
+    },
+    {
+      "path": "src/platform/trace-reducer.js",
+      "sha256": "1539cea376a02014f583d6df913c4043bdc5a43f9941a5d112d0b8bbf483faec",
+      "bytes": 3739
+    },
+    {
+      "path": "src/platform/transitions.js",
+      "sha256": "b8fe0507c086184aad43b55cebdde8bb0b56ec717966e2aec9158fc8ba1dfa11",
+      "bytes": 6164
+    },
+    {
+      "path": "src/registry/owner.js",
+      "sha256": "614ad182d9905ce272148ea4dc2f8d7fd1bdc50e5dc5816db9c238dc1360549b",
+      "bytes": 3516
+    },
+    {
+      "path": "src/registry/query.js",
+      "sha256": "aafd1de22534ef2cbbfee2095a2f731175563483ee4cda2b654b9cfa9f38cbbe",
+      "bytes": 799
+    },
+    {
+      "path": "src/registry/registry.js",
+      "sha256": "d19593446fa9a2cf449c4ebb513814bb6d2cc44ccc12affe66b8d169d0614f20",
+      "bytes": 8397
+    },
+    {
+      "path": "src/registry/snapshot.js",
+      "sha256": "f55d7beec32dc7b34075b135895dee544fe024ad9ad07c0b9063710381daa80c",
+      "bytes": 1765
+    },
+    {
+      "path": "src/runtime/adapter.js",
+      "sha256": "a1a89a112e9d80f96ea526d3a17f0de558c20db2ff18bd92672fda9a77e281dd",
+      "bytes": 514
+    },
+    {
+      "path": "src/sdk/chord.js",
+      "sha256": "1c3a22dac261f7d3850f45c8d2d98a7464d85a8af4eb062e9ec71f539681b997",
+      "bytes": 19621
+    },
+    {
+      "path": "src/sdk/index.js",
+      "sha256": "7519ffb9268de97cb698a4bd4fc4ad41d0c603b6e54e58bef1128d3ce69cb1a7",
+      "bytes": 28
+    },
+    {
+      "path": "src/types/index.js",
+      "sha256": "c94b1e196b1691179af82befe97f3b9788d9763a4a1ad200ca501c562bfaa998",
+      "bytes": 1084
+    },
+    {
+      "path": "src/utils/clone.js",
+      "sha256": "6c0715a8a9890575d1b7161781fcd8431330b186aea13b67bdab0c485a9c5ae0",
+      "bytes": 81
+    },
+    {
+      "path": "src/utils/id.js",
+      "sha256": "6879bb850f66317459a9d91724c297fb9e06ed1e6f130f3786a750c06674d9da",
+      "bytes": 144
+    }
+  ],
+  "credential_pattern_findings": [],
+  "protected_file_changes": [],
+  "installed_payload_exact": true,
+  "repack_byte_identical": true
+}

@@ -1,0 +1,29 @@
+✔ CAS success must install candidate in the SDK canonical owner (18.275799ms)
+✔ two same-revision whole-run commits cannot both succeed (9.779987ms)
+✔ paused run must invoke zero protected effects (3.820313ms)
+✔ failed run after approval rejection must invoke zero effects (4.360812ms)
+✔ denied compound registration must preserve state and journal (1.657962ms)
+✔ denied batch must not persist grants installed before its rejection (1.925536ms)
+✔ read-only context cannot expose canonical authority scope aliases (2.169714ms)
+✔ context for identity with no grants must not reveal all tasks (2.032098ms)
+✔ event inspection must not return writable canonical events (5.698146ms)
+✔ attempt reservation must advance revision and record the mutation (3.675324ms)
+✔ unknown effect must not be re-admitted without reconciliation evidence (12.573694ms)
+✔ replay must reconstruct committed task and queue state (9.381784ms)
+✔ trace diff must detect altered content under the same event identity (0.252038ms)
+✔ trace diff must detect reordered events with the same ID set (0.076006ms)
+✔ reducer must reject mixed run identities (0.15364ms)
+✔ reducer must reject incompatible event versions and unknown event types (0.088078ms)
+✔ reducer must reject determinably incomplete history (0.085379ms)
+✔ public exports must expose the advertised no-effect replay function (0.04105ms)
+✔ snapshot export is a detached view (control) (2.120594ms)
+✔ stale cancellation leaves canonical state unchanged (control) (3.25989ms)
+✔ snapshot malformed schema rejected (control) (2.540844ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 157.413709

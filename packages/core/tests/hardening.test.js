@@ -90,7 +90,7 @@ describe("Chord Core Hardening", () => {
     const chordDet = createChord();
     const host = installHost(chordDet);
     const p1 = createIntentTaskPacket({ schema_version: "chord.contracts.v1", spec_type: "IntentSpec", project: "p", phase: "q", do: ["a"], target_entity: "e" });
-    const p2 = createIntentTaskPacket({ schema_version: "chord.contracts.v1", spec_type: "IntentSpec", project: "p", phase: "q", do: ["a"], target_entity: "e" });
+    const p2 = createIntentTaskPacket({ schema_version: "chord.contracts.v1", spec_type: "IntentSpec", project: "p", phase: "q", do: ["b"], target_entity: "e" });
 
     chordDet.queueTaskPackets([p1], queueOptions(host, { priority: 0 }));
     chordDet.queueTaskPackets([p2], queueOptions(host, { priority: 10 }));

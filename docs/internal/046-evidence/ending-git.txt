@@ -1,0 +1,92 @@
+$ git status --short
+exit=0
+ M .gitignore
+ M .vscode/settings.json
+ M README.md
+ M packages/core/dev_flow.md
+ M packages/core/examples/basic-flow/README.md
+ M packages/core/examples/failure-recovery/README.md
+ M packages/core/examples/multi-entity-review/README.md
+ M packages/core/src/contracts/sigils.js
+ M packages/core/src/platform/event-journal.js
+ M packages/core/src/platform/task-queue.js
+ M packages/core/src/registry/registry.js
+ M packages/core/src/sdk/chord.js
+ M packages/core/tests/README.md
+?? docs/internal/041-block2-final-report.md
+?? docs/internal/042-approval-lifecycle.md
+?? docs/internal/042-context-handoff.md
+?? docs/internal/042-continuity-gap-audit.md
+?? docs/internal/042-continuity-tests.md
+?? docs/internal/042-coordination-guide.md
+?? docs/internal/042-final-report.md
+?? docs/internal/042-run-lifecycle.md
+?? docs/internal/042-state-implementation.md
+?? docs/internal/043-evidence-audit.md
+?? docs/internal/043-evidence-model.md
+?? docs/internal/043-fault-injection-tests.md
+?? docs/internal/043-final-report.md
+?? docs/internal/043-recovery-policy.md
+?? docs/internal/043-replay-diff.md
+?? docs/internal/043-trace-guarantees.md
+?? docs/internal/043-trace-reducer.md
+?? docs/internal/044-canonical-example-design.md
+?? docs/internal/044-cli-usage.md
+?? docs/internal/044-consumer-smoke.md
+?? docs/internal/044-developer-guide.md
+?? docs/internal/044-developer-surface-audit.md
+?? docs/internal/044-example-implementation.md
+?? docs/internal/044-example-tests.md
+?? docs/internal/044-final-report.md
+?? docs/internal/045-final-report.md
+?? docs/internal/045-go-no-go.md
+?? docs/internal/045-release-prerequisites.md
+?? docs/internal/046-evidence/
+?? docs/internal/046-final-report.md
+?? docs/internal/046-independent-stop-review.md
+?? docs/internal/046-mutation-inventory.md
+?? docs/internal/046-release-go-no-go.md
+?? docs/internal/046-repository-reality-audit.md
+?? docs/internal/046-standards-conformance-matrix.md
+?? docs/internal/046-state-atomicity-audit.md
+?? docs/internal/046-state-probes.mjs
+?? packages/core/README.md
+?? packages/core/examples/cross-actor-workflow.mjs
+?? packages/core/src/platform/approval-flow.js
+?? packages/core/src/platform/handoff.js
+?? packages/core/src/platform/recovery-policy.js
+?? packages/core/src/platform/trace-reducer.js
+?? packages/core/tests/canonical-example.test.js
+?? packages/core/tests/continuity.test.js
+?? packages/core/tests/fault-injection.test.js
+
+$ git branch --show-current
+exit=0
+main
+
+$ git rev-parse HEAD
+exit=0
+ba3e37ea035a2862e06766ed7f90513babf945b0
+
+$ git diff --stat
+exit=0
+ .gitignore                                         |  4 +--
+ .vscode/settings.json                              | 26 +++++++-------
+ README.md                                          | 31 ++++++++++------
+ packages/core/dev_flow.md                          | 29 ++++++++-------
+ packages/core/examples/basic-flow/README.md        |  7 +++-
+ packages/core/examples/failure-recovery/README.md  | 14 +++++++-
+ .../core/examples/multi-entity-review/README.md    | 10 +++++-
+ packages/core/src/contracts/sigils.js              |  6 ++--
+ packages/core/src/platform/event-journal.js        | 23 +++++++++---
+ packages/core/src/platform/task-queue.js           | 41 +++++++++++++++++++++-
+ packages/core/src/registry/registry.js             | 30 ++++++++++++++--
+ packages/core/src/sdk/chord.js                     | 14 +++++++-
+ packages/core/tests/README.md                      | 20 ++++++++++-
+ 13 files changed, 201 insertions(+), 54 deletions(-)
+
+$ git diff --cached --stat
+exit=0
+
+$ git diff --check
+exit=0

@@ -1,13 +1,15 @@
 import { stableId } from "../utils/id.js";
 import { deepClone } from "../utils/clone.js";
-import { assertTaskPacket, assertSpec, TaskAuthority, Outcome, SCHEMA_VERSION, contractError } from "../contracts/sigils.js";
+import { assertTaskPacket, assertSpec, TaskAuthority, Outcome, SCHEMA_VERSION, contractError, RegistryData } from "../contracts/sigils.js";
 import { markQueueEntryStatus } from "../platform/task-queue.js";
 import { assertArtifactTransition, assertDomainTransition, assertTaskTransition } from "../platform/transitions.js";
 import { invalidatePendingAttempt } from "../platform/attempts.js";
+import { authorityError } from "../platform/authorization.js";
+import { assertCanonicalTransition } from "../platform/state-invariants.js";
 
 export function createRegistry() {
   return {
-    run: { run_id: stableId("run"), schema_version: SCHEMA_VERSION, revision: 0 },
+    run: { run_id: stableId("run"), schema_version: SCHEMA_VERSION, revision: 0, state: "created", causation_id: null, correlation_id: null },
     artifacts: {},
     domains: {},
     tasks: {},
@@ -20,6 +22,27 @@ export function createRegistry() {
     pending_attempts: {},
     active_attempts: {}
   };
+}
+
+/** Whole-run clone-swap CAS (Block 3). Validates nextRegistry, compares
+ * expectedRevision against current registry.run.revision, swaps the
+ * owner-held reference in one synchronous section with no awaits.
+ * Returns { ok: true, revision } or { ok: false, code: "STALE_REVISION" }.
+ */
+export function commitRun(owner, { expectedRevision, nextRegistry, operation = "host_commit" } = {}) {
+  if (!owner || typeof owner !== "object" || !owner.registry) throw authorityError("INVALID_CONTEXT");
+  const current = owner.registry;
+  if (!Number.isSafeInteger(expectedRevision)) throw authorityError("INVALID_CONTEXT");
+  if (expectedRevision !== current.run.revision) return { ok: false, code: "STALE_REVISION" };
+  const next = RegistryData.assert(nextRegistry);
+  if (next.run.run_id !== current.run.run_id) throw authorityError("RUN_MISMATCH");
+  if (next.run.schema_version !== current.run.schema_version) throw authorityError("SCHEMA_MISMATCH");
+  if (next.run.revision !== current.run.revision + 1) throw authorityError("STALE_REVISION");
+  // Existing committed evidence cannot be rewritten by a candidate.
+  if (JSON.stringify(next.event_journal.slice(0, current.event_journal.length)) !== JSON.stringify(current.event_journal)) throw authorityError("INVALID_HISTORY");
+  assertCanonicalTransition(current, next, operation);
+  owner.registry = next;
+  return { ok: true, revision: next.run.revision };
 }
 
 export function registerSpec(registry, spec) {

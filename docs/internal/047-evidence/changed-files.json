@@ -1,0 +1,42 @@
+{
+  "modified_existing": [
+    "README.md",
+    "packages/core/README.md",
+    "packages/core/dev_flow.md",
+    "packages/core/examples/cross-actor-workflow.mjs",
+    "packages/core/tests/canonical-example.test.js",
+    "packages/core/tests/README.md",
+    "packages/core/tests/hardening.test.js",
+    "packages/core/tests/continuity.test.js",
+    "packages/core/tests/contracts.test.js",
+    "packages/core/tests/fault-injection.test.js",
+    "packages/core/tests/authorization.test.js",
+    "packages/core/tests/transitions.test.js",
+    "packages/core/src/verify-runtime.js",
+    "packages/core/src/index.js",
+    "packages/core/src/platform/runtime-loop.js",
+    "packages/core/src/platform/trace-reducer.js",
+    "packages/core/src/platform/transitions.js",
+    "packages/core/src/platform/handoff.js",
+    "packages/core/src/platform/index.js",
+    "packages/core/src/execution/task-packets.js",
+    "packages/core/src/registry/snapshot.js",
+    "packages/core/src/registry/registry.js",
+    "packages/core/src/sdk/chord.js",
+    "packages/core/src/contracts/sigils.js",
+    "packages/core/examples/failure-recovery/README.md"
+  ],
+  "new_package_files": [
+    "packages/core/INTEGRITY.md",
+    "packages/core/tests/admission-integrity.test.js",
+    "packages/core/tests/replay-integrity.test.js",
+    "packages/core/tests/architecture-integrity.test.js",
+    "packages/core/tests/lifecycle-integrity.test.js",
+    "packages/core/tests/recovery-integrity.test.js",
+    "packages/core/tests/integrity.test.js",
+    "packages/core/src/platform/reconciliation.js",
+    "packages/core/src/platform/state-invariants.js",
+    "packages/core/src/platform/history.js",
+    "packages/core/src/registry/owner.js"
+  ]
+}

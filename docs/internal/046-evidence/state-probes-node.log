@@ -1,0 +1,1168 @@
+TAP version 13
+# Subtest: CAS success must install candidate in the SDK canonical owner
+not ok 1 - CAS success must install candidate in the SDK canonical owner
+  ---
+  duration_ms: 6.517628
+  type: 'test'
+  location: '/home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:18:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'created'
+    - 'active'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'active'
+  actual: 'created'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:25:10)
+    Test.runInAsyncScope (node:async_hooks:226:14)
+    Test.run (node:internal/test_runner/test:1397:25)
+    Test.start (node:internal/test_runner/test:1257:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+  ...
+# Subtest: two same-revision whole-run commits cannot both succeed
+not ok 2 - two same-revision whole-run commits cannot both succeed
+  ---
+  duration_ms: 2.208039
+  type: 'test'
+  location: '/home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:28:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    true !== false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:35:10)
+    Test.runInAsyncScope (node:async_hooks:226:14)
+    Test.run (node:internal/test_runner/test:1397:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+    Test.postRun (node:internal/test_runner/test:1537:19)
+    Test.run (node:internal/test_runner/test:1462:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+  ...
+# Subtest: paused run must invoke zero protected effects
+not ok 3 - paused run must invoke zero protected effects
+  ---
+  duration_ms: 2.041532
+  type: 'test'
+  location: '/home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:37:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    1 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:41:10)
+    async Test.run (node:internal/test_runner/test:1404:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:969:7)
+  ...
+# Subtest: failed run after approval rejection must invoke zero effects
+not ok 4 - failed run after approval rejection must invoke zero effects
+  ---
+  duration_ms: 1.115667
+  type: 'test'
+  location: '/home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:43:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    1 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:48:10)
+    async Test.run (node:internal/test_runner/test:1404:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:969:7)
+  ...
+# Subtest: denied compound registration must preserve state and journal
+not ok 5 - denied compound registration must preserve state and journal
+  ---
+  duration_ms: 1.986784
+  type: 'test'
+  location: '/home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:50:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    ... Skipped lines
+    
+      {
+        active_attempts: {},
+        artifacts: {},
+        authority: null,
+        domains: {},
+    +   event_journal: [
+    +     {
+    +       actor_id: null,
+    +       at: 1792556494797,
+    +       authority_revision: null,
+    +       causation_id: null,
+    +       correlation_id: null,
+    +       event_id: 'evt_1792556494797_vw2tj2gm',
+    +       payload: {
+    +         phase: 'verify',
+    +         project: 'audit',
+    +         spec_type: 'IntentSpec'
+    +       },
+    +       policy_decision: null,
+    +       principal_id: null,
+    +       run_id: 'run_1792556494797_sv5fnnq9',
+    +       run_revision: 0,
+    +       schema_version: 'chord.contracts.v1',
+    +       type: 'spec_registered'
+    +     }
+    +   ],
+    -   event_journal: [],
+        execution_results: [],
+        pending_attempts: {},
+        run: {
+          causation_id: null,
+          correlation_id: null,
+    ...
+        },
+    +   specs: [
+    +     {
+    +       do: [
+    +         'mock-effect'
+    +       ],
+    +       phase: 'verify',
+    +       project: 'audit',
+    +       schema_version: 'chord.contracts.v1',
+    +       spec_type: 'IntentSpec'
+    +     }
+    +   ],
+    -   specs: [],
+        task_queue: [],
+        tasks: {},
+        trigger_state: {}
+      }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    run:
+      run_id: 'run_1792556494797_sv5fnnq9'
+      schema_version: 'chord.contracts.v1'
+      revision: 0
+      state: 'created'
+      causation_id: ~
+      correlation_id: ~
+    artifacts:
+    domains:
+    tasks:
+    task_queue:
+    event_journal:
+    execution_results:
+    trigger_state:
+    specs:
+    authority: ~
+    pending_attempts:
+    active_attempts:
+  actual:
+    run:
+      run_id: 'run_1792556494797_sv5fnnq9'
+      schema_version: 'chord.contracts.v1'
+      revision: 0
+      state: 'created'
+      causation_id: ~
+      correlation_id: ~
+    artifacts:
+    domains:
+    tasks:
+    task_queue:
+    event_journal:
+      0:
+        event_id: 'evt_1792556494797_vw2tj2gm'
+        type: 'spec_registered'
+        at: 1792556494797
+        schema_version: 'chord.contracts.v1'
+        run_id: 'run_1792556494797_sv5fnnq9'
+        run_revision: 0
+        actor_id: ~
+        principal_id: ~
+        correlation_id: ~
+        causation_id: ~
+        authority_revision: ~
+        policy_decision: ~
+        payload:
+          spec_type: 'IntentSpec'
+          project: 'audit'
+          phase: 'verify'
+    execution_results:
+    trigger_state:
+    specs:
+      0:
+        schema_version: 'chord.contracts.v1'
+        spec_type: 'IntentSpec'
+        project: 'audit'
+        phase: 'verify'
+        do:
+          0: 'mock-effect'
+    authority: ~
+    pending_attempts:
+    active_attempts:
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:54:10)
+    Test.runInAsyncScope (node:async_hooks:226:14)
+    Test.run (node:internal/test_runner/test:1397:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+    Test.postRun (node:internal/test_runner/test:1537:19)
+    Test.run (node:internal/test_runner/test:1462:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:969:7)
+  ...
+# Subtest: denied batch must not persist grants installed before its rejection
+not ok 6 - denied batch must not persist grants installed before its rejection
+  ---
+  duration_ms: 1.743266
+  type: 'test'
+  location: '/home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:56:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    ... Skipped lines
+    
+      {
+        active_attempts: {},
+        artifacts: {},
+        authority: {
+          actors: [
+    ...
+          approvals: [],
+    +     authority_revision: 1,
+    +     grants: [
+    +       {
+    +         actor_id: 'worker-actor',
+    +         capability: 'execute',
+    +         effect: 'allow',
+    +         expires_at: 9007199254740991,
+    +         grant_id: 'grant_task_1792556494799_rnu9w6n9',
+    +         issued_at: 0,
+    +         principal_id: 'host-principal',
+    +         requires_approval: false,
+    +         revoked_at: null,
+    +         scope: {
+    +           phase: 'verify',
+    +           project: 'audit',
+    +           resource: {
+    +             id: 'task_1792556494799_rnu9w6n9',
+    +             kind: 'task'
+    +           },
+    +           run_id: 'run_1792556494799_ti45yfzz',
+    +           target_entity: 'default',
+    +           task_id: 'task_1792556494799_rnu9w6n9'
+    +         }
+    +       }
+    +     ],
+    -     authority_revision: 0,
+    -     grants: [],
+          principals: [
+            {
+              authenticated_at: 0,
+              expires_at: 9007199254740991,
+              issuer: 'test-host',
+    ...
+          },
+    +     {
+    +       actor_id: null,
+    +       at: 1792556494800,
+    +       authority_revision: 1,
+    +       causation_id: null,
+    +       correlation_id: null,
+    +       event_id: 'evt_1792556494800_rc2tfz8q',
+    +       payload: {
+    +         count: 1
+    +       },
+    +       policy_decision: null,
+    +       principal_id: null,
+    +       run_id: 'run_1792556494799_ti45yfzz',
+    +       run_revision: 2,
+    +       schema_version: 'chord.contracts.v1',
+    +       type: 'grants_installed'
+    +     }
+        ],
+        execution_results: [],
+        pending_attempts: {},
+        run: {
+          causation_id: null,
+          correlation_id: null,
+    +     revision: 2,
+    -     revision: 1,
+          run_id: 'run_1792556494799_ti45yfzz',
+          schema_version: 'chord.contracts.v1',
+          state: 'created'
+        },
+        specs: [],
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    run:
+      run_id: 'run_1792556494799_ti45yfzz'
+      schema_version: 'chord.contracts.v1'
+      revision: 1
+      state: 'created'
+      causation_id: ~
+      correlation_id: ~
+    artifacts:
+    domains:
+    tasks:
+    task_queue:
+    event_journal:
+      0:
+        event_id: 'evt_1792556494799_xq9s6l8t'
+        type: 'authority_snapshot_set'
+        at: 1792556494799
+        schema_version: 'chord.contracts.v1'
+        run_id: 'run_1792556494799_ti45yfzz'
+        run_revision: 1
+        actor_id: ~
+        principal_id: ~
+        correlation_id: ~
+        causation_id: ~
+        authority_revision: 0
+        policy_decision: ~
+        payload:
+          authority_revision: 0
+    execution_results:
+    trigger_state:
+    specs:
+    authority:
+      schema_version: 'chord.contracts.v1'
+      run_id: 'run_1792556494799_ti45yfzz'
+      authority_revision: 0
+      principals:
+        0:
+          principal_id: 'host-principal'
+          issuer: 'test-host'
+          kind: 'service'
+          authenticated_at: 0
+          expires_at: 9007199254740991
+        1:
+          principal_id: 'human-approver'
+          issuer: 'test-host'
+          kind: 'human'
+          authenticated_at: 0
+          expires_at: 9007199254740991
+      actors:
+        0:
+          actor_id: 'worker-actor'
+          principal_id: 'host-principal'
+          kind: 'agent'
+          roles:
+            0: 'implementer'
+          capabilities:
+            0: 'execute'
+          revoked_at: ~
+      grants:
+      approvals:
+    pending_attempts:
+    active_attempts:
+  actual:
+    run:
+      run_id: 'run_1792556494799_ti45yfzz'
+      schema_version: 'chord.contracts.v1'
+      revision: 2
+      state: 'created'
+      causation_id: ~
+      correlation_id: ~
+    artifacts:
+    domains:
+    tasks:
+    task_queue:
+    event_journal:
+      0:
+        event_id: 'evt_1792556494799_xq9s6l8t'
+        type: 'authority_snapshot_set'
+        at: 1792556494799
+        schema_version: 'chord.contracts.v1'
+        run_id: 'run_1792556494799_ti45yfzz'
+        run_revision: 1
+        actor_id: ~
+        principal_id: ~
+        correlation_id: ~
+        causation_id: ~
+        authority_revision: 0
+        policy_decision: ~
+        payload:
+          authority_revision: 0
+      1:
+        event_id: 'evt_1792556494800_rc2tfz8q'
+        type: 'grants_installed'
+        at: 1792556494800
+        schema_version: 'chord.contracts.v1'
+        run_id: 'run_1792556494799_ti45yfzz'
+        run_revision: 2
+        actor_id: ~
+        principal_id: ~
+        correlation_id: ~
+        causation_id: ~
+        authority_revision: 1
+        policy_decision: ~
+        payload:
+          count: 1
+    execution_results:
+    trigger_state:
+    specs:
+    authority:
+      schema_version: 'chord.contracts.v1'
+      run_id: 'run_1792556494799_ti45yfzz'
+      authority_revision: 1
+      principals:
+        0:
+          principal_id: 'host-principal'
+          issuer: 'test-host'
+          kind: 'service'
+          authenticated_at: 0
+          expires_at: 9007199254740991
+        1:
+          principal_id: 'human-approver'
+          issuer: 'test-host'
+          kind: 'human'
+          authenticated_at: 0
+          expires_at: 9007199254740991
+      actors:
+        0:
+          actor_id: 'worker-actor'
+          principal_id: 'host-principal'
+          kind: 'agent'
+          roles:
+            0: 'implementer'
+          capabilities:
+            0: 'execute'
+          revoked_at: ~
+      grants:
+        0:
+          grant_id: 'grant_task_1792556494799_rnu9w6n9'
+          principal_id: 'host-principal'
+          actor_id: 'worker-actor'
+          capability: 'execute'
+          effect: 'allow'
+          scope:
+            run_id: 'run_1792556494799_ti45yfzz'
+            project: 'audit'
+            phase: 'verify'
+            task_id: 'task_1792556494799_rnu9w6n9'
+            target_entity: 'default'
+            resource:
+              kind: 'task'
+              id: 'task_1792556494799_rnu9w6n9'
+          issued_at: 0
+          expires_at: 9007199254740991
+          revoked_at: ~
+          requires_approval: false
+      approvals:
+    pending_attempts:
+    active_attempts:
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:62:10)
+    Test.runInAsyncScope (node:async_hooks:226:14)
+    Test.run (node:internal/test_runner/test:1397:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+    Test.postRun (node:internal/test_runner/test:1537:19)
+    Test.run (node:internal/test_runner/test:1462:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:969:7)
+  ...
+# Subtest: read-only context cannot expose canonical authority scope aliases
+not ok 7 - read-only context cannot expose canonical authority scope aliases
+  ---
+  duration_ms: 1.308471
+  type: 'test'
+  location: '/home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:64:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    ... Skipped lines
+    
+      {
+        actors: [
+          {
+            actor_id: 'worker-actor',
+            capabilities: [
+    ...
+              phase: 'verify',
+    +         project: 'changed-by-reader',
+    -         project: 'audit',
+              resource: {
+                id: 'task_1792556494801_94lkofuf',
+                kind: 'task'
+              },
+              run_id: 'run_1792556494801_ltz60b8x',
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    schema_version: 'chord.contracts.v1'
+    run_id: 'run_1792556494801_ltz60b8x'
+    authority_revision: 1
+    principals:
+      0:
+        principal_id: 'host-principal'
+        issuer: 'test-host'
+        kind: 'service'
+        authenticated_at: 0
+        expires_at: 9007199254740991
+      1:
+        principal_id: 'human-approver'
+        issuer: 'test-host'
+        kind: 'human'
+        authenticated_at: 0
+        expires_at: 9007199254740991
+    actors:
+      0:
+        actor_id: 'worker-actor'
+        principal_id: 'host-principal'
+        kind: 'agent'
+        roles:
+          0: 'implementer'
+        capabilities:
+          0: 'execute'
+        revoked_at: ~
+    grants:
+      0:
+        grant_id: 'grant_task_1792556494801_94lkofuf'
+        principal_id: 'host-principal'
+        actor_id: 'worker-actor'
+        capability: 'execute'
+        effect: 'allow'
+        scope:
+          run_id: 'run_1792556494801_ltz60b8x'
+          project: 'audit'
+          phase: 'verify'
+          task_id: 'task_1792556494801_94lkofuf'
+          target_entity: 'default'
+          resource:
+            kind: 'task'
+            id: 'task_1792556494801_94lkofuf'
+        issued_at: 0
+        expires_at: 9007199254740991
+        revoked_at: ~
+        requires_approval: false
+    approvals:
+  actual:
+    schema_version: 'chord.contracts.v1'
+    run_id: 'run_1792556494801_ltz60b8x'
+    authority_revision: 1
+    principals:
+      0:
+        principal_id: 'host-principal'
+        issuer: 'test-host'
+        kind: 'service'
+        authenticated_at: 0
+        expires_at: 9007199254740991
+      1:
+        principal_id: 'human-approver'
+        issuer: 'test-host'
+        kind: 'human'
+        authenticated_at: 0
+        expires_at: 9007199254740991
+    actors:
+      0:
+        actor_id: 'worker-actor'
+        principal_id: 'host-principal'
+        kind: 'agent'
+        roles:
+          0: 'implementer'
+        capabilities:
+          0: 'execute'
+        revoked_at: ~
+    grants:
+      0:
+        grant_id: 'grant_task_1792556494801_94lkofuf'
+        principal_id: 'host-principal'
+        actor_id: 'worker-actor'
+        capability: 'execute'
+        effect: 'allow'
+        scope:
+          run_id: 'run_1792556494801_ltz60b8x'
+          project: 'changed-by-reader'
+          phase: 'verify'
+          task_id: 'task_1792556494801_94lkofuf'
+          target_entity: 'default'
+          resource:
+            kind: 'task'
+            id: 'task_1792556494801_94lkofuf'
+        issued_at: 0
+        expires_at: 9007199254740991
+        revoked_at: ~
+        requires_approval: false
+    approvals:
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:70:10)
+    Test.runInAsyncScope (node:async_hooks:226:14)
+    Test.run (node:internal/test_runner/test:1397:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+    Test.postRun (node:internal/test_runner/test:1537:19)
+    Test.run (node:internal/test_runner/test:1462:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:969:7)
+  ...
+# Subtest: context for identity with no grants must not reveal all tasks
+not ok 8 - context for identity with no grants must not reveal all tasks
+  ---
+  duration_ms: 1.156865
+  type: 'test'
+  location: '/home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:73:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    1 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:76:10)
+    Test.runInAsyncScope (node:async_hooks:226:14)
+    Test.run (node:internal/test_runner/test:1397:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+    Test.postRun (node:internal/test_runner/test:1537:19)
+    Test.run (node:internal/test_runner/test:1462:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:969:7)
+  ...
+# Subtest: event inspection must not return writable canonical events
+not ok 9 - event inspection must not return writable canonical events
+  ---
+  duration_ms: 1.609046
+  type: 'test'
+  location: '/home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:79:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    ... Skipped lines
+    
+      [
+        {
+          actor_id: null,
+          at: 1792556494803,
+          authority_revision: 0,
+    ...
+            authority_revision: 0,
+    +       changed_by_reader: true
+          },
+          policy_decision: null,
+          principal_id: null,
+          run_id: 'run_1792556494803_zylczy4v',
+          run_revision: 1,
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0:
+      event_id: 'evt_1792556494803_spzzj44o'
+      type: 'authority_snapshot_set'
+      at: 1792556494803
+      schema_version: 'chord.contracts.v1'
+      run_id: 'run_1792556494803_zylczy4v'
+      run_revision: 1
+      actor_id: ~
+      principal_id: ~
+      correlation_id: ~
+      causation_id: ~
+      authority_revision: 0
+      policy_decision: ~
+      payload:
+        authority_revision: 0
+    1:
+      event_id: 'evt_1792556494803_w782hm27'
+      type: 'spec_registered'
+      at: 1792556494803
+      schema_version: 'chord.contracts.v1'
+      run_id: 'run_1792556494803_zylczy4v'
+      run_revision: 1
+      actor_id: ~
+      principal_id: ~
+      correlation_id: ~
+      causation_id: ~
+      authority_revision: 0
+      policy_decision: ~
+      payload:
+        spec_type: 'IntentSpec'
+        project: 'audit'
+        phase: 'verify'
+    2:
+      event_id: 'evt_1792556494804_hhsq0nfl'
+      type: 'grants_installed'
+      at: 1792556494804
+      schema_version: 'chord.contracts.v1'
+      run_id: 'run_1792556494803_zylczy4v'
+      run_revision: 2
+      actor_id: ~
+      principal_id: ~
+      correlation_id: ~
+      causation_id: ~
+      authority_revision: 1
+      policy_decision: ~
+      payload:
+        count: 1
+    3:
+      event_id: 'evt_1792556494804_g46valsu'
+      type: 'task_enqueued'
+      at: 1792556494804
+      schema_version: 'chord.contracts.v1'
+      run_id: 'run_1792556494803_zylczy4v'
+      run_revision: 2
+      actor_id: ~
+      principal_id: ~
+      correlation_id: ~
+      causation_id: ~
+      authority_revision: 1
+      policy_decision: ~
+      payload:
+        task_id: 'task_1792556494803_wzp5hcpw'
+        target_entity: 'default'
+  actual:
+    0:
+      event_id: 'evt_1792556494803_spzzj44o'
+      type: 'authority_snapshot_set'
+      at: 1792556494803
+      schema_version: 'chord.contracts.v1'
+      run_id: 'run_1792556494803_zylczy4v'
+      run_revision: 1
+      actor_id: ~
+      principal_id: ~
+      correlation_id: ~
+      causation_id: ~
+      authority_revision: 0
+      policy_decision: ~
+      payload:
+        authority_revision: 0
+        changed_by_reader: true
+    1:
+      event_id: 'evt_1792556494803_w782hm27'
+      type: 'spec_registered'
+      at: 1792556494803
+      schema_version: 'chord.contracts.v1'
+      run_id: 'run_1792556494803_zylczy4v'
+      run_revision: 1
+      actor_id: ~
+      principal_id: ~
+      correlation_id: ~
+      causation_id: ~
+      authority_revision: 0
+      policy_decision: ~
+      payload:
+        spec_type: 'IntentSpec'
+        project: 'audit'
+        phase: 'verify'
+    2:
+      event_id: 'evt_1792556494804_hhsq0nfl'
+      type: 'grants_installed'
+      at: 1792556494804
+      schema_version: 'chord.contracts.v1'
+      run_id: 'run_1792556494803_zylczy4v'
+      run_revision: 2
+      actor_id: ~
+      principal_id: ~
+      correlation_id: ~
+      causation_id: ~
+      authority_revision: 1
+      policy_decision: ~
+      payload:
+        count: 1
+    3:
+      event_id: 'evt_1792556494804_g46valsu'
+      type: 'task_enqueued'
+      at: 1792556494804
+      schema_version: 'chord.contracts.v1'
+      run_id: 'run_1792556494803_zylczy4v'
+      run_revision: 2
+      actor_id: ~
+      principal_id: ~
+      correlation_id: ~
+      causation_id: ~
+      authority_revision: 1
+      policy_decision: ~
+      payload:
+        task_id: 'task_1792556494803_wzp5hcpw'
+        target_entity: 'default'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:83:10)
+    Test.runInAsyncScope (node:async_hooks:226:14)
+    Test.run (node:internal/test_runner/test:1397:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+    Test.postRun (node:internal/test_runner/test:1537:19)
+    Test.run (node:internal/test_runner/test:1462:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:969:7)
+  ...
+# Subtest: attempt reservation must advance revision and record the mutation
+not ok 10 - attempt reservation must advance revision and record the mutation
+  ---
+  duration_ms: 0.812304
+  type: 'test'
+  location: '/home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:85:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    3 !== 4
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 4
+  actual: 3
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:90:10)
+    Test.runInAsyncScope (node:async_hooks:226:14)
+    Test.run (node:internal/test_runner/test:1397:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+    Test.postRun (node:internal/test_runner/test:1537:19)
+    Test.run (node:internal/test_runner/test:1462:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:969:7)
+  ...
+# Subtest: unknown effect must not be re-admitted without reconciliation evidence
+not ok 11 - unknown effect must not be re-admitted without reconciliation evidence
+  ---
+  duration_ms: 2.918424
+  type: 'test'
+  location: '/home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:93:1'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected exception.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'throws'
+  stack: |-
+    TestContext.<anonymous> (file:///home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:98:10)
+    async Test.run (node:internal/test_runner/test:1404:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:969:7)
+  ...
+# Subtest: replay must reconstruct committed task and queue state
+not ok 12 - replay must reconstruct committed task and queue state
+  ---
+  duration_ms: 2.222302
+  type: 'test'
+  location: '/home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:101:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + {}
+    - {
+    -   task_1792556494809_43ha4s3z: {
+    -     authority_binding: {
+    -       actor_id: 'worker-actor',
+    -       approval_required: false,
+    -       capability: 'execute',
+    -       principal_id: 'host-principal',
+    -       scope: {
+    -         phase: 'verify',
+    -         project: 'audit',
+    -         resource: {
+    -           id: 'task_1792556494809_43ha4s3z',
+    -           kind: 'task'
+    -         },
+    -         run_id: 'run_1792556494809_9cbvz3a6',
+    -         target_entity: 'default',
+    -         task_id: 'task_1792556494809_43ha4s3z'
+    -       }
+    -     },
+    -     constraints: {
+    -       depends: [],
+    -       dont: [],
+    -       rules: []
+    -     },
+    -     created_at: 1792556494809,
+    -     inputs: {
+    -       files: [],
+    -       spec: {
+    -         do: [
+    -           'mock-effect'
+    -         ],
+    -         phase: 'verify',
+    -         project: 'audit',
+    -         schema_version: 'chord.contracts.v1',
+    -         spec_type: 'IntentSpec'
+    -       },
+    -       stop: [],
+    -       verify: []
+    -     },
+    -     last_result: {
+    -       attempt_id: 'attempt_1792556494809_y6a4mrsy',
+    -       outcome: 'succeeded',
+    -       queue_id: 'queue_1792556494809_bhzyxx8p',
+    -       run_id: 'run_1792556494809_9cbvz3a6',
+    -       schema_version: 'chord.contracts.v1',
+    -       status: 'completed',
+    -       task_id: 'task_1792556494809_43ha4s3z',
+    -       task_revision: 0
+    -     },
+    -     phase: 'verify',
+    -     project: 'audit',
+    -     requested_action: [
+    -       'mock-effect'
+    -     ],
+    -     retry_count: 0,
+    -     role: 'implementer',
+    -     schema_version: 'chord.contracts.v1',
+    -     source_spec_id: null,
+    -     source_type: 'IntentSpec',
+    -     stance: 'strict',
+    -     status: 'completed',
+    -     target_entity: 'default',
+    -     task_id: 'task_1792556494809_43ha4s3z',
+    -     task_kind: 'intent_execution'
+    -   }
+    - }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    task_1792556494809_43ha4s3z:
+      schema_version: 'chord.contracts.v1'
+      task_id: 'task_1792556494809_43ha4s3z'
+      task_kind: 'intent_execution'
+      source_type: 'IntentSpec'
+      source_spec_id: ~
+      project: 'audit'
+      phase: 'verify'
+      target_entity: 'default'
+      role: 'implementer'
+      stance: 'strict'
+      requested_action:
+        0: 'mock-effect'
+      inputs:
+        spec:
+          schema_version: 'chord.contracts.v1'
+          spec_type: 'IntentSpec'
+          project: 'audit'
+          phase: 'verify'
+          do:
+            0: 'mock-effect'
+        files:
+        verify:
+        stop:
+      constraints:
+        dont:
+        rules:
+        depends:
+      authority_binding:
+        principal_id: 'host-principal'
+        actor_id: 'worker-actor'
+        capability: 'execute'
+        scope:
+          run_id: 'run_1792556494809_9cbvz3a6'
+          project: 'audit'
+          phase: 'verify'
+          task_id: 'task_1792556494809_43ha4s3z'
+          target_entity: 'default'
+          resource:
+            kind: 'task'
+            id: 'task_1792556494809_43ha4s3z'
+        approval_required: false
+      status: 'completed'
+      created_at: 1792556494809
+      retry_count: 0
+      last_result:
+        task_id: 'task_1792556494809_43ha4s3z'
+        status: 'completed'
+        outcome: 'succeeded'
+        run_id: 'run_1792556494809_9cbvz3a6'
+        schema_version: 'chord.contracts.v1'
+        task_revision: 0
+        queue_id: 'queue_1792556494809_bhzyxx8p'
+        attempt_id: 'attempt_1792556494809_y6a4mrsy'
+  actual:
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:106:10)
+    async Test.run (node:internal/test_runner/test:1404:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:969:7)
+  ...
+# Subtest: trace diff must detect altered content under the same event identity
+not ok 13 - trace diff must detect altered content under the same event identity
+  ---
+  duration_ms: 0.362941
+  type: 'test'
+  location: '/home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:109:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    true !== false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:113:10)
+    Test.runInAsyncScope (node:async_hooks:226:14)
+    Test.run (node:internal/test_runner/test:1397:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+    Test.postRun (node:internal/test_runner/test:1537:19)
+    Test.run (node:internal/test_runner/test:1462:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:969:7)
+  ...
+# Subtest: trace diff must detect reordered events with the same ID set
+not ok 14 - trace diff must detect reordered events with the same ID set
+  ---
+  duration_ms: 0.141197
+  type: 'test'
+  location: '/home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:115:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    true !== false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:117:10)
+    Test.runInAsyncScope (node:async_hooks:226:14)
+    Test.run (node:internal/test_runner/test:1397:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+    Test.postRun (node:internal/test_runner/test:1537:19)
+    Test.run (node:internal/test_runner/test:1462:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:969:7)
+  ...
+# Subtest: reducer must reject mixed run identities
+not ok 15 - reducer must reject mixed run identities
+  ---
+  duration_ms: 0.123846
+  type: 'test'
+  location: '/home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:119:1'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected exception.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'throws'
+  stack: |-
+    TestContext.<anonymous> (file:///home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:120:10)
+    Test.runInAsyncScope (node:async_hooks:226:14)
+    Test.run (node:internal/test_runner/test:1397:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+    Test.postRun (node:internal/test_runner/test:1537:19)
+    Test.run (node:internal/test_runner/test:1462:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:969:7)
+  ...
+# Subtest: reducer must reject incompatible event versions and unknown event types
+not ok 16 - reducer must reject incompatible event versions and unknown event types
+  ---
+  duration_ms: 0.136438
+  type: 'test'
+  location: '/home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:122:1'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected exception.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'throws'
+  stack: |-
+    TestContext.<anonymous> (file:///home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:123:10)
+    Test.runInAsyncScope (node:async_hooks:226:14)
+    Test.run (node:internal/test_runner/test:1397:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+    Test.postRun (node:internal/test_runner/test:1537:19)
+    Test.run (node:internal/test_runner/test:1462:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:969:7)
+  ...
+# Subtest: reducer must reject determinably incomplete history
+not ok 17 - reducer must reject determinably incomplete history
+  ---
+  duration_ms: 0.113569
+  type: 'test'
+  location: '/home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:125:1'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected exception.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'throws'
+  stack: |-
+    TestContext.<anonymous> (file:///home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:126:10)
+    Test.runInAsyncScope (node:async_hooks:226:14)
+    Test.run (node:internal/test_runner/test:1397:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+    Test.postRun (node:internal/test_runner/test:1537:19)
+    Test.run (node:internal/test_runner/test:1462:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:969:7)
+  ...
+# Subtest: public exports must expose the advertised no-effect replay function
+not ok 18 - public exports must expose the advertised no-effect replay function
+  ---
+  duration_ms: 0.107745
+  type: 'test'
+  location: '/home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:128:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'undefined'
+    - 'function'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'function'
+  actual: 'undefined'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/d/Workspace/other-projects/chord-v0.3.0/docs/internal/046-state-probes.mjs:129:10)
+    Test.runInAsyncScope (node:async_hooks:226:14)
+    Test.run (node:internal/test_runner/test:1397:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+    Test.postRun (node:internal/test_runner/test:1537:19)
+    Test.run (node:internal/test_runner/test:1462:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:969:7)
+  ...
+# Subtest: snapshot export is a detached view (control)
+ok 19 - snapshot export is a detached view (control)
+  ---
+  duration_ms: 1.068805
+  type: 'test'
+  ...
+# Subtest: stale cancellation leaves canonical state unchanged (control)
+ok 20 - stale cancellation leaves canonical state unchanged (control)
+  ---
+  duration_ms: 1.900341
+  type: 'test'
+  ...
+# Subtest: snapshot malformed schema rejected (control)
+ok 21 - snapshot malformed schema rejected (control)
+  ---
+  duration_ms: 1.362172
+  type: 'test'
+  ...
+1..21
+# tests 21
+# suites 0
+# pass 3
+# fail 18
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 103.346462

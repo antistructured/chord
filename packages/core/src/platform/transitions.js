@@ -1,5 +1,6 @@
 import { authorityError } from "./authorization.js";
 import { appendRegistryEvent } from "./event-journal.js";
+import { operationFor } from "./reconciliation.js";
 
 /** Guarded state machines (041-authority-design.md §5).
  *
@@ -140,6 +141,8 @@ export function markTaskUncertain(registry, taskId, { reason = "UNKNOWN", now = 
     return { marked: false, task, code };
   }
   task.status = "uncertain";
+  const operation = operationFor(registry, taskId);
+  if (operation) operation.state = "unknown";
   const entry = registry.task_queue.find(x => x.task_id === taskId);
   if (entry && canQueueTransition(entry.status, "uncertain")) entry.status = "uncertain";
   delete registry.pending_attempts[taskId];

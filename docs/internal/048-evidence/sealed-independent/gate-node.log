@@ -1,0 +1,14 @@
+✔ human exact-attempt approval; missing, service and wrong-attempt fail with zero effects (46.417295ms)
+✔ all common SDK read views detached; no-grant identity sees no tasks (7.419531ms)
+✔ same-revision CAS has one winner; rejected batch is byte-for-byte atomic (8.858429ms)
+✔ in-flight result loses to cancellation without changing terminal task or repeating effect (15.429626ms)
+✔ unknown effect quarantined across ID churn and restore; human evidence required before readmission (14.507275ms)
+✔ pure complete modern projection; malformed, missing-middle, tail and legacy reject; content diff detects edits (16.162617ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 291.904218

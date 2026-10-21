@@ -21,7 +21,7 @@ async function runValidation() {
     schema_version: "chord.contracts.v1",
     run_id: chord.registry.run.run_id,
     authority_revision: 0,
-    principals: [principal],
+    principals: [principal, { principal_id: "verify-human", issuer: "verify-host", kind: "human", authenticated_at: 0, expires_at: Number.MAX_SAFE_INTEGER }],
     actors: [actor],
     grants: [],
     approvals: []
@@ -182,6 +182,7 @@ async function runValidation() {
 
   // 7b. UNCERTAIN RECONCILIATION
   console.log("--- 7b. Uncertain Reconciliation ---");
+  chord.reconcileTask({ task_id: uncertainTasks[0].task_id, principal_id: "verify-human", decision: "confirmed_not_executed", evidence: { kind: "no_effect_confirmation", reference: "mock-adapter-no-effect-receipt" }, expectedRevision: chord.getRunRevision() });
   chord.replayTask(uncertainTasks[0].task_id);
   if (chord.registry.tasks[uncertainTasks[0].task_id].status !== "queued") {
     throw new Error("Uncertain task should requeue through fresh admission");
@@ -218,6 +219,7 @@ async function runValidation() {
     }]);
     throw new Error("SigilJS validation should have thrown for invalid packet");
   } catch (e) {
+    if (e.message === "SigilJS validation should have thrown for invalid packet") throw e;
     console.log("✅ SigilJS caught invalid packet:", e.message);
   }
   console.log("");

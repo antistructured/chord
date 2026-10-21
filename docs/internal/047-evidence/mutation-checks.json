@@ -1,0 +1,35 @@
+[
+  {
+    "name": "owner-no-install",
+    "cwd": "/home/d/.hermes/cache/scratch/chord047-mutants-54zwfjdl/owner-no-install",
+    "command": [
+      "bun",
+      "test",
+      "tests/integrity.test.js"
+    ],
+    "exit": 1,
+    "mutation_detected": true
+  },
+  {
+    "name": "dispatch-no-run-guards",
+    "cwd": "/home/d/.hermes/cache/scratch/chord047-mutants-54zwfjdl/dispatch-no-run-guards",
+    "command": [
+      "bun",
+      "test",
+      "tests/lifecycle-integrity.test.js"
+    ],
+    "exit": 1,
+    "mutation_detected": true
+  },
+  {
+    "name": "diff-content-ignored",
+    "cwd": "/home/d/.hermes/cache/scratch/chord047-mutants-54zwfjdl/diff-content-ignored",
+    "command": [
+      "bun",
+      "test",
+      "tests/replay-integrity.test.js"
+    ],
+    "exit": 1,
+    "mutation_detected": true
+  }
+]
