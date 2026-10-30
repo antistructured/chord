@@ -1,4 +1,4 @@
-import { createChord, SCHEMA_VERSION } from '@weipertda/chord';
+import { createChord, SCHEMA_VERSION } from '@antistructured/chord';
 
 // Trusted host setup, not actor/model-provided credentials or grants.
 const chord = createChord();
@@ -23,12 +23,10 @@ const { packets } = chord.registerSpecAndQueue({
   project: 'support', phase: 'draft', do: ['draft-response']
 }, {
   principal_id: 'host-user', actor_id: 'writer', capability: 'draft',
-  issueGrants: packets => packets.map(p => ({
-    grant_id: `grant_${p.task_id}`, principal_id: 'host-user', actor_id: 'writer',
-    capability: 'draft', effect: 'allow', issued_at: 0, expires_at,
-    revoked_at: null, requires_approval: false,
-    scope: { run_id, project: p.project, phase: p.phase, task_id: p.task_id,
-      target_entity: p.target_entity, resource: { kind: 'task', id: p.task_id } }
+  // createTaskGrant derives the exact task scope from the packet. It shapes a
+  // grant only: nothing is installed and nothing is authorized by shaping one.
+  issueGrants: packets => packets.map(packet => chord.createTaskGrant(packet, {
+    principal_id: 'host-user', actor_id: 'writer', capability: 'draft', expires_at
   }))
 });
 const result = await chord.runCycle();

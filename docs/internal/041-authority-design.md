@@ -17,7 +17,7 @@ The trusted host is allowed to install authority, change policy, authenticate pr
 
 ## 2. Inspected SigilJS API and contract implementation choice
 
-Downloaded the exact npm tarball for `@weipertda/sigiljs@0.18.0`, without installing it. `package.json` declares ESM and a root default export target of `./src/index.js`; that file exports the named `Sigil`, lowercase `sigil`, helpers, and `SigilValidationError`. Use the public named import `import { Sigil } from "@weipertda/sigiljs"` in a later pass, not a guessed `createValidator` export.[1]
+Downloaded the exact npm tarball for `@antistructured/sigiljs@0.18.0`, without installing it. `package.json` declares ESM and a root default export target of `./src/index.js`; that file exports the named `Sigil`, lowercase `sigil`, helpers, and `SigilValidationError`. Use the public named import `import { Sigil } from "@antistructured/sigiljs"` in a later pass, not a guessed `createValidator` export.[1]
 
 Verified source interfaces: `Sigil.exact` is a tagged-template constructor; its contract object has `.check(value, opts)` returning a Boolean, `.assert(value, opts)` returning the checked value or throwing, `.parse(value, opts)`, and `.safeParse(value, opts)` returning `{ success: true, data }` or `{ success: false, error }`. Exact mode applies to inline nested object expressions. `.version(string)` sets metadata; it does **not** enforce a run's version. `.assert()` does not clone input.[1]
 
@@ -154,11 +154,11 @@ Actual shell commands (repository workdir unless absolute scratch target shown):
 ```sh
 git status --short
 git rev-parse HEAD
-npm view @weipertda/sigiljs@0.18.0 dist --json
+npm view @antistructured/sigiljs@0.18.0 dist --json
 mkdir -p /home/d/.hermes/cache/scratch/chord-041-authority
-npm pack @weipertda/sigiljs@0.18.0 --ignore-scripts --pack-destination /home/d/.hermes/cache/scratch/chord-041-authority
-tar -xzf /home/d/.hermes/cache/scratch/chord-041-authority/weipertda-sigiljs-0.18.0.tgz -C /home/d/.hermes/cache/scratch/chord-041-authority
-sha1sum /home/d/.hermes/cache/scratch/chord-041-authority/weipertda-sigiljs-0.18.0.tgz
+npm pack @antistructured/sigiljs@0.18.0 --ignore-scripts --pack-destination /home/d/.hermes/cache/scratch/chord-041-authority
+tar -xzf /home/d/.hermes/cache/scratch/chord-041-authority/antistructured-sigiljs-0.18.0.tgz -C /home/d/.hermes/cache/scratch/chord-041-authority
+sha1sum /home/d/.hermes/cache/scratch/chord-041-authority/antistructured-sigiljs-0.18.0.tgz
 ```
 
 All above succeeded. SHA-1 matched npm metadata: `82a40649bfb1ec5213b049b1080dbf9011707b23` (identity check, not a separate security audit). `node --input-type=module -e` imported the absolute extracted `src/index.js` and printed the probe object recorded in section 2, exit 0. Reads used file tools; long collected output was paged from `/home/d/.hermes/cache/exec/stdout-99c351289f57.txt`. Citation ledger is scratch-only at `/home/d/.hermes/cache/scratch/chord-041-authority/citations.json`.
@@ -167,4 +167,4 @@ Changed repository file: this document only. Preserved existing `.gitignore`, `.
 
 ## Sources
 
-[1] https://registry.npmjs.org/@weipertda/sigiljs/-/sigiljs-0.18.0.tgz — @weipertda/sigiljs 0.18.0 inspected npm source tarball
+[1] https://registry.npmjs.org/@antistructured/sigiljs/-/sigiljs-0.18.0.tgz — @antistructured/sigiljs 0.18.0 inspected npm source tarball

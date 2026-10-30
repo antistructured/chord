@@ -3,7 +3,7 @@
 **Block 1 of 6: PARTIAL.** Eight sequential virtual-role audit passes executed; reports produced. Required baseline checks failed, so this is not COMPLETE and does not authorize Block 2 execution or preview release. No code repaired, dependencies changed, versions bumped, tags created or package published.
 
 ## Exact checkout and change scope
-- Branch `main`, commit `6b07802ba8639b29e7c48534612dbd60c946946d` (https://github.com/weipertda/chord/commit/6b07802ba8639b29e7c48534612dbd60c946946d).
+- Branch `main`, commit `6b07802ba8639b29e7c48534612dbd60c946946d` (https://github.com/antistructured/chord/commit/6b07802ba8639b29e7c48534612dbd60c946946d).
 - Actual package `packages/core`, `@chord/core@0.3.0`, JavaScript ES modules, Bun-oriented commands. `0.4.0-preview.1` is a proposed target only.
 - Pre-existing modified files preserved: `.gitignore`, `.vscode/settings.json`, `README.md`. No tracked implementation/manifest/lock edits by audit.
 - New files: the eight required reports below plus raw baseline transcript. All under `docs/internal/`; no package restructure.

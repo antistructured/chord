@@ -3,7 +3,7 @@
 Block 1 status: PARTIAL. All eight audit passes executed; existing runtime validation and advertised demo fail. See [final report](040-audit-final-report.md) and [baseline transcript](040-baseline-transcript.md). Pass 1 inventory complete; no release approval.
 
 ## Checkout and installation evidence
-- Branch `main`; HEAD `6b07802ba8639b29e7c48534612dbd60c946946d`; sole observed history entry `Initial commit – Chord v0.3.0 baseline` (`git log -5 --oneline`). Origin: https://github.com/weipertda/chord.git.
+- Branch `main`; HEAD `6b07802ba8639b29e7c48534612dbd60c946946d`; sole observed history entry `Initial commit – Chord v0.3.0 baseline` (`git log -5 --oneline`). Origin: https://github.com/antistructured/chord.git.
 - Initial user modifications: `.gitignore`, `.vscode/settings.json`, `README.md`. Preserve these; no implementation edits authorized.
 - No root package manifest. Actual package: `packages/core/package.json`, `@chord/core@0.3.0`, ES modules. `0.4.0-preview.1` is proposed, not declared.
 - Available tools: Bun 1.3.14, Node v24.18.1, npm 12.0.2. Existing node_modules; no install performed.

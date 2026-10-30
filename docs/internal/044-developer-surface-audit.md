@@ -13,7 +13,7 @@
 ## 2) Package metadata
 - package.json: name `@chord/core`, version `0.3.0` (unchanged per scope; release track `0.4.0-preview.1` proposed)
 - module type ESM, bun/esm compatible. No TS source.
-- Dependencies: `@weipertda/sigiljs@0.18.0`
+- Dependencies: `@antistructured/sigiljs@0.18.0`
 
 ## 3) Runtimes
 - Bun v1.3.14 works. Node v24 compatible via ESM.

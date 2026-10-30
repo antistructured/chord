@@ -20,14 +20,14 @@
 ## Provenance
 - **Contributors:** None outside maintainer (per maintainer statement)
 - **AI assistance:** Agents assisted under maintainer's direction
-- **Git history:** 6 commits by weipertda <weipertda@gmail.com>
+- **Git history:** 6 commits by antistructured <antistructured@gmail.com>
 - **Vendored code:** None found
 - **Copied third-party:** None identified in first-party source scan
 
 ## Dependencies
 | Dependency | Version | License | Notes |
 |------------|---------|---------|-------|
-| @weipertda/sigiljs | 0.18.0 | MIT | Runtime dependency, npm package (not bundled). Documented in NOTICE and THIRD_PARTY_NOTICES.md. Apache-2.0 does not relicense this dependency. |
+| @antistructured/sigiljs | 0.18.0 | MIT | Runtime dependency, npm package (not bundled). Documented in NOTICE and THIRD_PARTY_NOTICES.md. Apache-2.0 does not relicense this dependency. |
 
 ## Compliance Notes
 - NOTICE files include attribution for Chord and note SigilJS dependency

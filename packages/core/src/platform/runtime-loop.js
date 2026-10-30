@@ -43,7 +43,7 @@ export async function runRuntimeCycle(input, router, policy, options = {}) {
     if (!adapter) {
       scheduleTaskRetry(registry, task.task_id, computeBackoffDelayMs(policy, entry.retry_count + 1), 'no_adapter', { now: at });
       appendRegistryEvent(registry, 'task_retry_scheduled', { task_id: task.task_id, reason: 'no_adapter' });
-      return { response: { ok: false, task_id: task.task_id, reason: 'no_adapter' } };
+      return { response: { ok: false, task_id: task.task_id, code: 'no_adapter', reason: 'no_adapter' } };
     }
     const attempt = prepareAttemptRecord(registry, task);
     const decision = evaluateAuthority({ stage: 'dispatch', now: at, run: registry.run, task, attempt, authority: registry.authority });
@@ -72,11 +72,24 @@ export async function runRuntimeCycle(input, router, policy, options = {}) {
   });
   if (claim.response) return claim.response;
   const { packet, attempt, context } = claim;
+  let result;
   try {
     // No await or external callback between successful claim and invocation.
-    const result = await invoke();
-    const outcome = { ...result, run_id: context.run_id, schema_version: context.schema_version, task_revision: context.task_revision, queue_id: context.queue_id, attempt_id: context.attempt_id };
-    return store.transact('runtime_result', registry => {
+    result = await invoke();
+  } catch (caught) {
+    const code = /^[A-Z0-9_]{1,64}$/.test(caught?.code || '') ? caught.code : 'ADAPTER_ERROR';
+    return store.transact('runtime_uncertain', registry => {
+      const active = registry.active_attempts[packet.task_id];
+      if (active && active.attempt.attempt_id !== attempt.attempt_id) return { ok: false, uncertain: false, code: 'STALE_ATTEMPT', error: 'STALE_ATTEMPT' };
+      const marked = markTaskUncertain(registry, packet.task_id, { reason: code });
+      return { ok: false, task_id: packet.task_id, uncertain: marked.marked, code, error: code };
+    });
+  }
+  // Result persistence is NOT an adapter call. In particular, neither a
+  // known failed write nor a lost COMMIT acknowledgement permits a second
+  // compensating write over a potentially committed result.
+  const outcome = { ...result, run_id: context.run_id, schema_version: context.schema_version, task_revision: context.task_revision, queue_id: context.queue_id, attempt_id: context.attempt_id };
+  return store.transact('runtime_result', registry => {
       const task = registry.tasks[packet.task_id];
       const active = registry.active_attempts[packet.task_id];
       const commit = evaluateAuthority({ stage: 'commit', now: now(), run: registry.run, task, attempt, authority: registry.authority });
@@ -92,14 +105,5 @@ export async function runRuntimeCycle(input, router, policy, options = {}) {
       appendRegistryEvent(registry, 'task_result_ingested', { task_id: packet.task_id, outcome: outcome.outcome });
       appendRegistryEvent(registry, 'runtime_cycle_completed', { task_id: packet.task_id });
       return { ok: true, task_id: packet.task_id, result: outcome, attempt_id: attempt.attempt_id };
-    });
-  } catch (caught) {
-    const code = /^[A-Z0-9_]{1,64}$/.test(caught?.code || '') ? caught.code : 'ADAPTER_ERROR';
-    return store.transact('runtime_uncertain', registry => {
-      const active = registry.active_attempts[packet.task_id];
-      if (active && active.attempt.attempt_id !== attempt.attempt_id) return { ok: false, uncertain: false, error: 'STALE_ATTEMPT' };
-      const marked = markTaskUncertain(registry, packet.task_id, { reason: code });
-      return { ok: false, task_id: packet.task_id, uncertain: marked.marked, error: code };
-    });
-  }
+  });
 }

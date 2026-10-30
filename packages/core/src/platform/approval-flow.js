@@ -19,13 +19,13 @@ export function pauseForApproval(registry, { reason = "approval_required", expec
 }
 
 /** Resume after authorized approval. */
-export function resumeRun(registry, { expectedRevision, correlation_id = null, causation_id = null, approval_id = null } = {}) {
+export function resumeRun(registry, { expectedRevision, correlation_id = null, causation_id = null, approval_id = null } = {}, now = Date.now()) {
   if (!registry) throw authorityError("INVALID_CONTEXT");
   if (expectedRevision !== undefined && expectedRevision !== registry.run.revision) throw authorityError("STALE_REVISION");
   const prev = registry.run.state || "active";
   if (prev !== "paused") throw authorityError("INVALID_TRANSITION");
   const pause = registry.approval_pause;
-  if (pause?.expires_at !== null && pause?.expires_at < Date.now()) throw authorityError("EXPIRED");
+  if (pause?.expires_at !== null && pause?.expires_at < now) throw authorityError("EXPIRED");
   registry.run.state = "active";
   if (correlation_id) registry.run.correlation_id = correlation_id;
   if (causation_id) registry.run.causation_id = causation_id;

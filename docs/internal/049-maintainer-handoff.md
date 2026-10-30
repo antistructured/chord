@@ -13,7 +13,7 @@ Record Daniel Weipert as the supplied project legal name and Antistructured Labs
 ## Still unanswered
 
 - Authority/permissions to license and distribute intended material under Apache-2.0, subject to identified third-party obligations; exceptions or unresolved permissions.
-- Control of @weipertda npm scope and explicit approval of @weipertda/chord for the intended preview.
+- Control of @antistructured npm scope and explicit approval of @antistructured/chord for the intended preview.
 - Ownership/authorization of intervening package metadata edits.
 
 Clarification timed out after the name response. Unanswered questions are not consent.

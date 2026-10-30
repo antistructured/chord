@@ -1,5 +1,5 @@
 {
-  "name": "@weipertda/chord",
+  "name": "@antistructured/chord",
   "version": "0.4.0-preview.1",
   "type": "module",
   "description": "Governed coordination for humans, AI agents, and services.",
@@ -32,6 +32,8 @@
     "!src/verify-runtime.js",
     "examples/cross-actor-workflow.mjs",
     "examples/quickstart.mjs",
+    "examples/process-recovery.mjs",
+    "examples/two-process-coordination.mjs",
     "README.md",
     "INTEGRITY.md",
     "CHANGELOG.md",
@@ -41,12 +43,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/weipertda/chord.git",
+    "url": "git+https://github.com/antistructured/chord.git",
     "directory": "packages/core"
   },
-  "homepage": "https://github.com/weipertda/chord#readme",
+  "homepage": "https://github.com/antistructured/chord#readme",
   "bugs": {
-    "url": "https://github.com/weipertda/chord/issues"
+    "url": "https://github.com/antistructured/chord/issues"
   },
   "publishConfig": {
     "access": "public",

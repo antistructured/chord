@@ -13,10 +13,14 @@ export function replayRegistryJournal(registry, options = {}) {
 }
 
 export function createDeterministicAuditReport(registry, options = {}) {
+  // A supplied clock makes the report reproducible: identical registry state
+  // and identical `now` yield byte-identical reports. Without one the report
+  // carries the wall clock, as before.
+  const at = Number.isSafeInteger(options.now) ? options.now : Date.now();
   return {
     audit_type: "chord.audit",
     audit_version: "0.3.0",
-    created_at: new Date().toISOString(),
+    created_at: new Date(at).toISOString(),
     counts: {
       artifacts: Object.keys(registry.artifacts).length,
       domains: Object.keys(registry.domains).length,

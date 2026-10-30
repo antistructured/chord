@@ -19,7 +19,7 @@ Pre-existing .gitignore/.vscode changes, two .history README deletions and uncom
 - Selected: Apache License2.0, explicitly answered by maintainer.
 - Applied/approved for redistribution: NO. Holder(s)/authority/contributor/copied/generated/AI-assisted permissions unanswered.
 - First-party LICENSE/NOTICE/license metadata/contribution agreement evidence absent. Git records one author/committer identity, not proof of complete rights. Attribution marker absence does not prove originality or automatically license AI-assisted code.
-- Dependency: @weipertda/sigiljs0.18.0 MIT, installed LICENSE/notice inspected; registry integrity matches lock. It is not relicensed by Chord's future Apache choice. Actual copied/vendored/external content exceptions still require maintainer disclosure.
+- Dependency: @antistructured/sigiljs0.18.0 MIT, installed LICENSE/notice inspected; registry integrity matches lock. It is not relicensed by Chord's future Apache choice. Actual copied/vendored/external content exceptions still require maintainer disclosure.
 - No copyright-holder name or legal clearance invented. See049-license-provenance.md and049-license-decision.md.
 
 ## 5. Payload curation

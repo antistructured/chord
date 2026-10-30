@@ -6,7 +6,7 @@
 - Repository `/home/d/Workspace/other-projects/chord-v0.3.0`, branch `main`, HEAD `ba3e37ea035a2862e06766ed7f90513babf945b0`.
 - Required six Git commands executed before repository writes. No staged changes. Existing tracked edits and untracked Blocks 2–6 documents/runtime/tests are pre-existing work, not authored by this audit. No ownership inferred beyond that; all preserved.
 - Baseline full status, binary diff, ignored inventory and SHA-256 map saved under `/home/d/.hermes/cache/scratch/chord-046/`. No clean/reset/commit/branch switch/version/tag/publication.
-- No root package.json; actual package `packages/core/package.json`, `@chord/core@0.3.0`, ESM. Only dependency `@weipertda/sigiljs@0.18.0`, matching bun.lock and installed package. Actual `Sigil.exact`/version/check API is used through clonePlainData/define; schema validity is not identity authentication.
+- No root package.json; actual package `packages/core/package.json`, `@chord/core@0.3.0`, ESM. Only dependency `@antistructured/sigiljs@0.18.0`, matching bun.lock and installed package. Actual `Sigil.exact`/version/check API is used through clonePlainData/define; schema validity is not identity authentication.
 - Exports: root, `./sdk`, `./platform`. Root reexports SDK/platform/query/snapshot/types. Trace reducer and recovery policy are physically packed but **not exported**. No files whitelist, engines declaration, package license field or first-party LICENSE found. Dry-run payload includes tests, fixtures and dev_flow.md.
 
 ## Documents inspected

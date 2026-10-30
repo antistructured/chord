@@ -7,7 +7,7 @@ import { queryArtifacts, queryDomains, listDeadLetterTasks } from "../registry/q
 import { serializeRegistry, exportRegistry } from "../registry/snapshot.js";
 import { createIntentTaskPacket, createHandoffTaskPackets } from "../execution/task-packets.js";
 import { registerTaskPackets } from "../execution/results.js";
-import { createTaskQueue, enqueueTask, listQueuedTasks } from "../platform/task-queue.js";
+import { enqueueTask, listQueuedTasks } from "../platform/task-queue.js";
 import { createAdapterRouter } from "../platform/adapter-routing.js";
 import { createRuntimePolicy } from "../platform/policy.js";
 import { createDeterministicAuditReport, replayRegistryJournal } from "../platform/journal-audit.js";
@@ -17,38 +17,57 @@ import { evaluateAuthority, authorityError } from "../platform/authorization.js"
 import { prepareAttemptRecord, invalidatePendingAttempt, clearActiveAttempt } from "../platform/attempts.js";
 import { transitionTaskStatus, canQueueTransition } from "../platform/transitions.js";
 import { deepClone } from "../utils/clone.js";
-import { assertTaskPacket, assertSpec, ContextRequest, RegistryData, AuthoritySnapshot, TaskAuthority, Grant, SCHEMA_VERSION, CONTRACT_LIMITS, contractError } from "../contracts/sigils.js";
+import { assertTaskPacket, assertSpec, ContextRequest, RegistryData, AuthoritySnapshot, TaskAuthority, Grant, Approval, SCHEMA_VERSION, CONTRACT_LIMITS, contractError } from "../contracts/sigils.js";
 
+import { openSqliteStore } from "../runtime/storage/sqlite.js";
+import { recoverOwner } from "../runtime/recovery.js";
+import { storageError } from "../storage/contract.js";
+
+/** Synchronous trusted-host construction. storage is {path, mode, busyTimeoutMs?}.
+ * Existing stores supply canonical authority; host services must be supplied anew.
+ * close() releases resources without drain/commit: hosts should await cycles first.
+ */
 export function createChord(options = {}) {
-  const owner = createStateOwner(options.registry === undefined ? createRegistry() : options.registry);
-  let registry = owner.read();
+  const durable = options.storage !== undefined;
+  const trustedHost = options.trustedHost || null;
+  let lastNow = -1, clockFloor = 0;
+  function hostNow() {
+    const raw = trustedHost && typeof trustedHost.now === "function" ? trustedHost.now() : Date.now();
+    if (!Number.isSafeInteger(raw) || raw < 0) throw authorityError("INVALID_CONTEXT");
+    const effective = durable ? Math.max(clockFloor, raw) : raw;
+    if (effective < lastNow) throw authorityError("INVALID_CONTEXT");
+    lastNow = effective;
+    return effective;
+  }
+  let store = null;
+  try {
+  if (durable && options.registry !== undefined) throw storageError('INVALID_CONTEXT');
+  if (durable && options.storage?.mode === 'existing' && trustedHost?.authoritySnapshot != null) throw storageError('INVALID_CONTEXT');
+  if (durable) {
+    store = openSqliteStore(options.storage);
+    if (options.storage.mode === 'create') {
+      const initial = createStateOwner(createRegistry()).read();
+      store.init({ initialRegistry: initial, logicalNow: hostNow() });
+    } else clockFloor = store.load().logicalNow;
+    hostNow();
+  }
+  const owner = createStateOwner(store ? undefined : options.registry === undefined ? createRegistry() : options.registry, {
+    store, now: hostNow, observeFloor: floor => { clockFloor = Math.max(clockFloor, floor); }
+  });
+  if (store) recoverOwner(owner, hostNow);
+  // Bound only during an owner callback; never retain a last-read registry.
+  let registry;
   function mutate(operation, action, expectedRevision) {
-    const result = owner.transact(operation, draft => {
+    // The alias exists only as transaction-local working data, never authority.
+    return owner.transact(operation, draft => {
       const previous = registry;
       registry = draft;
       try { return action(draft); } finally { registry = previous; }
     }, expectedRevision);
-    registry = owner.read();
-    return result;
   }
   const read = () => deepClone(owner.read());
-  registry.task_queue ||= createTaskQueue();
-  registry.pending_attempts ||= {};
-  registry.active_attempts ||= {};
   let router = createAdapterRouter(options.adapterRouter || {});
   let policy = createRuntimePolicy(options.runtimePolicy || {});
-
-  // Trusted-host seam: the embedding host owns the clock and installs
-  // authority. JavaScript objects passed here are host-trusted arguments,
-  // never forwarded request data. Backward clock movement fails closed.
-  const trustedHost = options.trustedHost || null;
-  let lastNow = -1;
-  function hostNow() {
-    const raw = trustedHost && typeof trustedHost.now === "function" ? trustedHost.now() : Date.now();
-    if (!Number.isSafeInteger(raw) || raw < 0 || raw < lastNow) throw authorityError("INVALID_CONTEXT");
-    lastNow = raw;
-    return raw;
-  }
 
   function setAuthoritySnapshot(snapshot, snapshotOptions = {}) {
     const value = AuthoritySnapshot.assert(snapshot);
@@ -90,6 +109,76 @@ export function createChord(options = {}) {
     registry.authority = next;
     registry.run.revision += 1;
     appendRegistryEvent(registry, "grants_installed", { count: validated.length });
+  }
+
+  /** Host helper: build one contract-valid grant for a task packet.
+   * Derives the run id and the nested scope shape from this run and the
+   * packet, so a host never has to reproduce the scope contract by hand.
+   * Shapes data only: it grants nothing, installs nothing and reads no
+   * authority state. The grant still has to be installed by the host through
+   * setAuthoritySnapshot / the issueGrants callback, and the runtime still
+   * re-evaluates it at admit, dispatch and commit.
+   */
+  function createTaskGrant(packet, grantOptions = {}) {
+    const registry = owner.read();
+    const value = assertTaskPacket(packet);
+    if (typeof grantOptions.principal_id !== "string" || typeof grantOptions.actor_id !== "string" || typeof grantOptions.capability !== "string") throw authorityError("INVALID_CONTEXT");
+    return Grant.assert({
+      grant_id: grantOptions.grant_id || `grant_${value.task_id}`,
+      principal_id: grantOptions.principal_id,
+      actor_id: grantOptions.actor_id,
+      capability: grantOptions.capability,
+      effect: grantOptions.effect === "deny" ? "deny" : "allow",
+      scope: {
+        run_id: registry.run.run_id,
+        project: value.project,
+        phase: value.phase,
+        task_id: value.task_id,
+        target_entity: value.target_entity,
+        resource: { kind: "task", id: value.task_id }
+      },
+      issued_at: Number.isSafeInteger(grantOptions.issued_at) ? grantOptions.issued_at : 0,
+      expires_at: Number.isSafeInteger(grantOptions.expires_at) ? grantOptions.expires_at : Number.MAX_SAFE_INTEGER,
+      revoked_at: null,
+      requires_approval: grantOptions.requires_approval === true
+    });
+  }
+
+  /** Host helper: build one contract-valid approval for a prepared attempt.
+   * Derives the run id, scope, task revision and requesting identity from the
+   * stored task, so a host never has to reproduce the approval contract by
+   * hand. Shapes data only: it approves nothing and installs nothing. The
+   * approval still has to be installed by the host through
+   * setAuthoritySnapshot, and resumeRun still requires an attested human
+   * principal that differs from the requesting principal.
+   */
+  function createApproval(approvalOptions = {}) {
+    const registry = owner.read();
+    const task = registry.tasks[approvalOptions.task_id];
+    if (!task || typeof task.task_id !== "string") throw contractError("INVALID_DATA");
+    if (typeof approvalOptions.approver_principal_id !== "string") throw authorityError("INVALID_CONTEXT");
+    const binding = task.authority_binding;
+    const attempt = registry.pending_attempts[task.task_id];
+    const attempt_id = approvalOptions.attempt_id || attempt?.attempt_id;
+    if (typeof attempt_id !== "string") throw authorityError("INVALID_CONTEXT");
+    return Approval.assert({
+      approval_id: approvalOptions.approval_id || `approval_${task.task_id}`,
+      approver_principal_id: approvalOptions.approver_principal_id,
+      decision: "approved",
+      run_id: registry.run.run_id,
+      schema_version: registry.run.schema_version,
+      task_id: task.task_id,
+      task_revision: task.task_revision ?? 0,
+      attempt_id,
+      principal_id: binding.principal_id,
+      actor_id: binding.actor_id,
+      capability: binding.capability,
+      scope: binding.scope,
+      issued_at: Number.isSafeInteger(approvalOptions.issued_at) ? approvalOptions.issued_at : 0,
+      expires_at: Number.isSafeInteger(approvalOptions.expires_at) ? approvalOptions.expires_at : Number.MAX_SAFE_INTEGER,
+      revoked_at: null,
+      consumed_by_attempt_id: null
+    });
   }
 
   function parseText(text) {
@@ -286,8 +375,10 @@ export function createChord(options = {}) {
     getRegistry: read,
     getRunState: () => owner.read().run.state || "unknown",
     getRunRevision: () => owner.read().run.revision,
+    createTaskGrant,
+    createApproval,
     // Trusted-host administrative CAS, not an actor request endpoint.
-    commitRun: args => { const result = owner.install(args); registry = owner.read(); return result; },
+    commitRun: args => owner.install(args),
     projectContext: (opts = {}) => {
       const input = ContextRequest.assert(opts);
       const at = hostNow();
@@ -310,7 +401,7 @@ export function createChord(options = {}) {
         const approval = registry.authority.approvals.find(a => a.approval_id === decision.approval_id);
         if (!decision.allowed || !approval || approval.approver_principal_id !== human.principal_id || (opts.approval_id && opts.approval_id !== approval.approval_id)) throw authorityError("APPROVAL_REQUIRED");
       }
-      return resumeRun(registry, opts);
+      return resumeRun(registry, opts, at);
     }, opts.expectedRevision),
     rejectApproval: (opts = {}) => mutate("reject_approval", () => rejectApproval(registry, opts), opts.expectedRevision),
     cancelRun: (opts = {}) => mutate("cancel_run", () => {
@@ -332,6 +423,8 @@ export function createChord(options = {}) {
     inspectEvents: (opts = {}) => listRegistryEvents(read(), opts),
     exportRegistry: () => exportRegistry(owner.read()),
     serializeRegistry: () => serializeRegistry(owner.read()),
-    _invalidatePendingAttempt: id => mutate("invalidate_attempt", () => invalidatePendingAttempt(registry, id))
+    _invalidatePendingAttempt: id => mutate("invalidate_attempt", () => invalidatePendingAttempt(registry, id)),
+    close: () => owner.close()
   };
+  } catch (error) { store?.close(); throw error; }
 }

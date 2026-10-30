@@ -2,7 +2,7 @@
 
 The only runtime dependency is `@weipertda/sigiljs@0.18.0`, distributed separately by npm under the MIT License. Chord does not bundle it. Its license remains applicable; Apache-2.0 applies to Chord first-party material, not to this dependency.
 
-Source: https://github.com/antistructured/sigiljs
+Source: https://github.com/antistructured/sigiljs (the source repository declared by the published `@weipertda/sigiljs@0.18.0` package)
 
 ## SigilJS — MIT License
 

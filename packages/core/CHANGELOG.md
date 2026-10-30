@@ -2,7 +2,7 @@
 
 ## 0.4.0-preview.1 — UNRELEASED local candidate
 
-Product: Chord. Package: @weipertda/chord (formerly @chord/core). Publication has not been authorized or performed. Namespace choice is maintainer-accepted; authenticated npm permissions must be revalidated before publication.
+Product: Chord. Package: @antistructured/chord (formerly @chord/core). Publication has not been authorized or performed. Namespace choice is maintainer-accepted; authenticated npm permissions must be revalidated before publication.
 
 ### Candidate capabilities
 - Host-governed admission and dispatch with versioned SigilJS contracts, scoped grants and attempt-bound approvals.
@@ -14,7 +14,7 @@ Product: Chord. Package: @weipertda/chord (formerly @chord/core). Publication ha
 These capabilities were implemented before this packaging continuation. This continuation changes identity, payload and public/legal documentation—not kernel behavior.
 
 ### Packaging and licensing
-- Maintainer-accepted fallback name @weipertda/chord; update root, /sdk and /platform imports.
+- Maintainer-accepted fallback name @antistructured/chord; update root, /sdk and /platform imports.
 - Apache-2.0 first-party license; Antistructured Labs LLC holder wording approved by maintainer. Ownership/provenance is an attestation, not independent legal clearance.
 - @weipertda/sigiljs remains pinned to 0.18.0 under MIT, separately installed and not bundled.
 - Curated payload includes runtime, two public examples, README, integrity guide and legal notices. Tests, internal audits, editor files and development verifier are repository-only.

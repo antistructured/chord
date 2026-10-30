@@ -18,7 +18,7 @@ import { operationFor } from "./reconciliation.js";
  */
 export const TASK_TRANSITIONS = Object.freeze({
   queued: ["leased", "running", "blocked", "cancelled", "dead_letter"],
-  leased: ["running", "queued", "cancelled", "dead_letter"],
+  leased: ["running", "queued", "cancelled", "dead_letter", "uncertain"],
   blocked: ["queued", "cancelled"],
   running: ["completed", "failed", "blocked", "uncertain", "cancelled"],
   uncertain: ["queued", "completed", "failed", "cancelled"],
@@ -144,7 +144,10 @@ export function markTaskUncertain(registry, taskId, { reason = "UNKNOWN", now = 
   const operation = operationFor(registry, taskId);
   if (operation) operation.state = "unknown";
   const entry = registry.task_queue.find(x => x.task_id === taskId);
-  if (entry && canQueueTransition(entry.status, "uncertain")) entry.status = "uncertain";
+  if (entry && canQueueTransition(entry.status, "uncertain")) {
+    entry.status = "uncertain";
+    entry.lease_expires_at = null;
+  }
   delete registry.pending_attempts[taskId];
   delete registry.active_attempts[taskId];
   registry.run.revision += 1;

@@ -1,7 +1,7 @@
 # Chord 0.4.0-preview.1 — Release Notes & Limitations
 
 **Status:** Public preview candidate (not published to npm)  
-**Package:** `@weipertda/chord@0.4.0-preview.1`  
+**Package:** `@antistructured/chord@0.4.0-preview.1`  
 **License:** Apache-2.0  
 
 ## What's New / Highlights
@@ -36,6 +36,15 @@ This preview provides a governed coordination kernel with:
 - Examples show trusted host setup patterns
 
 ## Installation (local)
+The package is not published to npm, and no release tarball is shipped in this repository.
+Install from the local checkout instead:
 ```bash
-npm install ./weipertda-chord-0.4.0-preview.1.tgz
+npm install file:/path/to/chord/packages/core
+```
+
+To install from a tarball you build yourself, run `npm pack` in `packages/core` and install
+the generated file:
+```bash
+cd packages/core && npm pack --ignore-scripts
+npm install ./antistructured-chord-0.4.0-preview.1.tgz
 ```

@@ -3,13 +3,13 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "@weipertda/chord",
+      "name": "@antistructured/chord",
       "dependencies": {
         "@weipertda/sigiljs": "0.18.0",
       },
     },
   },
   "packages": {
-    "@weipertda/sigiljs": ["@weipertda/sigiljs@0.18.0", "", { "bin": { "sigil": "src/playground.js" } }, "sha512-5m+SYlCrFmC9IJMPMINJbvB2KG38VMumBx02nyEceghcu476XIuUPHkCPUASmlBeHp3d2YapM9d2cRKt2p47sg=="],
+    "@weipertda/sigiljs": ["@weipertda/sigiljs@0.18.0", "", { "bin": { "sigil": "src/playground.js" } }, "sha512-5m+SYlCrFmC9IJMPMINJbvB2KG38VMumBx02nyEceghcu476XIuUPHkCPUASmlBeHp3d2cRKt2p47sg=="],
   }
 }

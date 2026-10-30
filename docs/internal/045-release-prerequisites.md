@@ -11,7 +11,7 @@
 - No git tags visible in recent history
 - npm not published in this environment (tarball install from local works)
 - Package is ESM, single package `@chord/core`
-- Dependencies minimal: `@weipertda/sigiljs@0.18.0`
+- Dependencies minimal: `@antistructured/sigiljs@0.18.0`
 - Tests: 126 pass / 0 fail / 1026 expect() (8 files)
 
 ## Decision
