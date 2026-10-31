@@ -1,3 +1,4 @@
+import { own } from '../utils/own.js';
 import { authorityError } from './authorization.js';
 import { canTaskTransition, canQueueTransition, canArtifactTransition, canDomainTransition } from './transitions.js';
 import { sameData } from './history.js';
@@ -6,7 +7,7 @@ import { sameData } from './history.js';
 export function assertCanonicalTransition(before, after, operation = 'host_commit') {
   if (['cancelled', 'completed', 'failed'].includes(before.run.state) && before.run.state !== after.run.state) throw authorityError('INVALID_TRANSITION');
   for (const [id, task] of Object.entries(before.tasks)) {
-    const next = after.tasks[id];
+    const next = own(after.tasks, id);
     if (!next) throw authorityError('INVALID_TRANSITION');
     for (const key of ['task_id', 'schema_version', 'project', 'phase', 'target_entity', 'requested_action', 'inputs', 'constraints', 'authority_binding', 'operation_id']) if (!sameData(task[key], next[key])) throw authorityError('IMMUTABLE_TASK');
     const cancelled = operation === 'cancel_run' && after.run.state === 'cancelled' && next.status === 'cancelled' && !['completed', 'failed', 'cancelled'].includes(task.status);
@@ -22,6 +23,6 @@ export function assertCanonicalTransition(before, after, operation = 'host_commi
     const reconciled = operation === 'reconcile_effect' && entry.status === 'blocked' && ['completed', 'cancelled'].includes(next.status);
     if (entry.status !== next.status && !canQueueTransition(entry.status, next.status) && !cancelled && !imported && !reconciled) throw authorityError('INVALID_TRANSITION');
   }
-  for (const [id, record] of Object.entries(before.artifacts)) if (!after.artifacts[id] || !canArtifactTransition(record.status, after.artifacts[id].status)) throw authorityError('INVALID_TRANSITION');
-  for (const [id, record] of Object.entries(before.domains)) if (!after.domains[id] || !canDomainTransition(record.state, after.domains[id].state)) throw authorityError('INVALID_TRANSITION');
+  for (const [id, record] of Object.entries(before.artifacts)) if (!own(after.artifacts, id) || !canArtifactTransition(record.status, own(after.artifacts, id).status)) throw authorityError('INVALID_TRANSITION');
+  for (const [id, record] of Object.entries(before.domains)) if (!own(after.domains, id) || !canDomainTransition(record.state, own(after.domains, id).state)) throw authorityError('INVALID_TRANSITION');
 }

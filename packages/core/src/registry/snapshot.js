@@ -1,3 +1,4 @@
+import { own } from '../utils/own.js';
 import { Snapshot, SCHEMA_VERSION, contractError } from "../contracts/sigils.js";
 import { createStateOwner } from "./owner.js";
 
@@ -35,7 +36,7 @@ export function importRegistry(snapshot) {
   for (const task of Object.values(registry.tasks)) {
     if (task.status === "leased" || task.status === "running") {
       task.status = "uncertain";
-      const operation = registry.operations?.[task.operation_id];
+      const operation = own(registry.operations, task.operation_id);
       if (operation) operation.state = "unknown";
     }
   }

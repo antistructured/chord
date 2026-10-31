@@ -21,40 +21,42 @@ re-running any provider.
 
 This is the **package** README. For the project's value proposition, the capability classification,
 the architecture discussion and the roadmap, see the [repository README](../../README.md).
+For six concise public-API workflows, see the [repository developer guides](../../docs/guides/README.md).
+Those repository links are not shipped in the tarball; the six runnable `examples/` scripts are.
 
 ---
 
 ## Install
 
-The package is **not on npm**. `npm view @antistructured/chord` returns `E404`. Install it
-from a local checkout:
+Use the local preview candidate; there is no supported registry installation. Follow the
+[repository setup and local tarball install guide](../../docs/guides/README.md#local-consumer-installation).
+For an installed tarball this repository-only link is not included: from another private project,
+install the absolute local `.tgz` path with `npm install --ignore-scripts --no-audit --no-fund PATH_TO_TARBALL`.
 
-```bash
-npm install file:/path/to/chord/packages/core
-```
-
-That resolves the single runtime dependency, `@weipertda/sigiljs@0.18.0`, from the registry.
+That installs the single runtime dependency, `@weipertda/sigiljs@0.18.0`, from cache or the registry according to npm options.
 There is no global CLI binary and no registry install.
 
 ---
 
 ## Entry points
 
-Three import paths are declared in the local candidate’s `exports` map. All three are experimental; the `/platform` entry point is
-trusted-host plumbing, not a public product surface.
+Four import paths are declared in the local candidate’s `exports` map. All four are experimental; the `/platform` entry point is
+trusted-host plumbing, not a public product surface, and `/interop` is a provider-neutral experimental adapter protocol.
 
 | Specifier | Resolves to | Exports | Use it for |
 |---|---|---|---|
-| `@antistructured/chord` | `src/index.js` | 35 | Legacy SDK/helpers plus explicit experimental coordinated host, storage and IPC factories. |
+| `@antistructured/chord` | `src/index.js` | 64 | Legacy SDK/helpers plus explicit experimental coordinated host, storage, IPC and adapter-interop factories. |
 | `@antistructured/chord/sdk` | `src/sdk/index.js` | 1 | `createChord` only. |
 | `@antistructured/chord/platform` | `src/platform/index.js` | 22 | Low-level queue, routing, journal and reducer primitives. Trusted-host plumbing. |
+| `@antistructured/chord/interop` | `src/interop/index.js` | 29 | Versioned adapter protocol contracts, bridge/server, reference adapters and memory transport. |
 
-### `@antistructured/chord` — 35 exports
+### `@antistructured/chord` — 64 exports
 
 | Group | Exports |
 |---|---|
 | SDK / local storage | `createChord`, `openSqliteStore` (trusted-host raw store) |
 | Coordinated v2 / IPC | `createCoordinatedChord`, `openCoordinatedSqliteStore`, `createActorIngress`, `createActorClient` (root only; not `/sdk` or `/platform`) |
+| Adapter interop | `ADAPTER_PROTOCOL_VERSION`, `ADAPTER_DESCRIPTOR_VERSION`, `ADAPTER_CONTEXT_VERSION`, `ADAPTER_KINDS`, `ADAPTER_MESSAGE_TYPES`, `AdapterAdvertisement`, `AdapterExecutionContext`, `AdapterContext`, `AdapterExecuteRequest`, `AdapterResultResponse`, `AdapterErrorResponse`, `AdapterDescribeRequest`, `AdapterDescribeResponse`, `AdapterCancelRequest`, `AdapterCancelResponse`, `AdapterShutdownRequest`, `AdapterShutdownResponse`, `adapterCompatibility`, `assertAdapterCompatibility`, `adapterError`, `parseAdapterWire`, `validateAdapterExecuteRequest`, `validateAdapterResponse`, `createAdapterBridge`, `createAdapterServer`, `createLocalToolAdapter`, `createMockAgentAdapter`, `createMemoryTransportPair`, `runAdapterConformance` |
 | Contracts | `SCHEMA_VERSION` |
 | Queue | `createTaskQueue`, `enqueueTask`, `selectReadyTask`, `dequeueReadyTask`, `leaseTaskEntry`, `markQueueEntryStatus`, `scheduleTaskRetry`, `listQueuedTasks`, `listDeadLetterTasks`, `replayDeadLetterTask` |
 | Routing / policy | `createAdapterRouter`, `resolveAdapter`, `createRuntimePolicy`, `computeBackoffDelayMs` |
@@ -153,7 +155,7 @@ Expected output:
 
 `examples/cross-actor-workflow.mjs` is the full governed path — two mock actors, a revision-aware
 handoff, missing-approval denial, human approval consumption, a paused snapshot restored into a
-second SDK instance, safe continuation and a zero-effect replay. All four examples, including the separate-process
+second SDK instance, safe continuation and a zero-effect replay. All six shipped examples, including the separate-process
 `examples/process-recovery.mjs` and `examples/two-process-coordination.mjs` described below, are included in the candidate payload under `examples/`.
 
 ---
@@ -273,10 +275,11 @@ From `packages/core`, use a **new** absolute evidence directory on each invocati
 must exist). Node/Bun executables must support `node:sqlite`; substitute your paths as needed:
 
 ```bash
+B="$(command -v bun)"
 node examples/process-recovery.mjs "$TMPDIR/chord-b7-node-evidence"
-/home/d/.bun/bin/bun examples/process-recovery.mjs "$TMPDIR/chord-b7-bun-evidence"
-node examples/process-recovery.mjs "$TMPDIR/chord-b7-node-bun-evidence" /home/d/.bun/bin/bun
-/home/d/.bun/bin/bun examples/process-recovery.mjs "$TMPDIR/chord-b7-bun-node-evidence" "$(node -p process.execPath)"
+"$B" examples/process-recovery.mjs "$TMPDIR/chord-b7-bun-evidence"
+node examples/process-recovery.mjs "$TMPDIR/chord-b7-node-bun-evidence" "$B"
+"$B" examples/process-recovery.mjs "$TMPDIR/chord-b7-bun-node-evidence" "$(node -p process.execPath)"
 ```
 
 The proof prints JSON with `gate: "B5 PASS"` (the proof's identifier, not a new product level).
@@ -402,7 +405,7 @@ enrolled sessions at each construction. All canonical writes require an acknowle
 | `admin` (host-only) | `commitRun({expectedRevision,nextRegistry,audit_label?})`, `setAuthoritySnapshot(snapshot,{expectedRevision})`, `setCoordinationPolicy(policy,{expectedRevision,audit_label?})`, `reconcileTask(request)`, `readmitTask(taskId,{expectedRevision})` |
 | factory `createActorIngress({authenticate})` | Uses private load/owner closures; returns `handleAuthenticated(channelContext,commandJSON)` and `attachChild(child)`; attachment returns `detach()` |
 | root `createActorIngress({authenticate,load,commitCommand,clock?})` | Privileged low-level composition, not an actor constructor; prefer the factory-bound method |
-| root `createActorClient(channel = process)` | Actor-side inherited IPC facade: `sendCommand(command)` → Promise of response, `close()`; one outstanding request, no database/SDK/admin/owner handle |
+| root `createActorClient(channel = process, {timeoutMs = null} = {})` | Actor-side inherited IPC facade: `sendCommand(command)` → Promise of canonical response, `close()`; one outstanding request and exclusive wrapper per channel, no database/SDK/admin/owner handle |
 
 Root-only `openCoordinatedSqliteStore({path,mode,expectedIdentity,clock?})` has synchronous
 `init()`, `load()`, `commit({expectedRevision,credential,change})`, `checkOwner({credential})`,
@@ -487,13 +490,40 @@ band before attesting approval/reconciliation. Stored principals/receipts are no
 application byte limit before JSON.parse**, then validates exact shapes/recursive budgets. Node/Bun
 IPC still deserialize transport data first; this is not hostile-OS memory isolation or a network
 framing/rate-limiting service. Host must enforce launch/enrollment, disconnect/revoke/cleanup,
-message-volume/resource limits and dedicated channel routing. Client has one pending command,
-no built-in timeout/resend daemon; caller handles disconnect/unknown delivery without inventing
-success or changing the original operation ID. `detach()` removes only the listener; close/disconnect/
+message-volume/resource limits and dedicated channel routing. Client has one pending command per
+channel and rejects a second wrapper with `ACTOR_CHANNEL_IN_USE`. There is no automatic retry.
+`createActorClient(channel, {timeoutMs: 5000})` explicitly opts into local acknowledgement timeout;
+`ACTOR_COMMAND_TIMEOUT`, send failures, close/disconnect and `ACTOR_PROTOCOL_ERROR` do **not** prove
+non-commit. Recover original write receipts only with fresh authentication and the unchanged command.
+Default timeout is null (unbounded); non-null values must be integer milliseconds in `1..2147483647`.
+Close/disconnect retires that wrapper and removes its listeners;
+a replacement uses a fresh session generation. `detach()` removes only the host listener; close/disconnect/
 join the child separately. Do not attach a generic `sdk[method](payload)` handler or send database
 paths, admin/store/owner references, credentials, callbacks or grants as capabilities to actors.
 Same-OS-user arbitrary hostile code can open files or import privileged host APIs; dedicated
 JSON IPC is **not** a filesystem/OS sandbox.
+
+### IPC wire compatibility (052A correction)
+
+The JS facade and `handleAuthenticated(context, canonicalCommandJSON)` remain canonical. The
+**default client IPC bytes intentionally change**: exact Sigil-validated request frame
+`{protocol_version:'chord.actor-ipc-request.v1',session_id,request_id,command}` and response frame
+`{protocol_version:'chord.actor-ipc-response.v1',session_id,request_id,response}` wrap unchanged
+canonical objects. IDs are fresh UUIDv4s: session per wrapper, request per send (including retries
+and repeated reads). They are delivery metadata, not credentials or durable receipt inputs.
+Injected transports/mocks must echo both; there is **no silent unframed fallback**. The 1 MiB and
+recursive budgets include the wrapper, so near-limit canonical objects may not fit framed IPC.
+
+`attachChild` also retains an explicit legacy raw host edge for documents whose protocol is
+`chord.actor-command.v1`; those peers receive raw canonical responses and must manage their own
+correlation/retirement. This does not make legacy raw peers safe for wrapper replacement. Malformed
+or unsupported transport frames are dropped without dispatch; they cannot authenticate or acknowledge.
+Framed clients ignore raw, missing/unknown delivery identities, duplicates and stale generations.
+A matching delivery with invalid frame/response/result/command identity rejects locally with
+`ACTOR_PROTOCOL_ERROR`; it is not a canonical denial or a non-commit claim. Success results are
+validated against the pending command type and all five canonical identity fields. Rejections have
+no run/incarnation fields; null operation identity requires null correlation/causation and is accepted
+only inside the matching delivery frame.
 
 Every command has exactly `{protocol_version:'chord.actor-command.v1',operation_id,run_id,
 incarnation_id,expected_revision,correlation_id,causation_id,type,payload}`, including explicit nulls.
@@ -554,7 +584,7 @@ support `node:sqlite`; resolve your real Node executable rather than a PID-chang
 
 ```bash
 N="$(node -p process.execPath)"
-B=/home/d/.bun/bin/bun
+B="$(command -v bun)"
 "$N" examples/two-process-coordination.mjs "$TMPDIR/chord-p8-node-node" "$N" "$N"
 "$N" examples/two-process-coordination.mjs "$TMPDIR/chord-p8-node-bun" "$N" "$B"
 "$B" examples/two-process-coordination.mjs "$TMPDIR/chord-p8-bun-node" "$B" "$N"
@@ -585,6 +615,166 @@ These are function/member search locators, not generated HTML anchors. Earlier 0
 stage-specific history: P2 is normative design plus P3–P5 implementation addenda, P6/P7 measured
 proofs; their then-unsupported branches/package exclusions are not current API claims.
 
+## Experimental adapter interoperability (053)
+
+The additive `./interop` entry point provides a small, versioned, provider-neutral execution protocol
+for independent tools, agents and services. It does not add a scheduler, authority evaluator,
+provider registry or second canonical store. This standalone block checks bridge registration and
+resource lifecycle through the existing 052 opt-in, not work execution. Set `TMPDIR` to a private
+existing absolute scratch directory, save as `.mjs` with local package resolution, and run on Node/Bun.
+For the full authority/admission/result path run `examples/adapter-interop.mjs` below.
+
+```js
+import { createCoordinatedChord } from '@antistructured/chord';
+import { mkdtempSync } from 'node:fs';
+import { join } from 'node:path';
+import {
+  ADAPTER_CONTEXT_VERSION,
+  createAdapterBridge,
+  createAdapterServer,
+  createMemoryTransportPair,
+  createMockAgentAdapter
+} from '@antistructured/chord/interop';
+
+// Scratch demonstration only. Provision and retain a private directory in production.
+if (!process.env.TMPDIR) throw new Error('Set TMPDIR to a private absolute local directory');
+const path = join(mkdtempSync(join(process.env.TMPDIR, 'chord-adapter-guide-')), 'run.sqlite');
+const clock = { now: Date.now };
+
+const adapter = createMockAgentAdapter();
+const pair = createMemoryTransportPair();
+const server = createAdapterServer({
+  advertisement: adapter.advertisement,
+  handle: adapter.handle,
+  channel: pair.right
+});
+const bridge = createAdapterBridge({
+  advertisement: adapter.advertisement,
+  transport: pair.left,
+  timeoutMs: 5000
+});
+
+const chord = createCoordinatedChord({
+  storage: { path, mode: 'create', expectedIdentity: null },
+  trustedHost: { clock },
+  adapterRouter: {
+    fallback: { adapter: bridge, execution_context: ADAPTER_CONTEXT_VERSION }
+  }
+});
+try {
+  chord.owner.acquire({ expectedRevision: 0 });
+  const noWork = await chord.owner.runCycle(); // no authority or work was installed
+  if (!noWork.skipped) throw new Error('Expected no work');
+  chord.owner.release({ expectedRevision: chord.observer.inspect().revision });
+  console.log({ registered: true, dispatched: false });
+} finally {
+  bridge.close();
+  server.close();
+  pair.close();
+  chord.owner.close();
+}
+```
+
+The bridge carries the kernel-captured task/attempt/operation identity and stable effect key, matches
+replies by fresh session/request identity, ignores stale/duplicate/reordered replies and rejects
+malformed frames locally. Timeout, close and cancel are local lifecycle events, not proof of effect
+absence. The participant-side server validates envelopes and optionally deduplicates by the stable
+effect key; its cache is not durable and does not create exactly-once semantics. Advertisement is
+descriptive, never an authority grant. The existing kernel still schedules, fences and commits.
+
+`bridge.cancel({ target_request_id })` selects the exact pending wire request; alternatively use
+`{ attempt_id }`, `{ operation_id }` or `{ task_id }`. The selector is **not** `{ request_id }`.
+Cancellation acknowledges delivery to an active handler, not effect cancellation. `bridge.close()`
+retires the local bridge and pending waits without closing the transport or stopping the handler.
+`await bridge.shutdown()` attempts a bounded protocol handshake and then closes locally; its `true`
+return does not prove acknowledgement, effect completion or participant process exit. Close the
+server/channel separately and join any child process. Drain/join work before kernel close/release
+where possible; neither action cancels physical effects.
+
+Run the public-export-only example from `packages/core`:
+
+```bash
+bun run examples/adapter-interop.mjs
+```
+
+Expected output:
+
+```text
+{"ok":true,"adapter":"chord.mock-agent","protocol":"chord.adapter-protocol.v1","task_status":"completed","summary":"mock-agent:task-interop","replay_matches":true,"server_executions":1}
+```
+
+### Adapter conformance
+
+`runAdapterConformance({ adapter?, fixture?, action?, timeoutMs? })` is framework-neutral preview
+verification tooling. The existing `{ advertisement, handle }` adapter API is preserved. Handler checks
+use the supplied handler behind Chord's server; they **do not** certify a third-party wire endpoint.
+Each check includes `id`, `category`, `scope`, `status`, `expected`, `actual`, and a stable failure
+`code` or skip `reason`. Errors omit participant messages, stacks, causes and payloads.
+
+`ok` remains zero observed failures for compatibility. Always inspect `verdict`: `FAIL` on any failure,
+`INCOMPLETE` on any skip, and `PASS` only with no skips/failures. `complete` is false with skips;
+`certification` is always false. Built-in checks are labeled `chord-harness`, never supplied-participant
+coverage. Kernel historical replay/stale-owner fencing and portable registration are not inferred
+from wire replies and remain explicit skips. This is not independent certification or an authority grant.
+
+To test your actual participant, supply a **fixture**:
+
+- `advertisement`: its public descriptor.
+- `connect({ channel, timeoutMs })`: synchronously attach your real participant/server to this
+  EventEmitter-like transport (`on/off('message', listener)`, `send(JSON string, callback)`,
+  `connected`), returning `{ close(), release?() }`. Use public `createAdapterServer` or your own wire
+  implementation. Each scenario gets a fresh endpoint. `close()` must synchronously retire listeners,
+  timers, held effects and connections, including failure paths; allocation failure must self-clean.
+- `actions: { completed?, failed?, blocked?, pending? }`: names of **predefined safe, in-memory**
+  operations producing those outcomes. Missing actions skip their scenarios; there is no reference
+  adapter substitution. `pending` must wait until session `release()` or cleanup.
+- `capabilities: { cancel: true }` opts into active cancel acknowledgement plus release/late-result
+  checking. It does not mean cancellation prevents an effect. Unsupported cancellation is skipped.
+- Optional `createBridge({ advertisement, transport, timeoutMs })`: your bridge factory with Chord's
+  public bridge interface. Synthetic response identity/version/shape, correlation/reordering/duplicates,
+  old-session replacement, concurrency, timeout, close/disconnect, cancel/late-result and no-retry checks
+  then say `supplied-bridge`. Without it these checks say `chord-harness`. A bridge-only fixture
+  `{ createBridge }` is also supported; no participant descriptor/endpoint is invented and those
+  participant checks remain skipped.
+
+Participant checks send real describe, completed/failed/blocked, malformed/incoherent execute,
+shutdown and optional held/cancel/timeout requests through that supplied endpoint. Response polling
+and bridge waits are bounded; the runner does not retry. In-process synchronous hangs cannot be
+preempted: run untrusted fixtures in an externally supervised disposable process. Never use production
+credentials/effects: adversarial requests could trigger a defective participant. The runner passes
+no SDK/admin/store/registry/grant handle to fixtures. Descriptor compatibility installs no grants.
+Neither the in-memory sequential server cache nor a successful result proves durable semantic
+idempotency, concurrent effect coalescing, physical nonexecution, or exactly-once execution.
+
+```js
+import { createMockAgentAdapter, runAdapterConformance } from '@antistructured/chord';
+
+const report = await runAdapterConformance({ adapter: createMockAgentAdapter(), timeoutMs: 1000 });
+if (!report.ok || report.verdict !== 'INCOMPLETE' || report.certification !== false) {
+  throw new Error('Unexpected conformance report');
+}
+console.log({ ok: report.ok, verdict: report.verdict, certification: report.certification });
+```
+
+Run the public-export-only conformance example:
+
+```bash
+bun run examples/adapter-conformance.mjs
+```
+
+Expected output: `{"ok":true,"certification":false,...}` with zero observed failures for the mock
+agent, local tool and consumer fixture; their verdicts remain **INCOMPLETE**. The complete public-only
+fixture example prints every check. See current [conformance reverification](../../docs/internal/054-adapter-conformance-reverification.md)
+and the preserved [historical conformance report](../../docs/internal/054-adapter-conformance.md).
+
+See [protocol design](../../docs/internal/053-adapter-protocol.md),
+[runtime](../../docs/internal/053-adapter-runtime.md),
+[effect safety](../../docs/internal/053-effect-safety.md),
+[reference adapters](../../docs/internal/053-reference-adapters.md),
+[consumer integration](../../docs/internal/053-consumer-integration.md),
+[conformance](../../docs/internal/053-protocol-conformance.md) and
+[developer guide](../../docs/internal/053-developer-guide.md).
+
 ---
 
 ## What the SDK guarantees
@@ -594,18 +784,18 @@ workflow. They do not turn a v2 stale-owner/attempt rejection into an uncertaint
 v2 global run-revision equality during an in-flight call; see the separate 052 guide above.
 
 Each item below is enforced in code and pinned by a named test in the repository suite
-(Block 052 P8 working tree: `356 pass / 0 fail / 26 files`; Block 051 historically measured `275 pass / 0 fail / 21 files`; Block 050 historically measured
+(Block 054 Pass 3 reverification recorded `448 pass / 0 fail / 1777 expect() calls / 31 files`; Block 052 P8 historically measured `356 pass / 0 fail / 26 files`; Block 051 historically measured `275 pass / 0 fail / 21 files`; Block 050 historically measured
 `166 pass / 0 fail / 1418 expect() calls / 15 files`).
 
 - **Deterministic, fail-closed authority evaluation.** Three stages — `admit`, `dispatch`,
   `commit` — no mutation, no I/O, no implicit clock.
-  (`packages/core/src/platform/authorization.js:3`–`:8`)
+  (`packages/core/src/platform/authorization.js#evaluateAuthority`)
 - **Exact scope equality.** A grant must match the stored task field-by-field: run, project, phase,
   task, target entity and resource. An active deny always beats an allow.
-  (`packages/core/src/platform/authorization.js:19`–`:23`, `:85`–`:104`)
+  (`packages/core/src/platform/authorization.js#evaluateAuthority`)
 - **Attempt-bound, consumed approval.** An approval must match the task revision, attempt and
   scope, must be unconsumed, and is consumed at dispatch and re-checked at commit. Self-approval is
-  structurally impossible. (`packages/core/src/platform/authorization.js:107`–`:118`, `:132`, `:153`)
+  structurally impossible. (`packages/core/src/platform/authorization.js#evaluateAuthority`)
 - **Atomic admission.** A batch of packets is admitted or it is not; one denial registers no
   member. (`packages/core/src/sdk/chord.js#queueTaskPackets`, `packages/core/src/sdk/chord.js#mutate`)
 - **Commit-time re-authorization.** After the adapter returns, authority is re-evaluated against
@@ -613,11 +803,11 @@ Each item below is enforced in code and pinned by a named test in the repository
   (`packages/core/src/platform/runtime-loop.js#runRuntimeCycle`)
 - **Post-dispatch ambiguity is quarantined.** An ambiguous outcome is never blind-retried and
   never dead-lettered; it exits only through evidence-backed human reconciliation.
-  (`packages/core/src/platform/recovery-policy.js:12`–`:19`, `packages/core/src/platform/reconciliation.js:29`–`:54`)
+  (`packages/core/src/platform/recovery-policy.js#isRetryEligible`, `packages/core/src/platform/reconciliation.js#reconcileTask`)
 - **Committed-fact history and zero-effect replay.** Every accepted mutation appends a versioned
   commit with a computed state delta; the history reduces back to canonical state invoking no
   adapter. Incomplete, foreign or duplicate history is refused.
-  (`packages/core/src/registry/owner.js#createStateOwner`, `packages/core/src/platform/trace-reducer.js:8`–`:47`)
+  (`packages/core/src/registry/owner.js#createStateOwner`, `packages/core/src/platform/trace-reducer.js#reduceTrace`)
 - **Detached reads and private state.** Returned state is a deep clone; a rejected candidate changes
   no collection and no event. (`packages/core/src/registry/owner.js#createStateOwner`)
 
@@ -656,6 +846,8 @@ is host-enforced; separate v2 uses explicit owner acquisition under the restrict
 | `examples/cross-actor-workflow.mjs` | The canonical governed workflow. |
 | `examples/process-recovery.mjs` | Separate-process approval continuation and SIGKILL quarantine proof. |
 | `examples/two-process-coordination.mjs` | Public-export-only simultaneous owner/actor/standby proof with scoped handoff, human approval and two file effects. |
+| `examples/adapter-conformance.mjs` | Public conformance report for the mock agent and local tool adapter. |
+| `examples/adapter-interop.mjs` | Kernel → adapter bridge → memory transport → adapter server → mock agent, with canonical result and replay equality. |
 | `README.md`, `INTEGRITY.md`, `CHANGELOG.md` | This file, technical boundary notes and migration guidance, candidate release notes. |
 | `LICENSE`, `NOTICE`, `THIRD_PARTY_NOTICES.md` | Legal notices. |
 | `package.json` | The manifest (always included). |
@@ -672,10 +864,11 @@ From the repository root:
 ```bash
 cd packages/core
 bun install --frozen-lockfile
-bun test                                        # Block 052 P8: 356 pass / 0 fail / 26 files
+bun test                                        # full Bun suite; counts belong to a measured run
 bun run src/verify-runtime.js                   # exit 0
 bun run examples/quickstart.mjs
 bun run examples/cross-actor-workflow.mjs
+bun run examples/adapter-conformance.mjs
 npm pack --dry-run --ignore-scripts
 ```
 
@@ -685,19 +878,14 @@ Node.js v24.22.1 and Bun 1.4.3, both using lazily loaded `node:sqlite#DatabaseSy
 are measured versions, not minimum versions or all-platform certification. Memory-only use
 does not load SQLite. Durable requests without that binding fail `UNSUPPORTED_RUNTIME`,
 never fall back to memory. Earlier preview checks used Node 24.18.1/Bun 1.3.14.
-The default `bun` on this machine was unusable; checks used `/home/d/.bun/bin/bun`.
+Use `command -v bun` to resolve the Bun executable in the examples above.
 
 ---
 
-## License, third-party and legal position
+## License and third-party notices
 
 - **Apache License 2.0** for the first-party code — see [LICENSE](LICENSE). Copyright 2026 Antistructured Labs LLC.
 - **SigilJS** (`@weipertda/sigiljs@0.18.0`) is the only runtime dependency. It is MIT-licensed,
   separately installed and not bundled; Apache-2.0 does not apply to it. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
-- The legal position is **asserted, not cleared**. The first-party license and the copyright holder are
-  asserted by the maintainer; no CLA or DCO process is established, the chain of title is not
-  independently established, and redistribution clearance rests on maintainer attestation. The npm
-  scope and GitHub organization are still in transition — do not assume the coordinates in
-  `package.json` are final.
-- The configured git remote is `https://github.com/weipertda/chord`; the manifest's `repository`,
-  `homepage` and `bugs` fields still point at `https://github.com/antistructured/chord` and do not match it.
+- These describe the checked-in license and notices, not independent legal clearance or publication permission.
+- The configured origin and manifest repository identify `https://github.com/antistructured/chord`; matching metadata is not registry ownership verification.

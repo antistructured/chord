@@ -1,3 +1,4 @@
+import { own } from '../utils/own.js';
 import { clonePlainData, Attempt, AdapterResult, Outcome, TaskPacket } from '../contracts/sigils.js';
 import { evaluateAuthority } from '../platform/authorization.js';
 import { selectReadyTask } from '../platform/task-queue.js';
@@ -13,11 +14,11 @@ export function packetOf(task) {
 /** Identity-only check MUST precede authority denial/uncertainty construction. */
 export function assertAttempt(current, raw) {
   const d = DispatchRecord.assert(raw), {registry:r,coordination:c} = current;
-  const installed = Object.hasOwn(c.attempts,d.attempt_id) ? c.attempts[d.attempt_id] : null;
-  const task = r.tasks[d.task_id], active = r.active_attempts[d.task_id];
+  const installed = own(c.attempts,d.attempt_id);
+  const task = own(r.tasks,d.task_id), active = own(r.active_attempts,d.task_id);
   const queue = r.task_queue.find(q => q.queue_id === d.queue_id);
   // Keep these predicates explicit: a missing active attempt is stale too.
-  requireTrue(d.state === 'dispatched' && sameData(d,installed) && d.owner_id === c.lease.owner_id && d.generation === c.lease.generation && d.run_id === c.run_id && d.incarnation_id === c.incarnation_id && task && active && active.attempt.attempt_id === d.attempt_id && active.dispatch_revision === d.dispatch_revision && active.attempt.queue_id === d.queue_id && active.attempt.task_revision === d.task_revision && (task.task_revision ?? 0) === d.task_revision && active.attempt.authority_revision === d.authority_revision && active.attempt.lease_expires_at === d.task_lease_expires_at && task.operation_id === d.operation_id && task.status === 'running' && queue?.task_id === d.task_id && queue.status === 'leased' && queue.lease_expires_at === d.task_lease_expires_at && r.operations?.[d.operation_id]?.state === 'dispatched' && r.operations[d.operation_id].attempt_id === d.attempt_id,'STALE_ATTEMPT');
+  requireTrue(d.state === 'dispatched' && sameData(d,installed) && d.owner_id === c.lease.owner_id && d.generation === c.lease.generation && d.run_id === c.run_id && d.incarnation_id === c.incarnation_id && task && active && active.attempt.attempt_id === d.attempt_id && active.dispatch_revision === d.dispatch_revision && active.attempt.queue_id === d.queue_id && active.attempt.task_revision === d.task_revision && (task.task_revision ?? 0) === d.task_revision && active.attempt.authority_revision === d.authority_revision && active.attempt.lease_expires_at === d.task_lease_expires_at && task.operation_id === d.operation_id && task.status === 'running' && queue?.task_id === d.task_id && queue.status === 'leased' && queue.lease_expires_at === d.task_lease_expires_at && own(r.operations,d.operation_id)?.state === 'dispatched' && own(r.operations,d.operation_id).attempt_id === d.attempt_id,'STALE_ATTEMPT');
   return {d,task,attempt:active.attempt,queue};
 }
 export function dispatchDecision(current, dispatch, now) {
@@ -31,11 +32,12 @@ export function planClaim(current, taskId, attemptId, now) {
   const r = clonePlainData(current.registry), c = clonePlainData(current.coordination);
   requireTrue(executable(r),'RUN_NOT_ACTIVE');
   const q = selectReadyTask(r,now); requireTrue(q?.task_id === taskId,'STALE_ATTEMPT');
-  const task = r.tasks[taskId], operation = r.operations?.[task.operation_id];
+  const task = own(r.tasks,taskId), operation = own(r.operations,task.operation_id);
   requireTrue(operation && operation.task_id === taskId,'OPERATION_REQUIRED');
   requireTrue(operation.state === 'requested','RECONCILIATION_REQUIRED');
-  if (!r.pending_attempts[taskId]) requireTrue(!JSON.stringify(current).includes(JSON.stringify(attemptId)),'INVALID_SEMANTICS');
-  const attempt = Attempt.assert(r.pending_attempts[taskId] || {run_id:r.run.run_id,schema_version:r.run.schema_version,task_id:taskId,task_revision:task.task_revision ?? 0,queue_id:q.queue_id,attempt_id:attemptId,lease_expires_at:0,authority_revision:r.authority?.authority_revision ?? 0,grant_ids:[],approval_id:null});
+  const pending = own(r.pending_attempts,taskId);
+  if (!pending) requireTrue(!JSON.stringify(current).includes(JSON.stringify(attemptId)),'INVALID_SEMANTICS');
+  const attempt = Attempt.assert(pending || {run_id:r.run.run_id,schema_version:r.run.schema_version,task_id:taskId,task_revision:task.task_revision ?? 0,queue_id:q.queue_id,attempt_id:attemptId,lease_expires_at:0,authority_revision:r.authority?.authority_revision ?? 0,grant_ids:[],approval_id:null});
   requireTrue(attempt.attempt_id === attemptId && attempt.queue_id === q.queue_id && attempt.task_revision === (task.task_revision ?? 0) && !Object.hasOwn(c.attempts,attemptId),'STALE_ATTEMPT');
   const decision = evaluateAuthority({stage:'dispatch',now,run:r.run,task,attempt,authority:r.authority}); requireTrue(decision.allowed,decision.code);
   attempt.lease_expires_at = deadline(now); attempt.authority_revision = r.authority.authority_revision; attempt.grant_ids = [...decision.grant_ids]; attempt.approval_id = decision.approval_id;
@@ -64,7 +66,7 @@ export function claimCandidate(current, change, at, finalNow) {
   return {...planned,evidence:ClaimEvidence.assert({kind:'claim',attempt_id:d.attempt_id,generation:d.generation}),result:{dispatch:d}};
 }
 function uncertain(r,c,d) {
-  const task = r.tasks[d.task_id], q = r.task_queue.find(q => q.queue_id === d.queue_id);
+  const task = own(r.tasks,d.task_id), q = r.task_queue.find(q => q.queue_id === d.queue_id);
   task.status = 'uncertain'; q.status = 'uncertain'; q.lease_expires_at = null;
   r.operations[d.operation_id].state = 'unknown'; delete r.active_attempts[d.task_id]; delete r.pending_attempts[d.task_id]; c.attempts[d.attempt_id].state = 'quarantined';
 }
@@ -81,12 +83,12 @@ export function outcomeCandidate(current, change, at, finalNow) {
     const raw = AdapterResult.assert(change.adapter_result);
     requireTrue(raw.task_id === undefined || raw.task_id === d.task_id,'INVALID_RESULT');
     result = Outcome.assert({...raw,task_id:d.task_id,run_id:d.run_id,schema_version:r.run.schema_version,task_revision:d.task_revision,queue_id:d.queue_id,attempt_id:d.attempt_id});
-    const task = r.tasks[d.task_id], q = r.task_queue.find(q => q.queue_id === d.queue_id);
+    const task = own(r.tasks,d.task_id), q = r.task_queue.find(q => q.queue_id === d.queue_id);
     requireTrue(canTaskTransition(task.status,result.status),'INVALID_TRANSITION');
     task.status = result.status; task.last_result = result; r.execution_results.push(result); q.status = result.status;
-    const artifact = result.artifact && r.artifacts[result.artifact];
+    const artifact = result.artifact && own(r.artifacts,result.artifact);
     if (artifact) { const next = result.outcome === 'succeeded' ? 'accepted' : 'rejected'; requireTrue(canArtifactTransition(artifact.status,next),'INVALID_TRANSITION'); if (artifact.status !== next) { artifact.history.push({from:artifact.status,to:next,at}); artifact.status = next; } }
-    const domain = result.domain && r.domains[result.domain];
+    const domain = result.domain && own(r.domains,result.domain);
     if (domain) { const next = result.outcome === 'succeeded' ? 'complete' : 'blocked'; requireTrue(canDomainTransition(domain.state,next),'INVALID_TRANSITION'); if (domain.state !== next) { domain.state = next; domain.state_history.push({to:next,at}); } }
     delete r.active_attempts[d.task_id]; delete r.pending_attempts[d.task_id]; c.attempts[d.attempt_id].state = 'completed';
     r.operations[d.operation_id].state = result.status === 'completed' ? 'confirmed' : 'unknown'; classification = 'result';
@@ -97,14 +99,14 @@ export function outcomeCandidate(current, change, at, finalNow) {
 export function replayRuntime(current,nextDomain,nextC,record) {
   if (record.operation === 'runtime_claim') {
     ClaimEvidence.assert(record.evidence);
-    const d = record.evidence.attempt_id === null ? null : nextC.attempts[record.evidence.attempt_id];
+    const d = record.evidence.attempt_id === null ? null : own(nextC.attempts,record.evidence.attempt_id);
     return claimCandidate(current,{dispatch:d,nextRegistry:{...nextDomain,event_journal:current.registry.event_journal}},record.at,nextC.logical_now);
   }
   OutcomeEvidence.assert(record.evidence);
-  const d = current.coordination.attempts[record.evidence.attempt_id];
+  const d = own(current.coordination.attempts,record.evidence.attempt_id);
   let adapter_result = null;
   if (record.evidence.classification === 'result') {
-    const {run_id,schema_version,task_revision,queue_id,attempt_id,...raw} = nextDomain.tasks[d.task_id].last_result;
+    const {run_id,schema_version,task_revision,queue_id,attempt_id,...raw} = own(nextDomain.tasks,d.task_id).last_result;
     adapter_result = raw;
   }
   return outcomeCandidate(current,{dispatch:d,adapter_result,error_code:adapter_result ? null : 'ADAPTER_ERROR'},record.at,nextC.logical_now);

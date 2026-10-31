@@ -1,3 +1,4 @@
+import { own } from '../utils/own.js';
 import { stableId } from "../utils/id.js";
 import { TaskAuthority, Attempt } from "../contracts/sigils.js";
 
@@ -6,7 +7,7 @@ import { TaskAuthority, Attempt } from "../contracts/sigils.js";
  * one only after the prior reservation is invalidated (cancel/dead-letter).
  */
 export function prepareAttemptRecord(registry, task) {
-  const existing = registry.pending_attempts[task.task_id];
+  const existing = own(registry.pending_attempts, task.task_id);
   if (existing) return existing;
   const queueEntry = registry.task_queue.find(x => x.task_id === task.task_id);
   const attempt = Attempt.assert({
@@ -26,7 +27,7 @@ export function prepareAttemptRecord(registry, task) {
 }
 
 export function invalidatePendingAttempt(registry, taskId) {
-  const existing = registry.pending_attempts[taskId] || null;
+  const existing = own(registry.pending_attempts, taskId);
   delete registry.pending_attempts[taskId];
   return existing;
 }
@@ -36,7 +37,7 @@ export function invalidatePendingAttempt(registry, taskId) {
  * only commit while the run is still at that revision.
  */
 export function activatePendingAttempt(registry, taskId, dispatchRevision) {
-  const attempt = registry.pending_attempts[taskId];
+  const attempt = own(registry.pending_attempts, taskId);
   if (!attempt) return null;
   delete registry.pending_attempts[taskId];
   registry.active_attempts[taskId] = { attempt, dispatch_revision: dispatchRevision };
@@ -44,7 +45,7 @@ export function activatePendingAttempt(registry, taskId, dispatchRevision) {
 }
 
 export function clearActiveAttempt(registry, taskId) {
-  const existing = registry.active_attempts[taskId] || null;
+  const existing = own(registry.active_attempts, taskId);
   delete registry.active_attempts[taskId];
   return existing;
 }

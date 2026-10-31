@@ -1,3 +1,4 @@
+import { own } from '../utils/own.js';
 import { selectReadyTask, leaseTaskEntry, scheduleTaskRetry } from './task-queue.js';
 import { appendRegistryEvent } from './event-journal.js';
 import { resolveAdapter } from './adapter-routing.js';
@@ -34,7 +35,7 @@ export async function runRuntimeCycle(input, router, policy, options = {}) {
       appendRegistryEvent(registry, 'runtime_cycle_skipped', { reason: 'no_ready_task' });
       return { response: { ok: true, skipped: true } };
     }
-    const task = registry.tasks[entry.task_id];
+    const task = own(registry.tasks, entry.task_id);
     if (countLeased(registry) >= policy.globalMaxLeased || countLeased(registry, task.target_entity) >= policy.perEntityMaxLeased) {
       appendRegistryEvent(registry, 'dispatch_deferred', { task_id: task.task_id, reason: 'lease_cap' });
       return { response: { ok: true, deferred: true, task_id: task.task_id, reason: 'lease_cap' } };
@@ -79,7 +80,7 @@ export async function runRuntimeCycle(input, router, policy, options = {}) {
   } catch (caught) {
     const code = /^[A-Z0-9_]{1,64}$/.test(caught?.code || '') ? caught.code : 'ADAPTER_ERROR';
     return store.transact('runtime_uncertain', registry => {
-      const active = registry.active_attempts[packet.task_id];
+      const active = own(registry.active_attempts, packet.task_id);
       if (active && active.attempt.attempt_id !== attempt.attempt_id) return { ok: false, uncertain: false, code: 'STALE_ATTEMPT', error: 'STALE_ATTEMPT' };
       const marked = markTaskUncertain(registry, packet.task_id, { reason: code });
       return { ok: false, task_id: packet.task_id, uncertain: marked.marked, code, error: code };
@@ -90,8 +91,8 @@ export async function runRuntimeCycle(input, router, policy, options = {}) {
   // compensating write over a potentially committed result.
   const outcome = { ...result, run_id: context.run_id, schema_version: context.schema_version, task_revision: context.task_revision, queue_id: context.queue_id, attempt_id: context.attempt_id };
   return store.transact('runtime_result', registry => {
-      const task = registry.tasks[packet.task_id];
-      const active = registry.active_attempts[packet.task_id];
+      const task = own(registry.tasks, packet.task_id);
+      const active = own(registry.active_attempts, packet.task_id);
       const commit = evaluateAuthority({ stage: 'commit', now: now(), run: registry.run, task, attempt, authority: registry.authority });
       if (!executable(registry) || !commit.allowed || !active || active.dispatch_revision !== registry.run.revision || active.attempt.attempt_id !== attempt.attempt_id) {
         const code = !executable(registry) ? 'RUN_NOT_ACTIVE' : !commit.allowed ? commit.code : 'STALE_REVISION';

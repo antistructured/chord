@@ -13,3 +13,5 @@ export { openCoordinatedSqliteStore } from "./runtime/storage/coordinated-sqlite
 export { createCoordinatedChord } from "./sdk/coordinated-chord.js";
 export { createActorIngress } from "./runtime/actor-ingress.js";
 export { createActorClient } from "./runtime/actor-client.js";
+// Experimental provider-neutral execution-adapter protocol and reference bridges.
+export * from "./interop/index.js";

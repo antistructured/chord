@@ -10,16 +10,18 @@ Product: Chord. Package: @antistructured/chord (formerly @chord/core). Publicati
 - Host-mediated handoffs, scope-filtered context, approval pause/resume/reject, cancellation and snapshot restore.
 - Unknown-effect quarantine and host-attested evidence reconciliation before supported re-admission.
 - Pure reconstruction from supported modern complete histories without adapter/model execution.
+- Experimental one-machine fenced-owner/actor coordination with authenticated actor ingress, fresh owner leases and stale-owner/attempt rejection.
+- Experimental provider-neutral adapter protocol with bridge/server, memory transport, reference adapters and a public conformance runner. Advertisement and conformance are descriptive, never authority grants.
 
-These capabilities were implemented before this packaging continuation. This continuation changes identity, payload and public/legal documentation—not kernel behavior.
+Earlier capabilities were implemented before this packaging continuation. The candidate now also documents the bounded 052/053/054 experimental surfaces. This does not add multi-machine coordination or exactly-once effects.
 
 ### Packaging and licensing
 - Maintainer-accepted fallback name @antistructured/chord; update root, /sdk and /platform imports.
 - Apache-2.0 first-party license; Antistructured Labs LLC holder wording approved by maintainer. Ownership/provenance is an attestation, not independent legal clearance.
 - @weipertda/sigiljs remains pinned to 0.18.0 under MIT, separately installed and not bundled.
-- Curated payload includes runtime, two public examples, README, integrity guide and legal notices. Tests, internal audits, editor files and development verifier are repository-only.
+- Curated payload includes runtime, the public examples (quickstart, canonical workflow, process recovery, two-process coordination, adapter interop and adapter conformance), README, integrity guide and legal notices. Tests, internal audits, editor files and development verifier are repository-only.
 
 ### Compatibility and limits
-All public APIs are experimental. Detached registry reads replace live mutation; unknown re-admission needs verified reconciliation; incomplete diagnostic logs are not authoritative replay. Hosts must authenticate identities, supply legitimate grants/approvals, verify receipts, manage secrets and persist state. In-memory session restore is not process-crash durability or cross-process coordination. No distributed CAS, universal exactly-once external effects, cryptographic evidence authenticity, hostile-adapter sandbox or stable 1.0 promise.
+All public APIs are experimental. Detached registry reads replace live mutation; unknown re-admission needs verified reconciliation; incomplete diagnostic logs are not authoritative replay. Hosts must authenticate identities, supply legitimate grants/approvals, verify receipts, manage secrets and persist state. In-memory session restore is not process-crash durability or cross-process coordination. No distributed CAS, multi-machine coordination, universal exactly-once external effects, cryptographic evidence authenticity, hostile-adapter sandbox or stable 1.0 promise. Adapter conformance does not prove a physical effect or grant authority.
 
 Contract schema chord.contracts.v1 and existing snapshot/audit/history version identifiers remain unchanged by the npm namespace/version. Legacy/missing histories must not be silently upgraded to invented complete history. See INTEGRITY.md.

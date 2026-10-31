@@ -1,12 +1,15 @@
+import { own } from '../utils/own.js';
 export function createAdapterRouter({ exact = {}, prefix = {}, fallback = null } = {}) {
   return { exact, prefix, fallback };
 }
 
 export function resolveAdapter(router, entity) {
-  if (router.exact?.[entity]) return router.exact[entity];
+  const exact = own(router.exact, entity);
+  if (exact) return exact;
   for (const [key, adapter] of Object.entries(router.prefix || {})) {
     if (entity.startsWith(key)) return adapter;
   }
-  if (router.exact?.default) return router.exact.default;
+  const fallback = own(router.exact, 'default');
+  if (fallback) return fallback;
   return router.fallback || null;
 }

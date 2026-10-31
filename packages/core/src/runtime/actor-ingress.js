@@ -1,6 +1,7 @@
 import { CONTRACT_LIMITS } from '../contracts/sigils.js';
 import { ActorCommand, TrustedBinding, READ_TYPES, CoordinationError, requireTrue, uint } from '../coordination/contracts.js';
 import { readCommand } from '../coordination/commands.js';
+import { RequestFrame, ResponseFrame, RejectionResponse, parseActorWire } from './actor-transport.js';
 
 /** Privileged host composition, not an actor API. authenticate must consult an
  * out-of-band host-attested live channel map on EVERY request. load and
@@ -34,7 +35,7 @@ export function createActorIngress({authenticate,load,commitCommand,clock = {now
       return commitCommand(binding,command);
     } catch (e) {
       const code = e instanceof CoordinationError ? e.code : 'HOST_UNAUTHENTICATED';
-      return {protocol_version:'chord.actor-response.v1',operation_id:command?.operation_id ?? null,correlation_id:command?.correlation_id ?? null,causation_id:command?.causation_id ?? null,ok:false,code,commit_status:e.commitStatus === 'unknown' ? 'unknown' : 'not_committed'};
+      return RejectionResponse.assert({protocol_version:'chord.actor-response.v1',operation_id:command?.operation_id ?? null,correlation_id:command?.correlation_id ?? null,causation_id:command?.causation_id ?? null,ok:false,code,commit_status:e.commitStatus === 'unknown' ? 'unknown' : 'not_committed'});
     } finally { if (entered) busy = false; }
   }
   function attachChild(child) {
@@ -42,7 +43,17 @@ export function createActorIngress({authenticate,load,commitCommand,clock = {now
     // attaching. No register/authenticate/bind message exists on the wire.
     requireTrue(child && typeof child.on === 'function' && typeof child.send === 'function','INVALID_CONTEXT');
     const listener = message => {
-      const response = handleAuthenticated(child,message);
+      let parsed; try { parsed = parseActorWire(message); } catch { return; }
+      let response;
+      if (parsed?.protocol_version === 'chord.actor-command.v1') {
+        // Explicit legacy raw host edge; framed clients never downgrade to it.
+        response = handleAuthenticated(child,message);
+      } else {
+        let frame; try { frame = RequestFrame.assert(parsed); } catch { return; }
+        const canonical = handleAuthenticated(child,JSON.stringify(frame.command));
+        try { response = ResponseFrame.assert({protocol_version:'chord.actor-ipc-response.v1',session_id:frame.session_id,request_id:frame.request_id,response:canonical}); }
+        catch { return; } // Never compensate/retry if a response exceeds bounds.
+      }
       // Delivery failure never compensates or re-executes a committed command;
       // the actor must recover its original receipt after fresh authentication.
       if (child.connected) try { child.send(JSON.stringify(response),() => {}); } catch {}

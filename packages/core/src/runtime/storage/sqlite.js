@@ -1,4 +1,5 @@
 import { createRequire } from 'node:module';
+import { nativeCall, diagnosticDatabase } from './diagnostics.js';
 import { lstatSync, openSync, closeSync } from 'node:fs';
 import { isAbsolute } from 'node:path';
 import { SCHEMA_VERSION } from '../../contracts/sigils.js';
@@ -75,14 +76,15 @@ export function openSqliteStore(options) {
   }
   try {
     let exists = true;
-    try { if (!lstatSync(path).isFile()) throw storageError('INVALID_CONTEXT'); }
+    try { if (!nativeCall('fs.lstat', () => lstatSync(path)).isFile()) throw storageError('INVALID_CONTEXT'); }
     catch (error) { if (error.code === 'ENOENT') exists = false; else throw error; }
     if (!exists) {
       if (mode === 'existing') throw storageError('STORAGE_UNAVAILABLE');
       // Exclusive creation prevents existing-mode races from creating a file.
-      closeSync(openSync(path, 'wx', 0o600));
+      const fd = nativeCall('fs.open', () => openSync(path, 'wx', 0o600));
+      nativeCall('fs.close', () => closeSync(fd));
     }
-    db = new DatabaseSync(path);
+    db = diagnosticDatabase(nativeCall('sqlite.open', () => new DatabaseSync(path)));
     const check = db.prepare('PRAGMA quick_check').all();
     if (check.length !== 1 || Object.values(check[0])[0] !== 'ok') throw storageError('STORAGE_CORRUPT');
     // Check identity before changing journal mode on an unknown database.

@@ -1,3 +1,4 @@
+import { own } from '../utils/own.js';
 import { clonePlainData } from '../contracts/sigils.js';
 import { canonicalProjection, sameData, stateChanges, HISTORY_VERSION } from '../platform/history.js';
 import { validateNext } from '../storage/contract.js';
@@ -24,7 +25,7 @@ export function quarantine(registry, coordination) {
   for (const task of Object.values(registry.tasks)) {
     if (!['running','leased'].includes(task.status)) continue;
     task.status = 'uncertain';
-    const operation = task.operation_id && registry.operations?.[task.operation_id];
+    const operation = task.operation_id && own(registry.operations,task.operation_id);
     if (operation) operation.state = 'unknown';
     const q = registry.task_queue.find(q => q.task_id === task.task_id);
     if (q && ['leased','running'].includes(q.status)) { q.status = 'uncertain'; q.lease_expires_at = null; }
@@ -70,8 +71,8 @@ export function adminCandidate(current, change, finalNow) {
     coordination.policy = policy;
   }
   {
-    for (const task of Object.values(registry.tasks)) if (task.status === 'queued' && ['uncertain','blocked','dead_letter'].includes(current.registry.tasks[task.task_id]?.status)) {
-      const old = current.registry.tasks[task.task_id], op = current.registry.operations?.[old?.operation_id];
+    for (const task of Object.values(registry.tasks)) if (task.status === 'queued' && ['uncertain','blocked','dead_letter'].includes(own(current.registry.tasks,task.task_id)?.status)) {
+      const old = own(current.registry.tasks,task.task_id), op = own(current.registry.operations,old?.operation_id);
       requireTrue(old && ['uncertain','blocked','dead_letter'].includes(old.status) && op?.state === 'not_executed' && op.reconciliation_id,'RECONCILIATION_REQUIRED');
       const decision = evaluateAuthority({stage:'admit',now:finalNow,run:registry.run,task,authority:registry.authority}); requireTrue(decision.allowed,decision.code);
     }
@@ -80,7 +81,7 @@ export function adminCandidate(current, change, finalNow) {
     for (const [key,record] of Object.entries(registry.reconciliations || {})) if (!Object.hasOwn(current.registry.reconciliations || {},key)) {
       const principal = current.registry.authority?.principals.find(p => p.principal_id === record.principal_id && p.kind === 'human' && p.authenticated_at <= finalNow && finalNow < p.expires_at);
       requireTrue(principal,'PRINCIPAL_INVALID');
-      const task = current.registry.tasks[record.task_id];
+      const task = own(current.registry.tasks,record.task_id);
       const decision = evaluateAuthority({stage:'admit',now:finalNow,run:current.registry.run,task:{...task,status:'queued'},authority:current.registry.authority}); requireTrue(decision.allowed,decision.code);
     }
   }
@@ -90,7 +91,7 @@ export function adminCandidate(current, change, finalNow) {
   requireTrue(registry.run.revision === increment(current.registry.run.revision), 'STALE_REVISION');
   // Host maintenance cannot manufacture or rewrite an actor-authenticated
   // handoff response through the legacy domain record.
-  for (const key of Object.keys(current.coordination.handoffs)) requireTrue(sameData(current.registry.handoffs?.[key],registry.handoffs?.[key]),'FORBIDDEN');
+  for (const key of Object.keys(current.coordination.handoffs)) requireTrue(sameData(own(current.registry.handoffs,key),own(registry.handoffs,key)),'FORBIDDEN');
   // Admin may close/cancel an active attempt, never mint or retoken one.
   for (const [key, active] of Object.entries(registry.active_attempts)) requireTrue(Object.hasOwn(current.registry.active_attempts,key) && sameData(active,current.registry.active_attempts[key]), 'STALE_ATTEMPT');
   for (const d of Object.values(coordination.attempts)) if (d.state === 'dispatched' && !Object.hasOwn(registry.active_attempts,d.task_id)) d.state = 'closed';
@@ -111,12 +112,12 @@ export function crossInvariants(registry, c) {
   requireTrue(registry.run.run_id === c.run_id, 'RUN_MISMATCH');
   for (const task of Object.values(registry.tasks)) if (['running','leased'].includes(task.status)) requireTrue(Object.hasOwn(registry.active_attempts,task.task_id),'STALE_ATTEMPT');
   for (const [key,active] of Object.entries(registry.active_attempts)) {
-    const a = active.attempt, d = c.attempts[a.attempt_id], task = registry.tasks[key];
+    const a = active.attempt, d = own(c.attempts,a.attempt_id), task = own(registry.tasks,key);
     requireTrue(d && d.state === 'dispatched' && d.task_id === key && d.queue_id === a.queue_id && d.task_revision === a.task_revision && d.task_revision === (task.task_revision ?? 0) && d.dispatch_revision === active.dispatch_revision && d.authority_revision === a.authority_revision && d.task_lease_expires_at === a.lease_expires_at && d.owner_id === c.lease.owner_id && d.generation === c.lease.generation, 'STALE_ATTEMPT');
   }
   for (const d of Object.values(c.attempts)) {
     if (d.state !== 'dispatched') continue;
-    const active = registry.active_attempts[d.task_id], operation = registry.operations?.[d.operation_id], queue = registry.task_queue.find(q => q.queue_id === d.queue_id);
-    requireTrue(active?.attempt.attempt_id === d.attempt_id && registry.tasks[d.task_id]?.operation_id === d.operation_id && queue?.task_id === d.task_id && queue.status === 'leased' && queue.lease_expires_at === d.task_lease_expires_at && operation?.state === 'dispatched' && operation.attempt_id === d.attempt_id && operation.task_id === d.task_id, 'STALE_ATTEMPT');
+    const active = own(registry.active_attempts,d.task_id), operation = own(registry.operations,d.operation_id), queue = registry.task_queue.find(q => q.queue_id === d.queue_id);
+    requireTrue(active?.attempt.attempt_id === d.attempt_id && own(registry.tasks,d.task_id)?.operation_id === d.operation_id && queue?.task_id === d.task_id && queue.status === 'leased' && queue.lease_expires_at === d.task_lease_expires_at && operation?.state === 'dispatched' && operation.attempt_id === d.attempt_id && operation.task_id === d.task_id, 'STALE_ATTEMPT');
   }
 }

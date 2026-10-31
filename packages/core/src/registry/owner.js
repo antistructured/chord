@@ -1,3 +1,4 @@
+import { own } from '../utils/own.js';
 import { RegistryData, HostCommitRequest } from "../contracts/sigils.js";
 import { commitRun } from "./registry.js";
 import { appendRegistryEvent } from "../platform/event-journal.js";
@@ -51,7 +52,7 @@ export function createStateOwner(initial, { store = null, now = () => 0, observe
       if (result && typeof result.then === "function") throw authorityError("ASYNC_COMMIT");
       draft.run.revision = current.run.revision + 1;
       for (const [id, active] of Object.entries(draft.active_attempts)) {
-        if (!current.active_attempts[id]) active.dispatch_revision = draft.run.revision;
+        if (!own(current.active_attempts, id)) active.dispatch_revision = draft.run.revision;
       }
       for (const event of draft.event_journal.slice(current.event_journal.length)) event.run_revision = draft.run.revision;
       capture(current, draft, operation);

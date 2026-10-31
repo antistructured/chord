@@ -1,3 +1,4 @@
+import { own } from '../utils/own.js';
 import { stableId } from "../utils/id.js";
 import { transitionTaskStatus, transitionQueueEntryStatus, canQueueTransition } from "./transitions.js";
 import { evaluateAuthority, authorityError } from "./authorization.js";
@@ -80,7 +81,7 @@ export function scheduleTaskRetry(registry, taskId, delayMs, error = null, optio
   entry.last_error = error ? String(error) : null;
 
   // Sync registry.tasks through the same guard.
-  const task = registry.tasks[taskId];
+  const task = own(registry.tasks, taskId);
   if (task) {
     transitionTaskStatus(registry, taskId, next);
     task.retry_count = entry.retry_count;
@@ -105,7 +106,7 @@ export function scheduleTaskRetry(registry, taskId, delayMs, error = null, optio
  *  attempt reservations and retry counters are reset.
  */
 export function replayDeadLetterTask(registry, taskId, options = {}) {
-  const task = registry.tasks[taskId];
+  const task = own(registry.tasks, taskId);
   if (!task || typeof task.task_id !== "string") return null;
   const entry = registry.task_queue.find(x => x.task_id === taskId);
   if (!entry || entry.status !== "dead_letter" || task.status !== "dead_letter") return null;

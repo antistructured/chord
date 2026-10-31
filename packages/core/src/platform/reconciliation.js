@@ -1,3 +1,4 @@
+import { own } from '../utils/own.js';
 import { stableId } from "../utils/id.js";
 import { authorityError, evaluateAuthority } from "./authorization.js";
 import { ReconciliationRequest, ReconciliationRecord } from "../contracts/sigils.js";
@@ -24,12 +25,12 @@ export function admitOperation(registry, packet) {
   registry.tasks[packet.task_id].operation_id = operation_id;
 }
 export function operationFor(registry, taskId) {
-  return registry.operations?.[registry.tasks[taskId]?.operation_id] || null;
+  return own(registry.operations, own(registry.tasks, taskId)?.operation_id);
 }
 export function reconcileTask(registry, raw, now) {
   const request = ReconciliationRequest.assert(raw);
   if (request.expectedRevision !== registry.run.revision) throw authorityError("STALE_REVISION");
-  const task = registry.tasks[request.task_id];
+  const task = own(registry.tasks, request.task_id);
   const operation = operationFor(registry, request.task_id);
   if (!task || !["uncertain", "blocked", "cancelled"].includes(task.status) || !operation || operation.state !== "unknown") throw authorityError("INVALID_TRANSITION");
   const principal = registry.authority?.principals.find(p => p.principal_id === request.principal_id && p.kind === "human" && p.authenticated_at <= now && now < p.expires_at);

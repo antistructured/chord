@@ -1,5 +1,6 @@
 export function parseArgs(argv) {
   const out = {};
+
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
     if (arg.startsWith("--")) {
@@ -10,5 +11,6 @@ export function parseArgs(argv) {
       (out._ ||= []).push(arg);
     }
   }
+
   return out;
 }

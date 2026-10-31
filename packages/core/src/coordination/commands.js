@@ -1,3 +1,4 @@
+import { own } from '../utils/own.js';
 import { clonePlainData, TaskPacket, Approval, Attempt } from '../contracts/sigils.js';
 import { projectContext } from '../platform/handoff.js';
 import { evaluateAuthority } from '../platform/authorization.js';
@@ -7,7 +8,6 @@ import { requireTrue, increment, subjectOf, receiptKey, SuccessResponse, Command
 import { scopeOf, subjectValid, permission, actorSubject, selectRule, liveTask, ttl, assertBinding } from './command-authorization.js';
 
 const identity = c => ({run_id:c.run_id,incarnation_id:c.incarnation_id});
-const own = (o,k) => Object.hasOwn(o || {},k) ? o[k] : null;
 const unique = a => [...new Set(a)].sort();
 const activeRun = r => requireTrue(['created','active','paused'].includes(r.run.state),'INVALID_TRANSITION');
 export const ownerSummary = c => c.lease.owner_id === null ? null : ({owner_id:c.lease.owner_id,generation:c.lease.generation,lease_expires_at:c.lease.expires_at});
@@ -174,7 +174,7 @@ export function readCommand(snapshot,binding,command,now) {
   if (command.expected_revision !== null) requireTrue(command.expected_revision === snapshot.revision,'STALE_REVISION');
   const handoffs = [], approval_requests = [];
   for (const sidecar of Object.values(c.handoffs)) try {
-    const h = r.handoffs[sidecar.handoff_id]; handoffVisible(e,h,sidecar,binding,now);
+    const h = own(r.handoffs,sidecar.handoff_id); handoffVisible(e,h,sidecar,binding,now);
     handoffs.push({handoff_id:h.handoff_id,task_id:sidecar.scope.task_id,from_actor_id:h.from_actor_id,to_actor_id:h.to_actor_id,status:h.status,payload:h.payload,expires_at:h.expires_at});
   } catch {}
   for (const request of Object.values(c.approval_requests)) try {
@@ -197,7 +197,7 @@ export function readCommand(snapshot,binding,command,now) {
       const ars = approval_requests.filter(a => a.task_id === taskId).slice(0,100).map(a => ({approval_request_id:a.approval_request_id,status:a.status}));
       if (!taskVisible && !hs.length && !ars.length) continue;
       const out = {task_id:taskId,handoffs:hs,approval_requests:ars};
-      if (taskVisible) { out.status = task.status; out.last_result = task.last_result || null; out.operation_state = r.operations?.[task.operation_id]?.state || null; }
+      if (taskVisible) { out.status = task.status; out.last_result = task.last_result || null; out.operation_state = own(r.operations,task.operation_id)?.state || null; }
       outcomes.push(out);
     }
     result = {outcomes};
@@ -210,7 +210,7 @@ export function readCommand(snapshot,binding,command,now) {
 export function replayCommand(current,nextDomain,nextC,record) {
   const receipt = own(nextC.commands,record.evidence.receipt_key); requireTrue(receipt && !own(current.coordination.commands,record.evidence.receipt_key),'INVALID_HISTORY');
   const subject = receipt.binding_subject;
-  const first = receipt.command.type === 'submit_work' ? nextDomain.tasks[receipt.command.payload.packets[0].task_id] : null;
+  const first = receipt.command.type === 'submit_work' ? own(nextDomain.tasks,receipt.command.payload.packets[0].task_id) : null;
   const binding = {...subject,authenticated_at:record.at,expires_at:Number.MAX_SAFE_INTEGER,work_capability:first?.authority_binding.capability || 'unused',work_requires_approval:first?.authority_binding.approval_required || false};
   return commandCandidate(current,binding,receipt.command,record.at,nextC.logical_now,record.domain_commit_id);
 }

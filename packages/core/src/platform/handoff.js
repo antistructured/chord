@@ -1,3 +1,4 @@
+import { own } from '../utils/own.js';
 import { deepClone } from "../utils/clone.js";
 import { ContextRequest, ContextProjection, HandoffProposal, HandoffResponse } from "../contracts/sigils.js";
 import { authorityError, evaluateAuthority } from "./authorization.js";
@@ -80,7 +81,7 @@ export function respondToHandoff(registry, options = {}) {
   if (expectedRevision !== undefined && expectedRevision !== registry.run.revision) throw authorityError("STALE_REVISION");
   
   registry.handoffs ||= {};
-  const handoff = registry.handoffs[handoff_id];
+  const handoff = own(registry.handoffs, handoff_id);
   if (!handoff) throw authorityError("INVALID_CONTEXT");
   if (handoff.status !== "proposed") throw authorityError("INVALID_TRANSITION");
   if (handoff.to_actor_id !== actor_id) throw authorityError("FORBIDDEN");

@@ -1,3 +1,4 @@
+import { own } from '../utils/own.js';
 import { authorityError } from "./authorization.js";
 import { appendRegistryEvent } from "./event-journal.js";
 import { operationFor } from "./reconciliation.js";
@@ -67,7 +68,7 @@ export function assertTaskTransition(current, next) {
 }
 
 export function transitionTaskStatus(registry, taskId, next) {
-  const task = registry.tasks[taskId];
+  const task = own(registry.tasks, taskId);
   if (!task || typeof task.task_id !== "string") throw authorityError("INVALID_CONTEXT");
   if (task.status === next) return task;
   assertTaskTransition(task.status, next);
@@ -133,7 +134,7 @@ const SANITIZED_CODE = /^[A-Z0-9_]{1,64}$/;
  * Clears attempt reservations; the attempt is not reusable.
  */
 export function markTaskUncertain(registry, taskId, { reason = "UNKNOWN", now = Date.now() } = {}) {
-  const task = registry.tasks[taskId];
+  const task = own(registry.tasks, taskId);
   if (!task || typeof task.task_id !== "string") throw authorityError("INVALID_CONTEXT");
   const code = SANITIZED_CODE.test(String(reason)) ? String(reason) : "UNKNOWN";
   if (!canTaskTransition(task.status, "uncertain")) {

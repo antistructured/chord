@@ -1,4 +1,5 @@
 import { createRequire } from 'node:module';
+import { nativeCall, diagnosticDatabase } from './diagnostics.js';
 import { randomUUID } from 'node:crypto';
 import { lstatSync, openSync, closeSync } from 'node:fs';
 import { isAbsolute } from 'node:path';
@@ -116,9 +117,9 @@ export function openCoordinatedSqliteStore(options) {
     requireTrue(Number(result.changes) === 1,'STORAGE_CORRUPT'); return {ok:true,revision,commitId};
   }
   try {
-    if (mode === 'create') { try { closeSync(openSync(path,'wx',0o600)); } catch (e) { if (e.code === 'EEXIST') fail('STORE_ALREADY_INITIALIZED'); throw e; } }
-    else requireTrue(lstatSync(path).isFile(),'INVALID_CONTEXT');
-    db = new DatabaseSync(path);
+    if (mode === 'create') { try { const fd = nativeCall('fs.open', () => openSync(path,'wx',0o600)); nativeCall('fs.close', () => closeSync(fd)); } catch (e) { if (e.code === 'EEXIST') fail('STORE_ALREADY_INITIALIZED'); throw e; } }
+    else requireTrue(nativeCall('fs.lstat', () => lstatSync(path)).isFile(),'INVALID_CONTEXT');
+    db = diagnosticDatabase(nativeCall('sqlite.open', () => new DatabaseSync(path)));
     const check = db.prepare('PRAGMA quick_check').all();
     requireTrue(check.length === 1 && Object.values(check[0])[0] === 'ok','STORAGE_CORRUPT');
     checkLayout(mode === 'create');

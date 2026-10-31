@@ -6,7 +6,8 @@
   "exports": {
     ".": "./src/index.js",
     "./sdk": "./src/sdk/index.js",
-    "./platform": "./src/platform/index.js"
+    "./platform": "./src/platform/index.js",
+    "./interop": "./src/interop/index.js"
   },
   "scripts": {
     "demo:via": "bun run src/demo/callaback-demo.js",
@@ -30,6 +31,8 @@
   "files": [
     "src/**/*.js",
     "!src/verify-runtime.js",
+    "examples/adapter-conformance.mjs",
+    "examples/adapter-interop.mjs",
     "examples/cross-actor-workflow.mjs",
     "examples/quickstart.mjs",
     "examples/process-recovery.mjs",

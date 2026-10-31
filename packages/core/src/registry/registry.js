@@ -1,3 +1,4 @@
+import { own } from '../utils/own.js';
 import { stableId } from "../utils/id.js";
 import { deepClone } from "../utils/clone.js";
 import { assertTaskPacket, assertSpec, TaskAuthority, Outcome, SCHEMA_VERSION, contractError, RegistryData } from "../contracts/sigils.js";
@@ -52,22 +53,22 @@ export function registerSpec(registry, spec) {
   const specType = spec?.spec_type || detectSpecTypeFromSpec(spec);
   if (specType === "CoordSpec") {
     for (const domain of Object.keys(spec.state || {})) {
-      registry.domains[domain] ||= {
+      registry.domains[domain] = own(registry.domains, domain) || {
         name: domain,
-        owner: spec.authority?.[domain] || null,
+        owner: own(spec.authority, domain) || null,
         delegates: [],
-        state: spec.state?.[domain] || "pending",
+        state: own(spec.state, domain) || "pending",
         project: spec.project,
         phase: spec.phase,
-        state_history: [{ to: spec.state?.[domain] || "pending", at: Date.now() }]
+        state_history: [{ to: own(spec.state, domain) || "pending", at: Date.now() }]
       };
     }
     for (const [artifact, to] of normalizeCoordHandoffs(spec.handoff || [])) {
-      registry.artifacts[artifact] ||= {
+      registry.artifacts[artifact] = own(registry.artifacts, artifact) || {
         name: artifact,
         status: "declared",
         producers: [],
-        consumers: Array.from(new Set([...(registry.artifacts[artifact]?.consumers || []), to])),
+        consumers: Array.from(new Set([...(own(registry.artifacts, artifact)?.consumers || []), to])),
         project: spec.project,
         phase: spec.phase,
         history: [{ from: null, to: "declared", at: Date.now() }]
@@ -80,7 +81,7 @@ export function registerSpec(registry, spec) {
     // artifact and its producers/consumers but never changes artifact
     // status. Status moves only through a guarded, authorized committed
     // result below.
-    const artifact = registry.artifacts[spec.artifact] ||= {
+    const artifact = registry.artifacts[spec.artifact] = own(registry.artifacts, spec.artifact) || {
       name: spec.artifact,
       status: "declared",
       producers: [],
@@ -131,9 +132,9 @@ export function registerTask(registry, packet, binding) {
  */
 export function registerExecutionResult(registry, result) {
   result = Outcome.assert(result);
-  const task = registry.tasks[result.task_id];
+  const task = own(registry.tasks, result.task_id);
   if (!task) throw contractError("INVALID_RESULT");
-  const active = registry.active_attempts[result.task_id];
+  const active = own(registry.active_attempts, result.task_id);
   if (!active) throw contractError("INVALID_RESULT");
   const attempt = active.attempt;
   if (result.run_id !== registry.run.run_id ||
@@ -144,10 +145,10 @@ export function registerExecutionResult(registry, result) {
 
   // Validate every derived transition before mutating anything.
   assertTaskTransition(task.status, result.status);
-  if (result.artifact && registry.artifacts[result.artifact]) {
+  if (result.artifact && own(registry.artifacts, result.artifact)) {
     assertArtifactTransition(registry.artifacts[result.artifact].status, result.outcome === "succeeded" ? "accepted" : "rejected");
   }
-  if (result.domain && registry.domains[result.domain]) {
+  if (result.domain && own(registry.domains, result.domain)) {
     assertDomainTransition(registry.domains[result.domain].state, result.outcome === "succeeded" ? "complete" : "blocked");
   }
 
@@ -156,11 +157,11 @@ export function registerExecutionResult(registry, result) {
   task.last_result = deepClone(result);
   registry.execution_results.push(deepClone(result));
   markQueueEntryStatus(registry, result.task_id, result.status);
-  if (result.artifact && registry.artifacts[result.artifact]) {
+  if (result.artifact && own(registry.artifacts, result.artifact)) {
     transitionArtifact(registry.artifacts[result.artifact], result.outcome === "succeeded" ? "accepted" : "rejected");
   }
-  if (result.domain && registry.domains[result.domain]) {
-    const domain = registry.domains[result.domain];
+  if (result.domain && own(registry.domains, result.domain)) {
+    const domain = own(registry.domains, result.domain);
     const next = result.outcome === "succeeded" ? "complete" : "blocked";
     if (domain.state !== next) {
       domain.state = next;

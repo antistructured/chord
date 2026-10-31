@@ -1,3 +1,4 @@
+import { own } from '../utils/own.js';
 import { randomUUID } from 'node:crypto';
 import { openCoordinatedSqliteStore } from '../runtime/storage/coordinated-sqlite.js';
 import { createCoordinatedOwner } from '../registry/coordinated-owner.js';
@@ -60,7 +61,7 @@ export function createCoordinatedChord(options = {}) {
         });
       },
       readmitTask(taskId,{expectedRevision}) { return adminMutation('readmit_task',expectedRevision,(r,now) => {
-        const task = r.tasks[taskId], op = r.operations?.[task?.operation_id];
+        const task = own(r.tasks, taskId), op = own(r.operations, task?.operation_id);
         requireTrue(task && ['uncertain','blocked','dead_letter'].includes(task.status),'INVALID_TRANSITION');
         requireTrue(op?.state === 'not_executed' && op.reconciliation_id,'RECONCILIATION_REQUIRED');
         const decision = evaluateAuthority({stage:'admit',now,run:r.run,task:{...task,status:'queued'},authority:r.authority}); requireTrue(decision.allowed,decision.code);
@@ -78,7 +79,7 @@ export function createCoordinatedChord(options = {}) {
         const policy = createRuntimePolicy(policyConfig);
         const leased = r.task_queue.filter(q => q.status === 'leased');
         if (leased.length >= policy.globalMaxLeased || leased.filter(q => q.target_entity === ready.target_entity).length >= policy.perEntityMaxLeased) return {response:{ok:true,deferred:true}};
-        const task = r.tasks[ready.task_id], attemptId = r.pending_attempts[task.task_id]?.attempt_id || randomUUID();
+        const task = own(r.tasks, ready.task_id), attemptId = own(r.pending_attempts, task.task_id)?.attempt_id || randomUUID();
         const plan = planClaim(current.envelope,task.task_id,attemptId,current.now);
         const registration = resolveAdapter(createAdapterRouter(routerConfig),task.target_entity);
         if (!registration) return {response:{ok:false,code:'no_adapter'}};

@@ -1,3 +1,4 @@
+import { own } from '../utils/own.js';
 import { createRegistry, registerSpec } from "../registry/registry.js";
 import { createStateOwner } from "../registry/owner.js";
 import { admitOperation, operationFor, reconcileTask } from "../platform/reconciliation.js";
@@ -154,11 +155,11 @@ export function createChord(options = {}) {
    */
   function createApproval(approvalOptions = {}) {
     const registry = owner.read();
-    const task = registry.tasks[approvalOptions.task_id];
+    const task = own(registry.tasks, approvalOptions.task_id);
     if (!task || typeof task.task_id !== "string") throw contractError("INVALID_DATA");
     if (typeof approvalOptions.approver_principal_id !== "string") throw authorityError("INVALID_CONTEXT");
     const binding = task.authority_binding;
-    const attempt = registry.pending_attempts[task.task_id];
+    const attempt = own(registry.pending_attempts, task.task_id);
     const attempt_id = approvalOptions.attempt_id || attempt?.attempt_id;
     if (typeof attempt_id !== "string") throw authorityError("INVALID_CONTEXT");
     return Approval.assert({
@@ -294,7 +295,7 @@ export function createChord(options = {}) {
   }
 
   function prepareAttempt(taskId) {
-    const task = registry.tasks[taskId];
+    const task = own(registry.tasks, taskId);
     if (!task || typeof task.task_id !== "string") throw contractError("INVALID_DATA");
     if (task.status !== "queued") throw authorityError("INVALID_TRANSITION");
     return deepClone(prepareAttemptRecord(registry, task));
@@ -306,7 +307,7 @@ export function createChord(options = {}) {
    * stale: a late result is ignored, never committed over the cancel.
    */
   function cancelTask(taskId, cancelOptions = {}) {
-    const task = registry.tasks[taskId];
+    const task = own(registry.tasks, taskId);
     if (!task || typeof task.task_id !== "string") throw contractError("INVALID_DATA");
     if (cancelOptions.expectedRevision !== undefined && cancelOptions.expectedRevision !== registry.run.revision) throw authorityError("STALE_REVISION");
     transitionTaskStatus(registry, taskId, "cancelled");
@@ -329,7 +330,7 @@ export function createChord(options = {}) {
    * consumed approvals stay consumed (kernel-owned, never reset here).
    */
   function replayTask(taskId, replayOptions = {}) {
-    const task = registry.tasks[taskId];
+    const task = own(registry.tasks, taskId);
     if (!task || typeof task.task_id !== "string") throw contractError("INVALID_DATA");
     if (replayOptions.expectedRevision !== undefined && replayOptions.expectedRevision !== registry.run.revision) throw authorityError("STALE_REVISION");
     const previousStatus = task.status;
@@ -396,7 +397,7 @@ export function createChord(options = {}) {
         if (task.status !== "queued") continue;
         const required = task.authority_binding.approval_required || registry.authority.grants.some(g => g.scope.task_id === task.task_id && g.requires_approval && g.effect === "allow" && g.revoked_at === null && g.issued_at <= at && at < g.expires_at);
         if (!required) continue;
-        const attempt = registry.pending_attempts[task.task_id];
+        const attempt = own(registry.pending_attempts, task.task_id);
         const decision = evaluateAuthority({ stage: "dispatch", now: at, run: registry.run, task, attempt: attempt || null, authority: registry.authority });
         const approval = registry.authority.approvals.find(a => a.approval_id === decision.approval_id);
         if (!decision.allowed || !approval || approval.approver_principal_id !== human.principal_id || (opts.approval_id && opts.approval_id !== approval.approval_id)) throw authorityError("APPROVAL_REQUIRED");
